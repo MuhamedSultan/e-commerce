@@ -10,4 +10,18 @@
     <string name="total">Total :</string>
     <string name="emptyCart">\"It seems like your shopping cart is empty. Browse our collection and add items to your cart to start shopping!\"</string>
     <string name="addCreditCard">Add Credit Card</string>
+    <string name="MyOrders">My Orders</string>
+    <string name="seeYourOrders">See your orders</string>
+
+    <!-- Strings for My Favorites Section -->
+    <string name="MyFavorites">My Favorites</string>
+    <string name="seeYourFavorites">See your favorites</string>
+
+    <!-- Strings for Delivery Address Section -->
+    <string name="DeliveryAddress">Delivery Address</string>
+    <string name="seeYourAddress">See your shipping address</string>
+
+    <!-- Strings for Logout Section -->
+    <string name="logout">Logout</string>
+    <string name="click_here_to_logout">Click here to log out</string>
 </resources>
