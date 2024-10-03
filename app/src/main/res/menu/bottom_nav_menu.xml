@@ -5,4 +5,19 @@
         android:id="@+id/homeFragment"
         android:title="@string/home"
         android:icon="@drawable/ic_home"/>
+
+    <item
+        android:id="@+id/categoriesFragment"
+        android:title="@string/categories"
+        android:icon="@drawable/ic_category"/>
+
+    <item
+        android:id="@+id/cartFragment"
+        android:title="@string/cart"
+        android:icon="@drawable/ic_cart"/>
+
+    <item
+        android:id="@+id/settingFragment"
+        android:title="@string/profile"
+        android:icon="@drawable/ic_profile"/>
 </menu>
