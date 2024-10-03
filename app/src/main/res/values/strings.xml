@@ -6,4 +6,8 @@
     <string name="categories">Categories</string>
     <string name="cart">Cart</string>
     <string name="profile">Profile</string>
+    <string name="checkout">CHECKOUT</string>
+    <string name="total">Total :</string>
+    <string name="emptyCart">\"It seems like your shopping cart is empty. Browse our collection and add items to your cart to start shopping!\"</string>
+    <string name="addCreditCard">Add Credit Card</string>
 </resources>
