@@ -1,8 +1,8 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Base application theme. -->
-    <style name="Base.Theme.Ecommerce_app" parent="Theme.Material3.DayNight">
-        <!-- Customize your light theme here. -->
-        <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
+    <style name="Base.Theme.Ecommerce_app" parent="Theme.Material3.Light.NoActionBar">
+         Customize your light theme here.
+         <item name="colorPrimary">@color/basic_color</item>
     </style>
 
     <style name="Theme.Ecommerce_app" parent="Base.Theme.Ecommerce_app" />

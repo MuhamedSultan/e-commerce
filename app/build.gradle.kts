@@ -121,4 +121,8 @@ dependencies {
     implementation(libs.play.services.location)
 
 
+    //Google Material Design
+    implementation ("com.google.android.material:material:1.8.0")
+
+
 }
