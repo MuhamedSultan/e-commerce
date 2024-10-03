@@ -82,7 +82,11 @@
         android:id="@+id/paymentFragment"
         android:name="com.example.e_commerce_app.payment.PaymentFragment"
         android:label="Payment"
-        tools:layout="@layout/fragment_payment" />
+        tools:layout="@layout/fragment_payment" >
+        <action
+            android:id="@+id/action_paymentFragment_to_creditCardFragment"
+            app:destination="@id/creditCardFragment" />
+    </fragment>
     <fragment
         android:id="@+id/mapFragment"
         android:name="com.example.e_commerce_app.map.MapFragment"
@@ -100,5 +104,14 @@
         <action
             android:id="@+id/action_favoriteFragment_to_productDetailsFragment"
             app:destination="@id/productDetailsFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/creditCardFragment"
+        android:name="com.example.e_commerce_app.payment.CreditCardFragment"
+        android:label="fragment_credit_card"
+        tools:layout="@layout/fragment_credit_card" >
+        <action
+            android:id="@+id/action_creditCardFragment_to_paymentFragment"
+            app:destination="@id/paymentFragment" />
     </fragment>
 </navigation>
