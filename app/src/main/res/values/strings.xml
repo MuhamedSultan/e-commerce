@@ -6,7 +6,12 @@
     <string name="categories">Categories</string>
     <string name="cart">Cart</string>
     <string name="profile">Profile</string>
-
+    <string name="brand">Brands</string>
+    <string name="recommended_for_you">Recommended For You</string>
+    <string name="home_address">Home Address</string>
+    <string name="sub_total">Sub Total :</string>
+    <string name="total_tax">Total Tax :</string>
+    <string name="total_cost">Total Cost :</string>
 
     <!--OnBoarding-->
     <string name="welcom">Welcome to STStore !</string>

@@ -6,4 +6,9 @@
     </style>
 
     <style name="Theme.Ecommerce_app" parent="Base.Theme.Ecommerce_app" />
+
+
+    <style name="Bottom.Nav.Bar.Custom.Item.Indicator" parent="Widget.Material3.BottomNavigationView.ActiveIndicator">
+        <item name="android:color">@color/yellow</item>
+    </style>
 </resources>
