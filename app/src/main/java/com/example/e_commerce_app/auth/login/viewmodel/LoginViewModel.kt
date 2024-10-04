@@ -2,8 +2,8 @@ package com.example.e_commerce_app.auth.login.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.e_commerce_app.model.repo.ShopifyRepo
 import com.example.e_commerce_app.model.user.UserData
-import com.example.e_commerce_app.model.user.repo.ShopifyRepo // Import ShopifyRepo
 import com.example.e_commerce_app.util.ApiState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow

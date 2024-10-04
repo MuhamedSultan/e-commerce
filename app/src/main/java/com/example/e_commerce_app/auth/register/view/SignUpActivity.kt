@@ -12,8 +12,8 @@ import com.example.e_commerce_app.auth.register.viewmodel.SignUpViewModel
 import com.example.e_commerce_app.auth.register.viewmodel.SignUpViewModelFactory
 import com.example.e_commerce_app.auth.login.view.LoginActivity
 import com.example.e_commerce_app.databinding.ActivitySignUpBinding
+import com.example.e_commerce_app.model.repo.ShopifyRepoImpl
 import com.example.e_commerce_app.network.RemoteDataSourceImpl
-import com.example.e_commerce_app.model.user.repo.ShopifyRepoImpl
 import com.example.e_commerce_app.util.ApiState
 
 class SignUpActivity : AppCompatActivity() {

@@ -9,16 +9,11 @@ import com.example.e_commerce_app.util.ApiState
 interface RemoteDataSource {
 
     suspend fun getAllBrands():ApiState<SmartCollectionResponse>
-<<<<<<< HEAD
-
-
 
     suspend fun signInUser(email: String, password: String): ApiState<UserData>
     suspend fun registerUser(userData: UserData): ApiState<Unit>
     suspend fun createShopifyCustomer(customerRequest: CustomerRequest): ApiState<Unit>
 
 
-=======
     suspend fun getRandomProducts():ApiState<ProductResponse>
->>>>>>> ed325631fc5f048c7321e067cbde92cb28ef4898
 }

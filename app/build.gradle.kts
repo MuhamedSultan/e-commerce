@@ -74,11 +74,8 @@ dependencies {
     implementation(libs.androidx.legacy.support.v4)
     implementation(libs.firebase.auth)
     implementation(libs.firebase.firestore)
-<<<<<<< HEAD
-    implementation(libs.firebase.storage)
-=======
+
     implementation(libs.firebase.storage.ktx)
->>>>>>> ed325631fc5f048c7321e067cbde92cb28ef4898
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

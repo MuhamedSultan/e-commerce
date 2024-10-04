@@ -25,7 +25,6 @@ class RemoteDataSourceImpl : RemoteDataSource {
         }
     }
 
-<<<<<<< HEAD
     override suspend fun signInUser(email: String, password: String): ApiState<UserData> {
         return try {
             // Sign in with Firebase Auth
@@ -98,12 +97,8 @@ class RemoteDataSourceImpl : RemoteDataSource {
             ApiState.Error("Error creating Shopify customer: ${e.message}")
         }
     }
-}
 
 
-
-
-=======
     override suspend fun getRandomProducts(): ApiState<ProductResponse> {
         return try {
             val response=Network.shopifyService.getRandomProducts()
@@ -113,4 +108,3 @@ class RemoteDataSourceImpl : RemoteDataSource {
         }
     }
 }
->>>>>>> ed325631fc5f048c7321e067cbde92cb28ef4898

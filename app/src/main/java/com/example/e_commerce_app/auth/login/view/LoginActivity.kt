@@ -16,8 +16,8 @@ import com.example.e_commerce_app.util.ApiState
 import com.example.e_commerce_app.auth.login.viewmodel.LoginViewModel
 import com.example.e_commerce_app.auth.login.viewmodel.LoginViewModelFactory
 import com.example.e_commerce_app.databinding.ActivityLoginBinding
+import com.example.e_commerce_app.model.repo.ShopifyRepoImpl
 import com.example.e_commerce_app.network.RemoteDataSourceImpl
-import com.example.e_commerce_app.model.user.repo.ShopifyRepoImpl
 import com.google.firebase.auth.FirebaseAuth
 
 class LoginActivity : AppCompatActivity() {
