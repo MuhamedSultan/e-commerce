@@ -6,4 +6,58 @@
     <string name="categories">Categories</string>
     <string name="cart">Cart</string>
     <string name="profile">Profile</string>
+
+    <!--OnBoarding-->
+    <string name="welcom">Welcome to STStore !</string>
+    <string name="welcom2">With long experience in the audio industry, we create the best quality products</string>
+    <string name="getstart_btn">Get Started</string>
+
+
+    <!--Login-->
+
+    <string name="login1">Let’s Sign You In</string>
+    <string name="login2">Welcome back, you’ve been missed!</string>
+    <string name="userlogin">Email</string>
+    <string name="email">Email</string>
+    <string name="passwordlogin"> Password</string>
+
+
+    <!--Register-->
+
+    <string name="sginup1">Getting Started</string>
+    <string name="sginup2">Create an account to continue!</string>
+
+
+    <!--Favorite-->
+    <string name="fav">It seems like you haven’t added any items to your favorites yet. Explore our collection and start saving your top picks here!</string>
+
+
+
+    <!-- Strings for My Favorites Section -->
+    <string name="MyFavorites">My Favorites</string>
+    <string name="seeYourFavorites">See your favorites</string>
+
+    <!-- Strings for Delivery Address Section -->
+    <string name="DeliveryAddress">Delivery Address</string>
+    <string name="seeYourAddress">See your shipping address</string>
+
+    <!-- Strings for Logout Section -->
+    <string name="logout">Logout</string>
+    <string name="click_here_to_logout">Click here to log out</string>
+
+
+    <string name="checkout">CHECKOUT</string>
+    <string name="total">Total :</string>
+    <string name="emptyCart">\"It seems like your shopping cart is empty. Browse our collection and add items to your cart to start shopping!\"</string>
+    <string name="addCreditCard">Add Credit Card</string>
+    <string name="MyOrders">My Orders</string>
+    <string name="seeYourOrders">See your orders</string>
+
+    <string name="brand">Brands</string>
+    <string name="recommended_for_you">Recommended For You</string>
+    <string name="home_address">Home Address</string>
+    <string name="sub_total">Sub Total :</string>
+    <string name="total_tax">Total Tax :</string>
+    <string name="total_cost">Total Cost :</string>
+
 </resources>
