@@ -1,4 +1,6 @@
 package com.example.e_commerce_app.model.user.repo
 
-class ShopifyRepoImpl {
+import com.example.e_commerce_app.network.RemoteDataSource
+
+class ShopifyRepoImpl(private val remoteDataSource: RemoteDataSource) : ShopifyRepo {
 }
