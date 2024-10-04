@@ -1,39 +1,9 @@
 <resources>
-    <string name="app_name">STStore</string>
+    <string name="app_name">e-commerce_app</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="home">Home</string>
     <string name="categories">Categories</string>
     <string name="cart">Cart</string>
     <string name="profile">Profile</string>
-    <string name="brand">Brands</string>
-    <string name="recommended_for_you">Recommended For You</string>
-    <string name="home_address">Home Address</string>
-    <string name="sub_total">Sub Total :</string>
-    <string name="total_tax">Total Tax :</string>
-    <string name="total_cost">Total Cost :</string>
-
-    <!--OnBoarding-->
-    <string name="welcom">Welcome to STStore !</string>
-    <string name="welcom2">With long experience in the audio industry, we create the best quality products</string>
-    <string name="getstart_btn">Get Started</string>
-
-
-    <!--Login-->
-
-    <string name="login1">Let’s Sign You In</string>
-    <string name="login2">Welcome back, you’ve been missed!</string>
-    <string name="userlogin">Email</string>
-    <string name="email">Email</string>
-    <string name="passwordlogin"> Password</string>
-
-
-    <!--Register-->
-
-    <string name="sginup1">Getting Started</string>
-    <string name="sginup2">Create an account to continue!</string>
-
-
-    <!--Favorite-->
-    <string name="fav">It seems like you haven’t added any items to your favorites yet. Explore our collection and start saving your top picks here!</string>
 </resources>
