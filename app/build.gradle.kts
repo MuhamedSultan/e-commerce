@@ -7,8 +7,13 @@ plugins {
 }
 
 android {
+
+
     namespace = "com.example.e_commerce_app"
     compileSdk = 34
+
+    android.buildFeatures.buildConfig = true
+
 
     defaultConfig {
         applicationId = "com.example.e_commerce_app"
@@ -18,7 +23,23 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+
+
+//
+//        // Load properties from local.properties
+//        val accessToken: String = project.findProperty("ACCESS_TOKEN") as? String ?: ""
+//        val baseUrl: String = project.findProperty("BASE_URL") as? String ?: ""
+//
+//        // Set the values to BuildConfig
+//        buildConfigField("String", "ACCESS_TOKEN", "\"$accessToken\"")
+//        buildConfigField("String", "BASE_URL", "\"$baseUrl\"")
+//
+
     }
+
+
+
+
 
     buildTypes {
         release {
@@ -28,6 +49,9 @@ android {
                 "proguard-rules.pro"
             )
         }
+
+
+
     }
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_1_8
@@ -126,7 +150,10 @@ dependencies {
 
 
     //Google Material Design
-    implementation ("com.google.android.material:material:1.8.0")
+    implementation("com.google.android.material:material:1.8.0")
+
+
+    implementation("com.google.android.gms:play-services-auth:20.4.0") // Check for the latest version
 
 
 }
