@@ -2,27 +2,31 @@ package com.example.e_commerce_app.auth.register.view
 
 import android.content.Intent
 import android.os.Bundle
+import android.view.View
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
-import com.example.e_commerce_app.MainActivity
 import com.example.e_commerce_app.auth.register.viewmodel.SignUpViewModel
 import com.example.e_commerce_app.auth.register.viewmodel.SignUpViewModelFactory
 import com.example.e_commerce_app.auth.login.view.LoginActivity
 import com.example.e_commerce_app.databinding.ActivitySignUpBinding
+import com.example.e_commerce_app.network.RemoteDataSourceImpl
+import com.example.e_commerce_app.model.user.repo.ShopifyRepoImpl
 import com.example.e_commerce_app.util.ApiState
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.firestore.FirebaseFirestore
 
 class SignUpActivity : AppCompatActivity() {
 
-    lateinit var binding: ActivitySignUpBinding
-    lateinit var tv_signIn: TextView
+    private lateinit var binding: ActivitySignUpBinding
+    private lateinit var tv_signIn: TextView
+
+    // Initialize the RemoteDataSource
+    private val remoteDataSource = RemoteDataSourceImpl()
+    private val shopifyRepo = ShopifyRepoImpl(remoteDataSource)
 
     private val signUpViewModel: SignUpViewModel by viewModels {
-        SignUpViewModelFactory(FirebaseAuth.getInstance(), FirebaseFirestore.getInstance())
+        SignUpViewModelFactory(shopifyRepo)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -43,7 +47,16 @@ class SignUpActivity : AppCompatActivity() {
             val userName = binding.edtSignInUserName.text.toString().trim()
             val phoneNumber = binding.edtSignInPhoneNumber.text.toString().trim()
 
-            if (signUpViewModel.validateInput(email, password, confirmPassword, userName, phoneNumber)) {
+            if (signUpViewModel.validateInput(
+                    email,
+                    password,
+                    confirmPassword,
+                    userName,
+                    phoneNumber
+                )
+            ) {
+                binding.progressBar3.visibility = View.VISIBLE
+
                 signUpViewModel.registerUser(email, password, userName, phoneNumber)
             } else {
                 Toast.makeText(this, "Invalid input", Toast.LENGTH_SHORT).show()
@@ -58,15 +71,28 @@ class SignUpActivity : AppCompatActivity() {
             signUpViewModel.signUpState.collect { state ->
                 when (state) {
                     is ApiState.Loading -> {
-                        // Show loading indicator
                     }
+
                     is ApiState.Success -> {
-                        Toast.makeText(this@SignUpActivity, state.data ?: "SignUp Success ,Back To Login", Toast.LENGTH_SHORT).show()
+                        binding.progressBar3.visibility = View.GONE
+
+                        Toast.makeText(
+                            this@SignUpActivity,
+                            "SignUp Success! Back to Login",
+                            Toast.LENGTH_SHORT
+                        ).show()
                         val intent = Intent(this@SignUpActivity, LoginActivity::class.java)
                         startActivity(intent)
+                        finish()
                     }
+
                     is ApiState.Error -> {
-                        Toast.makeText(this@SignUpActivity, "Error: ${state.message}", Toast.LENGTH_SHORT).show()
+                        binding.progressBar3.visibility = View.GONE
+                        Toast.makeText(
+                            this@SignUpActivity,
+                            "Error: ${state.message}",
+                            Toast.LENGTH_SHORT
+                        ).show()
                     }
                 }
             }

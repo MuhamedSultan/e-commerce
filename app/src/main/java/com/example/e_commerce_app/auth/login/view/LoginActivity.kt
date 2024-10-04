@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
+import android.view.View
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.viewModels
@@ -15,8 +16,9 @@ import com.example.e_commerce_app.util.ApiState
 import com.example.e_commerce_app.auth.login.viewmodel.LoginViewModel
 import com.example.e_commerce_app.auth.login.viewmodel.LoginViewModelFactory
 import com.example.e_commerce_app.databinding.ActivityLoginBinding
+import com.example.e_commerce_app.network.RemoteDataSourceImpl
+import com.example.e_commerce_app.model.user.repo.ShopifyRepoImpl
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.firestore.FirebaseFirestore
 
 class LoginActivity : AppCompatActivity() {
 
@@ -24,8 +26,12 @@ class LoginActivity : AppCompatActivity() {
     private lateinit var tv_signUp: TextView
     private lateinit var sharedPreferences: SharedPreferences
 
+
+    private val remoteDataSource by lazy { RemoteDataSourceImpl() }
+    private val shopifyRepo by lazy { ShopifyRepoImpl(remoteDataSource) }
+
     private val loginViewModel: LoginViewModel by viewModels {
-        LoginViewModelFactory(FirebaseAuth.getInstance(), FirebaseFirestore.getInstance())
+        LoginViewModelFactory(shopifyRepo)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -33,10 +39,8 @@ class LoginActivity : AppCompatActivity() {
         binding = ActivityLoginBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        // Initialize SharedPreferences
         sharedPreferences = getSharedPreferences("UserPrefs", Context.MODE_PRIVATE)
 
-        // Check if user is already logged in
         checkUserLoggedIn()
 
         tv_signUp = binding.tvSignUp
@@ -50,7 +54,11 @@ class LoginActivity : AppCompatActivity() {
             val password = binding.edtSignInPassword.text.toString().trim()
 
             if (loginViewModel.validateInput(email, password)) {
+                binding.progressBar.visibility = View.VISIBLE
+
                 loginViewModel.signInUser(email, password)
+
+
             } else {
                 Toast.makeText(this, "Invalid input", Toast.LENGTH_SHORT).show()
             }
@@ -60,14 +68,12 @@ class LoginActivity : AppCompatActivity() {
     }
 
     private fun checkUserLoggedIn() {
-        // Retrieve the user ID from SharedPreferences
         val userId = sharedPreferences.getString("userId", null)
 
-        // If userId is not null, navigate to MainActivity
         if (userId != null) {
             val intent = Intent(this, MainActivity::class.java)
             startActivity(intent)
-            finish() // Close the LoginActivity
+            finish()
         }
     }
 
@@ -76,21 +82,27 @@ class LoginActivity : AppCompatActivity() {
             loginViewModel.loginState.collect { state ->
                 when (state) {
                     is ApiState.Loading -> {
-                        // Show loading indicator (you can add a ProgressBar here)
                     }
 
                     is ApiState.Success -> {
-                        saveUserData() // Save user data to SharedPreferences
+                        binding.progressBar.visibility = View.GONE
 
-                        Toast.makeText(this@LoginActivity, "Login successful!", Toast.LENGTH_SHORT).show()
+                        saveUserData()
+                        Toast.makeText(this@LoginActivity, "Login successful!", Toast.LENGTH_SHORT)
+                            .show()
                         val intent = Intent(this@LoginActivity, MainActivity::class.java)
                         startActivity(intent)
-                        finish() // Close LoginActivity
-
+                        finish()
                     }
 
                     is ApiState.Error -> {
-                        Toast.makeText(this@LoginActivity, "Error: ${state.message}", Toast.LENGTH_SHORT).show()
+                        binding.progressBar.visibility = View.GONE
+
+                        Toast.makeText(
+                            this@LoginActivity,
+                            "Error: ${state.message}",
+                            Toast.LENGTH_SHORT
+                        ).show()
                     }
                 }
             }
