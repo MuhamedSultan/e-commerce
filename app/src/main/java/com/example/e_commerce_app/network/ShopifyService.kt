@@ -2,7 +2,9 @@ package com.example.e_commerce_app.network
 
 import com.example.e_commerce_app.model.cart.CartResponse
 import com.example.e_commerce_app.model.cart.DeleteProductResponse
+import com.example.e_commerce_app.model.product.Product
 import com.example.e_commerce_app.model.product.ProductResponse
+import com.example.e_commerce_app.model.product.SingleProductResponse
 import com.example.e_commerce_app.model.smart_collection.SmartCollectionResponse
 import com.example.e_commerce_app.model.user.CustomerRequest
 import com.example.e_commerce_app.model.user.CustomerResponse
@@ -34,8 +36,14 @@ interface ShopifyService {
     ): Response<DeleteProductResponse>
 
     @GET("smart_collections.json")
-    suspend fun getAllBrands():SmartCollectionResponse
+    suspend fun getAllBrands(): SmartCollectionResponse
 
     @GET("products.json")
-    suspend fun getRandomProducts():ProductResponse
+    suspend fun getRandomProducts(): ProductResponse
+
+
+    @GET("products/{id}.json")
+    suspend fun fetchProductById(@Path("id") productId: Long): Response<SingleProductResponse>
+
+
 }
