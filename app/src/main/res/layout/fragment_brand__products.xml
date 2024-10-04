@@ -8,7 +8,7 @@
     tools:context=".brand_products.Brand_ProductsFragment">
 
     <EditText
-        android:id="@+id/editTextText"
+        android:id="@+id/edSearch"
         android:layout_width="0dp"
         android:layout_height="50dp"
         android:layout_marginStart="16dp"
@@ -33,5 +33,5 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/editTextText" />
+        app:layout_constraintTop_toBottomOf="@+id/edSearch" />
 </androidx.constraintlayout.widget.ConstraintLayout>

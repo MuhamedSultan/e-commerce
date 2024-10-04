@@ -1,4 +1,4 @@
-package com.example.e_commerce_app.home.view
+package com.example.e_commerce_app.home.view.adapter
 
 import android.content.Context
 import android.view.LayoutInflater

@@ -59,5 +59,6 @@
     <string name="sub_total">Sub Total :</string>
     <string name="total_tax">Total Tax :</string>
     <string name="total_cost">Total Cost :</string>
+    <string name="search_here">Search here</string>
 
 </resources>
