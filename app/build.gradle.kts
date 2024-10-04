@@ -76,6 +76,7 @@ dependencies {
     implementation(libs.firebase.auth)
     implementation(libs.firebase.firestore)
     implementation(libs.firebase.storage)
+    implementation(libs.androidx.recyclerview)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -154,8 +155,7 @@ dependencies {
     implementation("com.google.android.material:material:1.8.0")
 
 
-    implementation("com.google.android.gms:play-services-auth:20.4.0")
-
+    implementation("com.google.android.gms:play-services-auth:20.4.0") // Check for the latest version
 
 
 }
