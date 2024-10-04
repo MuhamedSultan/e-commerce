@@ -8,20 +8,13 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import com.example.e_commerce_app.MainActivity
-import com.example.e_commerce_app.auth.register.viewmodel.SignUpState
 import com.example.e_commerce_app.auth.register.viewmodel.SignUpViewModel
 import com.example.e_commerce_app.auth.register.viewmodel.SignUpViewModelFactory
 import com.example.e_commerce_app.auth.login.view.LoginActivity
 import com.example.e_commerce_app.databinding.ActivitySignUpBinding
-import com.example.e_commerce_app.model.user.CustomerDataRequest
-import com.example.e_commerce_app.model.user.CustomerRequest
-import com.example.e_commerce_app.model.user.UserData
-import com.example.e_commerce_app.network.Network
+import com.example.e_commerce_app.util.ApiState
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
 
 class SignUpActivity : AppCompatActivity() {
 
@@ -36,7 +29,6 @@ class SignUpActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivitySignUpBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
 
         tv_signIn = binding.tvSignIn
         tv_signIn.setOnClickListener {
@@ -65,16 +57,16 @@ class SignUpActivity : AppCompatActivity() {
         lifecycleScope.launchWhenStarted {
             signUpViewModel.signUpState.collect { state ->
                 when (state) {
-                    is SignUpState.Loading -> {
+                    is ApiState.Loading -> {
                         // Show loading indicator
                     }
-                    is SignUpState.Success -> {
-                        Toast.makeText(this@SignUpActivity, state.message, Toast.LENGTH_SHORT).show()
-                        val intent = Intent(this@SignUpActivity, MainActivity::class.java)
+                    is ApiState.Success -> {
+                        Toast.makeText(this@SignUpActivity, state.data ?: "SignUp Success ,Back To Login", Toast.LENGTH_SHORT).show()
+                        val intent = Intent(this@SignUpActivity, LoginActivity::class.java)
                         startActivity(intent)
                     }
-                    is SignUpState.Failure -> {
-                        Toast.makeText(this@SignUpActivity, "Error: ${state.error}", Toast.LENGTH_SHORT).show()
+                    is ApiState.Error -> {
+                        Toast.makeText(this@SignUpActivity, "Error: ${state.message}", Toast.LENGTH_SHORT).show()
                     }
                 }
             }

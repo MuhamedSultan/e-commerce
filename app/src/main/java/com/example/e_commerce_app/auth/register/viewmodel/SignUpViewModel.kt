@@ -6,6 +6,7 @@ import com.example.e_commerce_app.model.user.CustomerDataRequest
 import com.example.e_commerce_app.model.user.CustomerRequest
 import com.example.e_commerce_app.model.user.UserData
 import com.example.e_commerce_app.network.Network
+import com.example.e_commerce_app.util.ApiState
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.Dispatchers
@@ -13,23 +14,17 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
-sealed class SignUpState {
-    object Loading : SignUpState()
-    data class Success(val message: String) : SignUpState()
-    data class Failure(val error: String) : SignUpState()
-}
-
 class SignUpViewModel(
     private val firebaseAuth: FirebaseAuth,
     private val firestore: FirebaseFirestore
 ) : ViewModel() {
 
-    private val _signUpState = MutableStateFlow<SignUpState>(SignUpState.Loading)
-    val signUpState: StateFlow<SignUpState> = _signUpState
+    private val _signUpState = MutableStateFlow<ApiState<String>>(ApiState.Loading())
+    val signUpState: StateFlow<ApiState<String>> = _signUpState
 
     fun registerUser(email: String, password: String, userName: String, phoneNumber: String) {
         viewModelScope.launch {
-            _signUpState.value = SignUpState.Loading
+            _signUpState.value = ApiState.Loading()
 
             firebaseAuth.createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener { task ->
@@ -48,7 +43,7 @@ class SignUpViewModel(
                             createShopifyCustomer(userName, email, password)
                         }
                     } else {
-                        _signUpState.value = SignUpState.Failure("Sign-up failed: ${task.exception?.message}")
+                        _signUpState.value = ApiState.Error("Sign-up failed: ${task.exception?.message}")
                     }
                 }
         }
@@ -61,7 +56,7 @@ class SignUpViewModel(
                 onSuccess()
             }
             .addOnFailureListener { e ->
-                _signUpState.value = SignUpState.Failure("Failed to save user data: ${e.message}")
+                _signUpState.value = ApiState.Error("Failed to save user data: ${e.message}")
             }
     }
 
@@ -80,12 +75,12 @@ class SignUpViewModel(
             try {
                 val response = Network.shopifyService.createCustomer(customerRequest)
                 if (response.isSuccessful) {
-                    _signUpState.value = SignUpState.Success("Shopify customer created!")
+                    _signUpState.value = ApiState.Success("Shopify customer created!")
                 } else {
-                    _signUpState.value = SignUpState.Failure("Failed to create Shopify customer: ${response.message()}")
+                    _signUpState.value = ApiState.Error("Failed to create Shopify customer: ${response.message()}")
                 }
             } catch (e: Exception) {
-                _signUpState.value = SignUpState.Failure("Error creating Shopify customer: ${e.message}")
+                _signUpState.value = ApiState.Error("Error creating Shopify customer: ${e.message}")
             }
         }
     }
