@@ -9,12 +9,16 @@ import com.bumptech.glide.Glide
 import com.example.e_commerce_app.databinding.ItemProductBinding
 import com.example.e_commerce_app.model.product.Product
 
-class RandomProductsAdapter(private val product: List<Product>, private val context: Context) :
+class RandomProductsAdapter(
+    private val product: List<Product>,
+    private val context: Context,
+    private val onProductClick: (Product) -> Unit
+) :
     Adapter<RandomProductsAdapter.RandomProductsViewHolder>() {
 
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RandomProductsViewHolder {
-        val view = ItemProductBinding.inflate(LayoutInflater.from(parent.context),parent,false)
+        val view = ItemProductBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         return RandomProductsViewHolder(view)
     }
 
@@ -23,10 +27,16 @@ class RandomProductsAdapter(private val product: List<Product>, private val cont
     }
 
     override fun onBindViewHolder(holder: RandomProductsViewHolder, position: Int) {
-        val productList=product[position]
+        val productList = product[position]
         Glide.with(context).load(productList.image.src).into(holder.productImage)
         holder.productName.text = productList.title.split('|').getOrNull(1)?.trim() ?: ""
-        holder.productPrice.text=productList.variants[0].price
+        holder.productPrice.text = productList.variants[0].price
+
+
+        holder.itemView.setOnClickListener {
+            onProductClick(productList)
+        }
+
     }
 
     class RandomProductsViewHolder(binding: ItemProductBinding) :

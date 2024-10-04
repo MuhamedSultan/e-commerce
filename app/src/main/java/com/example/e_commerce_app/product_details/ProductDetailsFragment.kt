@@ -8,11 +8,14 @@ import android.view.ViewGroup
 import com.example.e_commerce_app.R
 
 
-
 class ProductDetailsFragment : Fragment() {
+    private var productId: Long? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        arguments?.let {
+            productId = it.getLong("productId")
+        }
 
     }
 

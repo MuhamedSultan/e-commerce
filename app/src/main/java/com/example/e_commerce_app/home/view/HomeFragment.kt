@@ -9,6 +9,8 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import androidx.navigation.fragment.findNavController
+
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.e_commerce_app.databinding.FragmentHomeBinding
@@ -127,7 +129,11 @@ class HomeFragment : Fragment() {
     }
 
     private fun setupRandomProductsRecyclerview(product: List<Product>) {
-        val randomProductsAdapter = RandomProductsAdapter(product, requireContext())
+        val randomProductsAdapter = RandomProductsAdapter(product, requireContext()) { selectedProduct ->
+            // Navigate to ProductDetailsFragment
+            val action = HomeFragmentDirections.actionHomeFragmentToProductDetailsFragment(selectedProduct.id) // Pass the product ID or necessary data
+            findNavController().navigate(action)
+        }
         val manager = LinearLayoutManager(requireContext())
         manager.orientation = LinearLayoutManager.HORIZONTAL
 
@@ -136,5 +142,6 @@ class HomeFragment : Fragment() {
             layoutManager = manager
         }
     }
+
 
 }
