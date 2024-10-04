@@ -51,7 +51,6 @@ android {
         }
 
 
-
     }
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_1_8
@@ -75,8 +74,7 @@ dependencies {
     implementation(libs.androidx.legacy.support.v4)
     implementation(libs.firebase.auth)
     implementation(libs.firebase.firestore)
-    implementation(libs.firebase.storage)
-    implementation(libs.androidx.recyclerview)
+    implementation(libs.firebase.storage.ktx)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
