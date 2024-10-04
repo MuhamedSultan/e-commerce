@@ -1,4 +1,4 @@
-package com.example.e_commerce_app.model.user.repo
+package com.example.e_commerce_app.model.repo
 
 import com.example.e_commerce_app.model.smart_collection.SmartCollectionResponse
 import com.example.e_commerce_app.network.RemoteDataSource

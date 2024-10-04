@@ -15,7 +15,7 @@ import com.example.e_commerce_app.databinding.FragmentHomeBinding
 import com.example.e_commerce_app.home.viewmodel.HomeViewModel
 import com.example.e_commerce_app.home.viewmodel.HomeViewModelFactory
 import com.example.e_commerce_app.model.smart_collection.SmartCollection
-import com.example.e_commerce_app.model.user.repo.ShopifyRepoImpl
+import com.example.e_commerce_app.model.repo.ShopifyRepoImpl
 import com.example.e_commerce_app.network.RemoteDataSourceImpl
 import com.example.e_commerce_app.util.ApiState
 import com.google.android.material.snackbar.Snackbar
