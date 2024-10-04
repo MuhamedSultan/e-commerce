@@ -1,5 +1,6 @@
-package com.example.e_commerce_app.model.user.repo
+package com.example.e_commerce_app.model.repo
 
+import com.example.e_commerce_app.model.product.ProductResponse
 import com.example.e_commerce_app.model.smart_collection.SmartCollectionResponse
 import com.example.e_commerce_app.model.user.CustomerRequest
 import com.example.e_commerce_app.model.user.UserData
@@ -11,6 +12,7 @@ class ShopifyRepoImpl(private val remoteDataSource: RemoteDataSource) : ShopifyR
         return remoteDataSource.getAllBrands()
     }
 
+<<<<<<< HEAD:app/src/main/java/com/example/e_commerce_app/model/user/repo/ShopifyRepoImpl.kt
     //UserAuth
     override suspend fun signInUser(email: String, password: String): ApiState<UserData> {
         return remoteDataSource.signInUser(email, password)
@@ -25,4 +27,10 @@ class ShopifyRepoImpl(private val remoteDataSource: RemoteDataSource) : ShopifyR
     }
 
 
+=======
+    override suspend fun getRandomProducts(): ApiState<ProductResponse> {
+       return remoteDataSource.getRandomProducts()
+    }
+
+>>>>>>> ed325631fc5f048c7321e067cbde92cb28ef4898:app/src/main/java/com/example/e_commerce_app/model/repo/ShopifyRepoImpl.kt
 }

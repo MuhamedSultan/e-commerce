@@ -2,7 +2,7 @@ package com.example.e_commerce_app.home.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import com.example.e_commerce_app.model.user.repo.ShopifyRepo
+import com.example.e_commerce_app.model.repo.ShopifyRepo
 
 class HomeViewModelFactory(
     private val shopifyRepo: ShopifyRepo

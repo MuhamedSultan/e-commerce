@@ -1,5 +1,6 @@
 package com.example.e_commerce_app.network
 
+import com.example.e_commerce_app.model.product.ProductResponse
 import com.example.e_commerce_app.model.smart_collection.SmartCollectionResponse
 import com.example.e_commerce_app.model.user.CustomerDataRequest
 import com.example.e_commerce_app.model.user.CustomerRequest
@@ -24,6 +25,7 @@ class RemoteDataSourceImpl : RemoteDataSource {
         }
     }
 
+<<<<<<< HEAD
     override suspend fun signInUser(email: String, password: String): ApiState<UserData> {
         return try {
             // Sign in with Firebase Auth
@@ -101,3 +103,14 @@ class RemoteDataSourceImpl : RemoteDataSource {
 
 
 
+=======
+    override suspend fun getRandomProducts(): ApiState<ProductResponse> {
+        return try {
+            val response=Network.shopifyService.getRandomProducts()
+            ApiState.Success(response)
+        }catch (e:Exception){
+            ApiState.Error(e.message.toString())
+        }
+    }
+}
+>>>>>>> ed325631fc5f048c7321e067cbde92cb28ef4898

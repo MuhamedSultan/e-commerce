@@ -2,8 +2,9 @@ package com.example.e_commerce_app.home.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.e_commerce_app.model.product.ProductResponse
 import com.example.e_commerce_app.model.smart_collection.SmartCollectionResponse
-import com.example.e_commerce_app.model.user.repo.ShopifyRepo
+import com.example.e_commerce_app.model.repo.ShopifyRepo
 import com.example.e_commerce_app.util.ApiState
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -15,8 +16,18 @@ class HomeViewModel(private val shopifyRepo: ShopifyRepo) : ViewModel() {
         MutableStateFlow(ApiState.Loading())
     val brandsResult: StateFlow<ApiState<SmartCollectionResponse>> = _brandsResult
 
+    private val _randProductsResult: MutableStateFlow<ApiState<ProductResponse>> =
+        MutableStateFlow(ApiState.Loading())
+    val randProductsResult: StateFlow<ApiState<ProductResponse>> = _randProductsResult
+
     fun getAllBrands() = viewModelScope.launch(Dispatchers.IO) {
         val result = shopifyRepo.getAllBrands().data
         _brandsResult.value = ApiState.Success(result!!)
+    }
+
+    fun getRandomProducts() = viewModelScope.launch(Dispatchers.IO) {
+        val result=shopifyRepo.getRandomProducts().data
+        _randProductsResult.value=ApiState.Success(result!!)
+
     }
 }

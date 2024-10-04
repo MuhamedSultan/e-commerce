@@ -1,5 +1,6 @@
 package com.example.e_commerce_app.network
 
+import com.example.e_commerce_app.model.product.ProductResponse
 import com.example.e_commerce_app.model.smart_collection.SmartCollectionResponse
 import com.example.e_commerce_app.model.user.CustomerRequest
 import com.example.e_commerce_app.model.user.UserData
@@ -8,6 +9,7 @@ import com.example.e_commerce_app.util.ApiState
 interface RemoteDataSource {
 
     suspend fun getAllBrands():ApiState<SmartCollectionResponse>
+<<<<<<< HEAD
 
 
 
@@ -16,4 +18,7 @@ interface RemoteDataSource {
     suspend fun createShopifyCustomer(customerRequest: CustomerRequest): ApiState<Unit>
 
 
+=======
+    suspend fun getRandomProducts():ApiState<ProductResponse>
+>>>>>>> ed325631fc5f048c7321e067cbde92cb28ef4898
 }

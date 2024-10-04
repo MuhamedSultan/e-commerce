@@ -5,17 +5,20 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.e_commerce_app.databinding.FragmentHomeBinding
+import com.example.e_commerce_app.home.view.adapter.BrandsAdapter
+import com.example.e_commerce_app.home.view.adapter.RandomProductsAdapter
 import com.example.e_commerce_app.home.viewmodel.HomeViewModel
 import com.example.e_commerce_app.home.viewmodel.HomeViewModelFactory
+import com.example.e_commerce_app.model.product.Product
 import com.example.e_commerce_app.model.smart_collection.SmartCollection
-import com.example.e_commerce_app.model.user.repo.ShopifyRepoImpl
+import com.example.e_commerce_app.model.repo.ShopifyRepoImpl
 import com.example.e_commerce_app.network.RemoteDataSourceImpl
 import com.example.e_commerce_app.util.ApiState
 import com.google.android.material.snackbar.Snackbar
@@ -45,6 +48,7 @@ class HomeFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         homeViewModel.getAllBrands()
+        homeViewModel.getRandomProducts()
         lifecycleScope.launch {
             viewLifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 homeViewModel.brandsResult.collect { result ->
@@ -57,7 +61,7 @@ class HomeFragment : Fragment() {
                             hideLoadingIndicator()
                             result.data?.let { collections ->
                                 hideLoadingIndicator()
-                                setupRecyclerview(collections.smart_collections)
+                                setupBrandRecyclerview(collections.smart_collections)
                             }
                         }
 
@@ -67,6 +71,33 @@ class HomeFragment : Fragment() {
                         }
                     }
                 }
+            }
+        }
+        lifecycleScope.launch {
+            viewLifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
+
+                homeViewModel.randProductsResult.collect { result ->
+                    when (result) {
+                        is ApiState.Loading -> {
+                            showLoadingIndicator()
+                        }
+
+                        is ApiState.Success -> {
+                            hideLoadingIndicator()
+                            result.data?.let { product ->
+                                hideLoadingIndicator()
+                                val randomProducts = product.products.shuffled().take(20)
+                                setupRandomProductsRecyclerview(randomProducts)
+                            }
+                        }
+
+                        is ApiState.Error -> {
+                            hideLoadingIndicator()
+                            showError(result.message.toString())
+                        }
+                    }
+                }
+
             }
         }
     }
@@ -85,12 +116,23 @@ class HomeFragment : Fragment() {
         binding.groupLayout.visibility = View.VISIBLE
     }
 
-    private fun setupRecyclerview(smartCollection: List<SmartCollection>) {
+    private fun setupBrandRecyclerview(smartCollection: List<SmartCollection>) {
         val brandAdapter = BrandsAdapter(smartCollection, requireContext())
         val manager = LinearLayoutManager(requireContext())
         manager.orientation = LinearLayoutManager.HORIZONTAL
         binding.brandRv.apply {
             adapter = brandAdapter
+            layoutManager = manager
+        }
+    }
+
+    private fun setupRandomProductsRecyclerview(product: List<Product>) {
+        val randomProductsAdapter = RandomProductsAdapter(product, requireContext())
+        val manager = LinearLayoutManager(requireContext())
+        manager.orientation = LinearLayoutManager.HORIZONTAL
+
+        binding.recommendedProductsRv.apply {
+            adapter = randomProductsAdapter
             layoutManager = manager
         }
     }
