@@ -1,10 +1,10 @@
 package com.example.e_commerce_app.categories.view
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
@@ -12,8 +12,6 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.e_commerce_app.brand_products.view.BrandProductsAdapter
-import com.example.e_commerce_app.brand_products.view.BrandProductsFragmentDirections
 import com.example.e_commerce_app.categories.view.adapter.CategoriesAdapter
 import com.example.e_commerce_app.categories.view.adapter.CategoriesProductsAdapter
 import com.example.e_commerce_app.categories.view.adapter.OnCategoryClick
@@ -29,7 +27,7 @@ import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.launch
 
 
-class CategoriesFragment : Fragment(){
+class CategoriesFragment : Fragment(),OnCategoryClick{
     private lateinit var binding: FragmentCategoriesBinding
     private lateinit var categoriesViewModel: CategoriesViewModel
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -52,7 +50,6 @@ class CategoriesFragment : Fragment(){
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         categoriesViewModel.getCategorise()
-        categoriesViewModel.getProductsOfSelectedCategory(482200682811)
         lifecycleScope.launch {
             viewLifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 categoriesViewModel.categoriesResult.collect { result ->
@@ -108,7 +105,7 @@ class CategoriesFragment : Fragment(){
     }
 
     private fun setupCategoriesRecyclerview(collection: List<CustomCollection>) {
-        val categoriesAdapter = CategoriesAdapter(collection)
+        val categoriesAdapter = CategoriesAdapter(collection,this)
         val manager = LinearLayoutManager(requireContext())
         manager.orientation = LinearLayoutManager.HORIZONTAL
         binding.categoriesRv.apply {
@@ -132,5 +129,10 @@ class CategoriesFragment : Fragment(){
             adapter = categoriesProductsAdapter
             layoutManager = manager
         }
+    }
+
+    override fun onCategoryClick(categoryId: Long) {
+        categoriesViewModel.getProductsOfSelectedCategory(categoryId)
+
     }
 }

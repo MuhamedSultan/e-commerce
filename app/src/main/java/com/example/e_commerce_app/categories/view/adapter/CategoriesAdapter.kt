@@ -1,4 +1,4 @@
-package com.example.e_commerce_app.categories
+package com.example.e_commerce_app.categories.view.adapter
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -7,7 +7,10 @@ import com.example.e_commerce_app.databinding.ItemChipBinding
 import com.example.e_commerce_app.model.custom_collection.CustomCollection
 
 
-class CategoriesAdapter(private val collectionsList: List<CustomCollection>) :
+class CategoriesAdapter(
+    private val collectionsList: List<CustomCollection>,
+    private val onCategoryClick: OnCategoryClick
+) :
     RecyclerView.Adapter<CategoriesAdapter.CategoriesViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CategoriesViewHolder {
@@ -18,6 +21,9 @@ class CategoriesAdapter(private val collectionsList: List<CustomCollection>) :
     override fun onBindViewHolder(holder: CategoriesViewHolder, position: Int) {
         val collection = collectionsList[position]
         holder.categoryItem.text = collection.title
+        holder.categoryItem.setOnClickListener {
+            onCategoryClick.onCategoryClick(collection.id)
+        }
     }
 
     override fun getItemCount(): Int {
