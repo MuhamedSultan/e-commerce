@@ -17,6 +17,7 @@ interface ShopifyRepo {
     suspend fun createShopifyCustomer(customerRequest: CustomerRequest): ApiState<Unit>
     suspend fun getProductById(productId: Long): ApiState<Product>
     suspend fun getCategories(): ApiState<CustomCollectionResponse>
+    suspend fun getProductsOfSelectedCategory(collectionId: Long): ApiState<ProductResponse>
 
 
 

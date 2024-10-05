@@ -34,6 +34,10 @@ class ShopifyRepoImpl(private val remoteDataSource: RemoteDataSource) : ShopifyR
         return remoteDataSource.getCategories()
     }
 
+    override suspend fun getProductsOfSelectedCategory(collectionId: Long): ApiState<ProductResponse> {
+        return remoteDataSource.getProductsOfSelectedBrand(collectionId)
+    }
+
 
     override suspend fun getRandomProducts(): ApiState<ProductResponse> {
        return remoteDataSource.getRandomProducts()

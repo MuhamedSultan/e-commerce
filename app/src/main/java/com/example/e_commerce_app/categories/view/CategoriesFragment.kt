@@ -9,12 +9,18 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.e_commerce_app.categories.CategoriesAdapter
+import com.example.e_commerce_app.brand_products.view.BrandProductsAdapter
+import com.example.e_commerce_app.categories.view.adapter.CategoriesAdapter
+import com.example.e_commerce_app.categories.view.adapter.CategoriesProductsAdapter
+import com.example.e_commerce_app.categories.view.adapter.OnCategoryClick
 import com.example.e_commerce_app.categories.viewmodel.CategoriesViewModel
 import com.example.e_commerce_app.categories.viewmodel.CategoriesViewModelFactory
 import com.example.e_commerce_app.databinding.FragmentCategoriesBinding
 import com.example.e_commerce_app.model.custom_collection.CustomCollection
+import com.example.e_commerce_app.model.product.Product
 import com.example.e_commerce_app.model.repo.ShopifyRepoImpl
 import com.example.e_commerce_app.network.RemoteDataSourceImpl
 import com.example.e_commerce_app.util.ApiState
@@ -22,7 +28,7 @@ import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.launch
 
 
-class CategoriesFragment : Fragment() {
+class CategoriesFragment : Fragment(){
     private lateinit var binding: FragmentCategoriesBinding
     private lateinit var categoriesViewModel: CategoriesViewModel
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -45,6 +51,7 @@ class CategoriesFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         categoriesViewModel.getCategorise()
+        categoriesViewModel.getProductsOfSelectedCategory(482200682811)
         lifecycleScope.launch {
             viewLifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 categoriesViewModel.categoriesResult.collect { result ->
@@ -68,6 +75,31 @@ class CategoriesFragment : Fragment() {
                 }
             }
         }
+
+        lifecycleScope.launch {
+            viewLifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                categoriesViewModel.productsResult.collect { result ->
+                    when (result) {
+                        is ApiState.Loading -> {
+
+                        }
+
+                        is ApiState.Success -> {
+                            setupCategoriesProductsRecyclerview(
+                                result.data?.products ?: emptyList()
+                            )
+                        }
+
+                        is ApiState.Error -> {
+                            showError(result.message.toString())
+                        }
+
+                    }
+
+                }
+            }
+        }
+
     }
 
     private fun showError(message: String) {
@@ -80,6 +112,17 @@ class CategoriesFragment : Fragment() {
         manager.orientation = LinearLayoutManager.HORIZONTAL
         binding.categoriesRv.apply {
             adapter = categoriesAdapter
+            layoutManager = manager
+        }
+    }
+
+    private fun setupCategoriesProductsRecyclerview(product: List<Product>) {
+        val categoriesProductsAdapter =
+            CategoriesProductsAdapter(product, requireContext())
+        val manager = GridLayoutManager(requireContext(),2)
+
+        binding.productsRv.apply {
+            adapter = categoriesProductsAdapter
             layoutManager = manager
         }
     }

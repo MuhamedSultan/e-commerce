@@ -3,6 +3,7 @@ package com.example.e_commerce_app.categories.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.e_commerce_app.model.custom_collection.CustomCollectionResponse
+import com.example.e_commerce_app.model.product.ProductResponse
 import com.example.e_commerce_app.model.repo.ShopifyRepo
 import com.example.e_commerce_app.util.ApiState
 import kotlinx.coroutines.Dispatchers
@@ -16,9 +17,18 @@ class CategoriesViewModel(private val shopifyRepo: ShopifyRepo) : ViewModel() {
         MutableStateFlow(ApiState.Loading())
     val categoriesResult: StateFlow<ApiState<CustomCollectionResponse>> = _categoriesResult
 
+    private val _productsResult: MutableStateFlow<ApiState<ProductResponse>> =
+        MutableStateFlow(ApiState.Loading())
+    val productsResult: StateFlow<ApiState<ProductResponse>> = _productsResult
+
     fun getCategorise() = viewModelScope.launch(Dispatchers.IO) {
         val result = shopifyRepo.getCategories()
         _categoriesResult.value = result
+    }
+
+    fun getProductsOfSelectedCategory(collectionId:Long) = viewModelScope.launch(Dispatchers.IO) {
+        val result = shopifyRepo.getProductsOfSelectedCategory(collectionId)
+        _productsResult.value = result
     }
 
 }

@@ -11,7 +11,6 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.tasks.await
 import com.example.e_commerce_app.util.ApiState
-import retrofit2.Response
 
 class RemoteDataSourceImpl : RemoteDataSource {
 
@@ -137,6 +136,15 @@ class RemoteDataSourceImpl : RemoteDataSource {
     override suspend fun getCategories(): ApiState<CustomCollectionResponse> {
         return try {
             val response = Network.shopifyService.getCategories()
+            ApiState.Success(response)
+        } catch (e: Exception) {
+            ApiState.Error(e.message.toString())
+        }
+    }
+
+    override suspend fun getProductsOfSelectedBrand(collectionId: Long): ApiState<ProductResponse> {
+        return try {
+            val response = Network.shopifyService.getProductsOfSelectedCategory(collectionId)
             ApiState.Success(response)
         } catch (e: Exception) {
             ApiState.Error(e.message.toString())

@@ -3,17 +3,14 @@ package com.example.e_commerce_app.network
 import com.example.e_commerce_app.model.cart.CartResponse
 import com.example.e_commerce_app.model.cart.DeleteProductResponse
 import com.example.e_commerce_app.model.custom_collection.CustomCollectionResponse
-import com.example.e_commerce_app.model.product.Product
 import com.example.e_commerce_app.model.product.ProductResponse
 import com.example.e_commerce_app.model.product.SingleProductResponse
 import com.example.e_commerce_app.model.smart_collection.SmartCollectionResponse
 import com.example.e_commerce_app.model.user.CustomerRequest
 import com.example.e_commerce_app.model.user.CustomerResponse
-import com.example.e_commerce_app.util.ApiState
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.GET
-import retrofit2.http.Headers
 import retrofit2.http.DELETE
 import retrofit2.http.POST
 import retrofit2.http.Path
@@ -51,5 +48,8 @@ interface ShopifyService {
     suspend fun getBrandProducts(@Query("vendor") brandName: String): ProductResponse
 
     @GET("custom_collections.json")
-    suspend fun getCategories():CustomCollectionResponse
+    suspend fun getCategories(): CustomCollectionResponse
+
+    @GET("products.json")
+    suspend fun getProductsOfSelectedCategory(@Query("collection_id") collectionId: Long): ProductResponse
 }
