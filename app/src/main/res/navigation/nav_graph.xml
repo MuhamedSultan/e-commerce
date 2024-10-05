@@ -40,7 +40,7 @@
     </fragment>
     <fragment
         android:id="@+id/categoriesFragment"
-        android:name="com.example.e_commerce_app.categories.CategoriesFragment"
+        android:name="com.example.e_commerce_app.categories.view.CategoriesFragment"
         android:label="Categories"
         tools:layout="@layout/fragment_categories">
         <action

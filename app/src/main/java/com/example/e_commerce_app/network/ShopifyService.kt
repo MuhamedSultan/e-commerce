@@ -2,6 +2,7 @@ package com.example.e_commerce_app.network
 
 import com.example.e_commerce_app.model.cart.CartResponse
 import com.example.e_commerce_app.model.cart.DeleteProductResponse
+import com.example.e_commerce_app.model.custom_collection.CustomCollectionResponse
 import com.example.e_commerce_app.model.product.Product
 import com.example.e_commerce_app.model.product.ProductResponse
 import com.example.e_commerce_app.model.product.SingleProductResponse
@@ -40,7 +41,7 @@ interface ShopifyService {
     suspend fun getAllBrands(): SmartCollectionResponse
 
     @GET("products.json")
-    suspend fun getRandomProducts(@Query("limit") limit: Int = 250): ProductResponse
+    suspend fun getRandomProducts(): ProductResponse
 
 
     @GET("products/{id}.json")
@@ -49,5 +50,6 @@ interface ShopifyService {
     @GET("products.json")
     suspend fun getBrandProducts(@Query("vendor") brandName: String): ProductResponse
 
-
+    @GET("custom_collections.json")
+    suspend fun getCategories():CustomCollectionResponse
 }

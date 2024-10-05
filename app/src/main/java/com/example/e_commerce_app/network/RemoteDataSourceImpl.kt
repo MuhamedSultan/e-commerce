@@ -1,5 +1,6 @@
 package com.example.e_commerce_app.network
 
+import com.example.e_commerce_app.model.custom_collection.CustomCollectionResponse
 import com.example.e_commerce_app.model.product.Product
 import com.example.e_commerce_app.model.product.ProductResponse
 import com.example.e_commerce_app.model.smart_collection.SmartCollectionResponse
@@ -10,6 +11,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.tasks.await
 import com.example.e_commerce_app.util.ApiState
+import retrofit2.Response
 
 class RemoteDataSourceImpl : RemoteDataSource {
 
@@ -115,20 +117,29 @@ class RemoteDataSourceImpl : RemoteDataSource {
 
     override suspend fun getRandomProducts(): ApiState<ProductResponse> {
         return try {
-            val response = Network.shopifyService.getRandomProducts(250)
+            val response = Network.shopifyService.getRandomProducts()
             ApiState.Success(response)
         } catch (e: Exception) {
             ApiState.Error(e.message.toString())
         }
     }
 
-    override suspend fun getBrandProducts(brandName:String): ApiState<ProductResponse> {
+    override suspend fun getBrandProducts(brandName: String): ApiState<ProductResponse> {
         return try {
             val response = Network.shopifyService.getBrandProducts(brandName)
             ApiState.Success(response)
         } catch (e: Exception) {
             ApiState.Error(e.message.toString())
 
+        }
+    }
+
+    override suspend fun getCategories(): ApiState<CustomCollectionResponse> {
+        return try {
+            val response = Network.shopifyService.getCategories()
+            ApiState.Success(response)
+        } catch (e: Exception) {
+            ApiState.Error(e.message.toString())
         }
     }
 }

@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/white"
-    tools:context=".brand_products.Brand_ProductsFragment">
+    tools:context=".brand_products.view.BrandProductsFragment">
 
     <EditText
         android:id="@+id/edSearch"
@@ -18,7 +18,7 @@
         android:background="@drawable/ed_search_bg"
         android:drawableEnd="@drawable/ic_search"
         android:elevation="16dp"
-        android:hint="Search here"
+        android:hint="@string/search_here"
         android:inputType="text"
         android:paddingHorizontal="12dp"
         app:layout_constraintEnd_toEndOf="parent"
@@ -26,7 +26,7 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recyclerView"
+        android:id="@+id/productsRv"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginTop="16dp"
@@ -34,14 +34,13 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/recyclerView2" />
+        app:layout_constraintTop_toBottomOf="@+id/categoriesRv" />
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recyclerView2"
+        android:id="@+id/categoriesRv"
         android:layout_width="0dp"
-        android:layout_height="77dp"
+        android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
-        tools:listitem="@layout/item_chip"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/edSearch" />

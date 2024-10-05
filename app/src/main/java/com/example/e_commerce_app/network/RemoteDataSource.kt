@@ -1,21 +1,23 @@
 package com.example.e_commerce_app.network
 
+import com.example.e_commerce_app.model.custom_collection.CustomCollectionResponse
 import com.example.e_commerce_app.model.product.Product
 import com.example.e_commerce_app.model.product.ProductResponse
 import com.example.e_commerce_app.model.smart_collection.SmartCollectionResponse
 import com.example.e_commerce_app.model.user.CustomerRequest
 import com.example.e_commerce_app.model.user.UserData
 import com.example.e_commerce_app.util.ApiState
+import retrofit2.Response
 
 interface RemoteDataSource {
 
     suspend fun getAllBrands():ApiState<SmartCollectionResponse>
     suspend fun getRandomProducts():ApiState<ProductResponse>
-
     suspend fun signInUser(email: String, password: String): ApiState<UserData>
     suspend fun registerUser(userData: UserData): ApiState<Unit>
     suspend fun createShopifyCustomer(customerRequest: CustomerRequest): ApiState<Unit>
     suspend fun getProductById(productId: Long): ApiState<Product>
-
     suspend fun getBrandProducts(brandName:String):ApiState<ProductResponse>
+    suspend fun getCategories(): ApiState<CustomCollectionResponse>
+
 }

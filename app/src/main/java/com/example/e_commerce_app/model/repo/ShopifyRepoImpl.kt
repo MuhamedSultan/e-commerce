@@ -1,5 +1,6 @@
 package com.example.e_commerce_app.model.repo
 
+import com.example.e_commerce_app.model.custom_collection.CustomCollectionResponse
 import com.example.e_commerce_app.model.product.Product
 import com.example.e_commerce_app.model.product.ProductResponse
 import com.example.e_commerce_app.model.smart_collection.SmartCollectionResponse
@@ -27,6 +28,10 @@ class ShopifyRepoImpl(private val remoteDataSource: RemoteDataSource) : ShopifyR
 
     override suspend fun getProductById(productId: Long): ApiState<Product> {
        return remoteDataSource.getProductById(productId)
+    }
+
+    override suspend fun getCategories(): ApiState<CustomCollectionResponse> {
+        return remoteDataSource.getCategories()
     }
 
 
