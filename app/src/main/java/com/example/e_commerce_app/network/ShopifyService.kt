@@ -5,7 +5,7 @@ import com.example.e_commerce_app.model.cart.DeleteProductResponse
 import com.example.e_commerce_app.model.smart_collection.SmartCollectionResponse
 import com.example.e_commerce_app.model.user.CustomerRequest
 import com.example.e_commerce_app.model.user.CustomerResponse
-import com.example.e_commerce_app.util.ApiState
+import kotlinx.coroutines.flow.Flow
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.GET
@@ -23,7 +23,7 @@ interface ShopifyService {
     ): Response<CustomerResponse>
 
     @GET("carts.json")
-    suspend fun getAllCartProducts(): Response<CartResponse>
+    fun getAllCartProducts(): Flow<CartResponse>
 
     // New method to delete a specific product from a cart
     @DELETE("carts/{cart_id}/line_items/{line_item_id}.json")
