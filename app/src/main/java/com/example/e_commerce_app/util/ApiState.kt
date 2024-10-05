@@ -1,6 +1,6 @@
 package com.example.e_commerce_app.util
 
-sealed class ApiState<T>(
+sealed class ApiState<out T>(
     val data: T? = null,
     val message: String? = null
 ) {

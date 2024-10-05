@@ -4,11 +4,16 @@ import com.example.e_commerce_app.db.LocalDataSource
 import com.example.e_commerce_app.model.custom_collection.CustomCollectionResponse
 import com.example.e_commerce_app.model.product.Product
 import com.example.e_commerce_app.model.product.ProductResponse
+import com.example.e_commerce_app.model.cart.CartResponse
 import com.example.e_commerce_app.model.smart_collection.SmartCollectionResponse
 import com.example.e_commerce_app.model.user.CustomerRequest
 import com.example.e_commerce_app.model.user.UserData
 import com.example.e_commerce_app.network.RemoteDataSource
 import com.example.e_commerce_app.util.ApiState
+import com.example.e_commerce_app.util.Constants
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.flow
 
 class ShopifyRepoImpl(
     private val remoteDataSource: RemoteDataSource,
@@ -17,6 +22,25 @@ class ShopifyRepoImpl(
     override suspend fun getAllBrands(): ApiState<SmartCollectionResponse> {
         return remoteDataSource.getAllBrands()
     }
+//    override fun getAllCartProducts():Flow<CartResponse> {
+//        return remoteDataSource.getAllCartProducts()
+//    }
+
+//    override suspend fun getDraftIds(customerId: String)=
+//        flow {
+//            val draftIDs = mutableListOf<String>()
+//            emit(ApiState.Loading)
+//            remoteDataSource.getDraftIds(customerId).addOnSuccessListener {
+//                if (it.exists()) {
+//                    draftIDs.add(it.data?.get(Constants.DRAFT_FAVORITE_ID) as String)
+//                    draftIDs.add(it.data?.get(Constants.DRAFT_CART_ID) as String)
+//                }
+//            }.await()
+//            emit(ApiState.Success(draftIDs))
+//        }.catch {
+//            emit(ApiState.Error("${it.message}"))
+//        }
+
 
     override suspend fun signInUser(email: String, password: String): ApiState<UserData> {
         return remoteDataSource.signInUser(email, password)

@@ -60,5 +60,6 @@
     <string name="total_tax">Total Tax :</string>
     <string name="total_cost">Total Cost :</string>
     <string name="search_here">Search here</string>
+    <string name="Coupon">Coupon Image</string>
 
 </resources>
