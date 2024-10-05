@@ -20,7 +20,7 @@ class RemoteDataSourceImpl : RemoteDataSource {
         }
     }
 
-    override fun getAllCartProducts(): Flow<CartResponse> {
+    /*override fun getAllCartProducts(): Flow<CartResponse> {
         return Network.shopifyService.getAllCartProducts()
     }
 
@@ -28,6 +28,6 @@ class RemoteDataSourceImpl : RemoteDataSource {
 
         return   firebaseFireStore.collection(Constants.collectionPath)
             .document(customerId).get()
-    }
+    }*/
 
 }

@@ -13,24 +13,24 @@ class ShopifyRepoImpl(private val remoteDataSource: RemoteDataSource) : ShopifyR
     override suspend fun getAllBrands(): ApiState<SmartCollectionResponse> {
         return remoteDataSource.getAllBrands()
     }
-    override fun getAllCartProducts():Flow<CartResponse> {
-        return remoteDataSource.getAllCartProducts()
-    }
+//    override fun getAllCartProducts():Flow<CartResponse> {
+//        return remoteDataSource.getAllCartProducts()
+//    }
 
-    override suspend fun getDraftIds(customerId: String)=
-        flow {
-            val draftIDs = mutableListOf<String>()
-            emit(ApiState.Loading)
-            remoteDataSource.getDraftIds(customerId).addOnSuccessListener {
-                if (it.exists()) {
-                    draftIDs.add(it.data?.get(Constants.DRAFT_FAVORITE_ID) as String)
-                    draftIDs.add(it.data?.get(Constants.DRAFT_CART_ID) as String)
-                }
-            }.await()
-            emit(ApiState.Success(draftIDs))
-        }.catch {
-            emit(ApiState.Error("${it.message}"))
-        }
+//    override suspend fun getDraftIds(customerId: String)=
+//        flow {
+//            val draftIDs = mutableListOf<String>()
+//            emit(ApiState.Loading)
+//            remoteDataSource.getDraftIds(customerId).addOnSuccessListener {
+//                if (it.exists()) {
+//                    draftIDs.add(it.data?.get(Constants.DRAFT_FAVORITE_ID) as String)
+//                    draftIDs.add(it.data?.get(Constants.DRAFT_CART_ID) as String)
+//                }
+//            }.await()
+//            emit(ApiState.Success(draftIDs))
+//        }.catch {
+//            emit(ApiState.Error("${it.message}"))
+//        }
 
 
 }

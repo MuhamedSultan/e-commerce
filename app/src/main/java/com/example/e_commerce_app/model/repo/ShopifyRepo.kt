@@ -8,6 +8,6 @@ import kotlinx.coroutines.flow.Flow
 interface ShopifyRepo {
     suspend fun getAllBrands(): ApiState<SmartCollectionResponse>
 
-    fun getAllCartProducts(): Flow<CartResponse>
-    suspend fun getDraftIds(customerId: String): Flow<ApiState<List<String>>>
+//    fun getAllCartProducts(): Flow<CartResponse>
+    //suspend fun getDraftIds(customerId: String): Flow<ApiState<List<String>>>
 }

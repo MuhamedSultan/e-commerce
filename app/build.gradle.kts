@@ -155,5 +155,12 @@ dependencies {
 
     implementation("com.google.android.gms:play-services-auth:20.4.0") // Check for the latest version
 
+    //view Pager
+    implementation("androidx.viewpager2:viewpager2:1.0.0")
+
+    // Pager Dots Indicator
+    implementation("com.tbuonomo:dotsindicator:4.2")
+
+
 
 }

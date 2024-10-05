@@ -6,5 +6,5 @@ sealed class ApiState<out T>(
 ) {
     class Success<T>(data: T) : ApiState<T>(data)
     class Error<T>(message: String, data: T? = null) : ApiState<T>(data, message)
-    object Loading : ApiState<Nothing>()
+    class Loading<T> : ApiState<T>()
 }

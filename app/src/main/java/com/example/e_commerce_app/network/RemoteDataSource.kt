@@ -9,6 +9,6 @@ import kotlinx.coroutines.flow.Flow
 
 interface RemoteDataSource {
     suspend fun getAllBrands():ApiState<SmartCollectionResponse>
-    fun getAllCartProducts(): Flow<CartResponse>
-    suspend fun getDraftIds(customerId: String): Task<DocumentSnapshot>
+//    fun getAllCartProducts(): Flow<CartResponse>
+//    suspend fun getDraftIds(customerId: String): Task<DocumentSnapshot>
 }
