@@ -28,9 +28,12 @@
     </fragment>
     <fragment
         android:id="@+id/brand_ProductsFragment"
-        android:name="com.example.e_commerce_app.brand_products.Brand_ProductsFragment"
+        android:name="com.example.e_commerce_app.brand_products.view.BrandProductsFragment"
         android:label="Brand Products"
         tools:layout="@layout/fragment_brand__products">
+        <argument
+            android:name="brandName"
+            app:argType="string" />
         <action
             android:id="@+id/action_brand_ProductsFragment_to_productDetailsFragment"
             app:destination="@id/productDetailsFragment" />
@@ -69,7 +72,11 @@
         android:id="@+id/productDetailsFragment"
         android:name="com.example.e_commerce_app.product_details.view.ProductDetailsFragment"
         android:label="Product Details"
-        tools:layout="@layout/fragment_product_details" />
+        tools:layout="@layout/fragment_product_details" >
+        <argument
+            android:name="productId"
+            app:argType="long" />
+    </fragment>
     <fragment
         android:id="@+id/ordersFragment"
         android:name="com.example.e_commerce_app.orders.OrdersFragment"

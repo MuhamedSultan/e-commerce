@@ -31,8 +31,6 @@ class RandomProductsAdapter(
         Glide.with(context).load(productList.image.src).into(holder.productImage)
         holder.productName.text = productList.title.split('|').getOrNull(1)?.trim() ?: ""
         holder.productPrice.text = productList.variants[0].price
-
-
         holder.itemView.setOnClickListener {
             onProductClick(productList)
         }

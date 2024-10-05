@@ -10,6 +10,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
+import androidx.navigation.fragment.navArgs
 
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -88,7 +89,7 @@ class HomeFragment : Fragment() {
                             hideLoadingIndicator()
                             result.data?.let { product ->
                                 hideLoadingIndicator()
-                                val randomProducts = product.products.shuffled().take(20)
+                                val randomProducts = product.products.shuffled().take(15)
                                 setupRandomProductsRecyclerview(randomProducts)
                             }
                         }
@@ -119,7 +120,11 @@ class HomeFragment : Fragment() {
     }
 
     private fun setupBrandRecyclerview(smartCollection: List<SmartCollection>) {
-        val brandAdapter = BrandsAdapter(smartCollection, requireContext())
+        val brandAdapter = BrandsAdapter(smartCollection, requireContext()) { selectedBrand ->
+            val action =
+                HomeFragmentDirections.actionHomeFragmentToBrandProductsFragment(selectedBrand.title)
+            findNavController().navigate(action)
+        }
         val manager = LinearLayoutManager(requireContext())
         manager.orientation = LinearLayoutManager.HORIZONTAL
         binding.brandRv.apply {
@@ -129,11 +134,13 @@ class HomeFragment : Fragment() {
     }
 
     private fun setupRandomProductsRecyclerview(product: List<Product>) {
-        val randomProductsAdapter = RandomProductsAdapter(product, requireContext()) { selectedProduct ->
-            // Navigate to ProductDetailsFragment
-            val action = HomeFragmentDirections.actionHomeFragmentToProductDetailsFragment(selectedProduct.id) // Pass the product ID or necessary data
-            findNavController().navigate(action)
-        }
+        val randomProductsAdapter =
+            RandomProductsAdapter(product, requireContext()) { selectedProduct ->
+                val action = HomeFragmentDirections.actionHomeFragmentToProductDetailsFragment(
+                    selectedProduct.id
+                )
+                findNavController().navigate(action)
+            }
         val manager = LinearLayoutManager(requireContext())
         manager.orientation = LinearLayoutManager.HORIZONTAL
 
@@ -142,6 +149,4 @@ class HomeFragment : Fragment() {
             layoutManager = manager
         }
     }
-
-
 }
