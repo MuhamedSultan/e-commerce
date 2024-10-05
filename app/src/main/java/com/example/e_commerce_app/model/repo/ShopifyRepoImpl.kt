@@ -1,5 +1,6 @@
 package com.example.e_commerce_app.model.repo
 
+import com.example.e_commerce_app.model.product.Product
 import com.example.e_commerce_app.model.product.ProductResponse
 import com.example.e_commerce_app.model.smart_collection.SmartCollectionResponse
 import com.example.e_commerce_app.model.user.CustomerRequest
@@ -12,7 +13,6 @@ class ShopifyRepoImpl(private val remoteDataSource: RemoteDataSource) : ShopifyR
         return remoteDataSource.getAllBrands()
     }
 
-    //UserAuth
     override suspend fun signInUser(email: String, password: String): ApiState<UserData> {
         return remoteDataSource.signInUser(email, password)
     }
@@ -23,6 +23,10 @@ class ShopifyRepoImpl(private val remoteDataSource: RemoteDataSource) : ShopifyR
 
     override suspend fun createShopifyCustomer(customerRequest: CustomerRequest): ApiState<Unit> {
         return remoteDataSource.createShopifyCustomer(customerRequest)
+    }
+
+    override suspend fun getProductById(productId: Long): ApiState<Product> {
+       return remoteDataSource.getProductById(productId)
     }
 
 

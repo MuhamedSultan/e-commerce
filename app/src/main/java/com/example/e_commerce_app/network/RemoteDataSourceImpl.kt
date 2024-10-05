@@ -1,5 +1,6 @@
 package com.example.e_commerce_app.network
 
+import com.example.e_commerce_app.model.product.Product
 import com.example.e_commerce_app.model.product.ProductResponse
 import com.example.e_commerce_app.model.smart_collection.SmartCollectionResponse
 import com.example.e_commerce_app.model.user.CustomerDataRequest
@@ -95,6 +96,19 @@ class RemoteDataSourceImpl : RemoteDataSource {
             }
         } catch (e: Exception) {
             ApiState.Error("Error creating Shopify customer: ${e.message}")
+        }
+    }
+
+    override suspend fun getProductById(productId: Long): ApiState<Product> {
+        return try {
+            val response = Network.shopifyService.fetchProductById(productId)
+            if (response.isSuccessful) {
+                ApiState.Success(response.body()?.product ?: throw Exception("Product not found"))
+            } else {
+                ApiState.Error("Error: ${response.message()}")
+            }
+        } catch (e: Exception) {
+            ApiState.Error("Error fetching product: ${e.message}")
         }
     }
 
