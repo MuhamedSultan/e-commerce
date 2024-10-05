@@ -2,6 +2,8 @@ package com.example.e_commerce_app.network
 
 import com.example.e_commerce_app.model.cart.CartResponse
 import com.example.e_commerce_app.model.cart.DeleteProductResponse
+import com.example.e_commerce_app.model.cart.UpdateCartItemRequest
+import com.example.e_commerce_app.model.cart.UpdateCartItemResponse
 import com.example.e_commerce_app.model.smart_collection.SmartCollectionResponse
 import com.example.e_commerce_app.model.user.CustomerRequest
 import com.example.e_commerce_app.model.user.CustomerResponse
@@ -22,10 +24,20 @@ interface ShopifyService {
         @Body customerRequest: CustomerRequest
     ): Response<CustomerResponse>
 
-    @GET("carts.json")
-    fun getAllCartProducts(): Flow<CartResponse>
+    @GET("carts/{cart_id}.json")
+    suspend fun fetchCartItems(
+        @Path("cart_id") cartId: String
+    ): Response<CartResponse>
 
-    // New method to delete a specific product from a cart
+    // POST request to update the quantity of a product in the cart
+    @POST("carts/{cart_id}/line_items/{line_item_id}/update.json")
+    suspend fun updateCartProductQuantity(
+        @Path("cart_id") cartId: String,
+        @Path("line_item_id") lineItemId: String,
+        @Body updateCartItemRequest: UpdateCartItemRequest
+    ): Response<UpdateCartItemResponse>
+
+    // DELETE request to remove a specific product from a cart
     @DELETE("carts/{cart_id}/line_items/{line_item_id}.json")
     suspend fun deleteCartProduct(
         @Path("cart_id") cartId: String,
