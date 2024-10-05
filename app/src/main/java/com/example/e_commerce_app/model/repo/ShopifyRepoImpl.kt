@@ -1,5 +1,6 @@
 package com.example.e_commerce_app.model.repo
 
+import com.example.e_commerce_app.db.LocalDataSource
 import com.example.e_commerce_app.model.custom_collection.CustomCollectionResponse
 import com.example.e_commerce_app.model.product.Product
 import com.example.e_commerce_app.model.product.ProductResponse
@@ -9,7 +10,10 @@ import com.example.e_commerce_app.model.user.UserData
 import com.example.e_commerce_app.network.RemoteDataSource
 import com.example.e_commerce_app.util.ApiState
 
-class ShopifyRepoImpl(private val remoteDataSource: RemoteDataSource) : ShopifyRepo {
+class ShopifyRepoImpl(
+    private val remoteDataSource: RemoteDataSource,
+    private val localDataSource: LocalDataSource? = null
+) : ShopifyRepo {
     override suspend fun getAllBrands(): ApiState<SmartCollectionResponse> {
         return remoteDataSource.getAllBrands()
     }
@@ -27,7 +31,7 @@ class ShopifyRepoImpl(private val remoteDataSource: RemoteDataSource) : ShopifyR
     }
 
     override suspend fun getProductById(productId: Long): ApiState<Product> {
-       return remoteDataSource.getProductById(productId)
+        return remoteDataSource.getProductById(productId)
     }
 
     override suspend fun getCategories(): ApiState<CustomCollectionResponse> {
@@ -38,9 +42,15 @@ class ShopifyRepoImpl(private val remoteDataSource: RemoteDataSource) : ShopifyR
         return remoteDataSource.getProductsOfSelectedBrand(collectionId)
     }
 
+    override suspend fun addToFavorite(product: Product) {
+
+        localDataSource?.addToFavorite(product)
+
+    }
+
 
     override suspend fun getRandomProducts(): ApiState<ProductResponse> {
-       return remoteDataSource.getRandomProducts()
+        return remoteDataSource.getRandomProducts()
     }
 
     override suspend fun getBrandProducts(brandName: String): ApiState<ProductResponse> {

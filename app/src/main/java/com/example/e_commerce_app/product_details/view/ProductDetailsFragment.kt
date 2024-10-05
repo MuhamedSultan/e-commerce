@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
@@ -13,6 +14,8 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
 import com.example.e_commerce_app.R
+import com.example.e_commerce_app.db.LocalDataSourceImpl
+import com.example.e_commerce_app.db.ShopifyDB
 import com.example.e_commerce_app.model.product.Product
 import com.example.e_commerce_app.model.repo.ShopifyRepoImpl
 import com.example.e_commerce_app.network.RemoteDataSourceImpl
@@ -44,7 +47,10 @@ class ProductDetailsFragment : Fragment() {
             productId = it.getLong("productId")
         }
 
-        val repo = ShopifyRepoImpl(RemoteDataSourceImpl())
+        val shopifyDao = ShopifyDB.getInstance(requireContext()).shopifyDao()
+        val localDataSource = LocalDataSourceImpl(shopifyDao)
+
+        val repo = ShopifyRepoImpl(RemoteDataSourceImpl(), localDataSource)
         val factory = ProductDetailsViewModelFactory(repo)
         viewModel = ViewModelProvider(this, factory)[ProductDetailsViewModel::class.java]
     }
@@ -105,6 +111,14 @@ class ProductDetailsFragment : Fragment() {
         view?.findViewById<TextView>(R.id.productPrice)?.text =
             product.variants.firstOrNull()?.price ?: "$0.00"
 
+
+        view?.findViewById<Button>(R.id.btn_add_to_favorite)?.setOnClickListener {
+            lifecycleScope.launch {
+                viewModel.addToFavorite(product)
+
+            }
+        }
+
         val colors = product.options.find { it.name == "Color" }?.values ?: emptyList()
         val sizes = product.options.find { it.name == "Size" }?.values ?: emptyList()
 
@@ -119,6 +133,7 @@ class ProductDetailsFragment : Fragment() {
 
         imageViewPager.adapter = imageAdapter
         imageViewPager.setPageTransformer(ZoomOutPageTransformer())
+
 
     }
 

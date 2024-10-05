@@ -13,6 +13,7 @@ class ProductDetailsViewModel(private val repository: ShopifyRepo) : ViewModel()
     private val _productState = MutableStateFlow<ApiState<Product>>(ApiState.Loading())
     val productState: StateFlow<ApiState<Product>> = _productState
 
+
     fun fetchProductDetails(productId: Long) {
         viewModelScope.launch {
             _productState.value = ApiState.Loading()
@@ -20,6 +21,13 @@ class ProductDetailsViewModel(private val repository: ShopifyRepo) : ViewModel()
             val result = repository.getProductById(productId)
 
             _productState.value = result
+        }
+    }
+
+
+    fun addToFavorite(product: Product) {
+        viewModelScope.launch {
+            repository.addToFavorite(product)
         }
     }
 }

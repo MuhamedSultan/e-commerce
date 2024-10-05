@@ -11,7 +11,7 @@ import com.example.e_commerce_app.util.ApiState
 interface ShopifyRepo {
     suspend fun getAllBrands(): ApiState<SmartCollectionResponse>
     suspend fun getRandomProducts(): ApiState<ProductResponse>
-    suspend fun getBrandProducts(brandName:String):ApiState<ProductResponse>
+    suspend fun getBrandProducts(brandName: String): ApiState<ProductResponse>
     suspend fun signInUser(email: String, password: String): ApiState<UserData>
     suspend fun registerUser(userData: UserData): ApiState<Unit>
     suspend fun createShopifyCustomer(customerRequest: CustomerRequest): ApiState<Unit>
@@ -20,5 +20,6 @@ interface ShopifyRepo {
     suspend fun getProductsOfSelectedCategory(collectionId: Long): ApiState<ProductResponse>
 
 
+    suspend fun addToFavorite(product: Product)
 
 }
