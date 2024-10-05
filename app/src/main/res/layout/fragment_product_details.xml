@@ -6,16 +6,15 @@
     android:layout_height="match_parent"
     tools:context=".product_details.view.ProductDetailsFragment">
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/productImageRecyclerView"
-        android:layout_width="wrap_content"
-        android:layout_height="100dp"
-        android:layout_marginTop="44dp"
-        android:src="@drawable/base"
+    <androidx.viewpager2.widget.ViewPager2
+        android:id="@+id/productImageViewPager"
+        android:layout_width="match_parent"
+        android:layout_height="250dp"
+        android:layout_marginTop="16dp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.497"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
 
     <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
@@ -25,7 +24,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/productImageRecyclerView">
+        app:layout_constraintTop_toBottomOf="@+id/productImageViewPager">
 
     <ScrollView
         android:layout_width="match_parent"
@@ -42,7 +41,7 @@
                 android:id="@+id/productTitle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="32dp"
+                android:layout_marginTop="8dp"
                 android:gravity="center"
                 android:text="Wireless, smart home speaker"
                 android:textColor="@color/black"
@@ -54,6 +53,7 @@
                 app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
+
                 android:id="@+id/productDescription"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -69,7 +69,7 @@
                 android:id="@+id/productPrice"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
+                android:layout_marginTop="6dp"
                 android:text="$0.00"
                 android:textColor="@color/black"
                 android:textSize="20sp"
@@ -83,7 +83,7 @@
                 android:id="@+id/productSizeLabel"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="24dp"
+                android:layout_marginTop="8dp"
                 android:text="Available Sizes:"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.051"
@@ -94,8 +94,7 @@
                 android:id="@+id/productSizeRecyclerView"
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
-                android:layout_margin="16dp"
-                android:layout_marginTop="8dp"
+                android:layout_marginLeft="16dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.043"
                 app:layout_constraintStart_toStartOf="parent"
@@ -115,8 +114,8 @@
                 android:id="@+id/productColorRecyclerView"
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
-                android:layout_margin="16dp"
                 app:layout_constraintEnd_toEndOf="parent"
+                android:layout_marginLeft="16dp"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/productColorLabel"
                 tools:listitem="@layout/item_color" />
@@ -126,7 +125,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="8dp"
-                android:layout_marginTop="48dp"
+                android:layout_marginTop="8dp"
                 android:layout_marginRight="50dp"
                 android:background="@drawable/getstart_rounded_button"
                 android:text="ADD TO CART"
@@ -143,7 +142,7 @@
                 android:background="@drawable/faviconn"
                 app:layout_constraintBottom_toBottomOf="@+id/btn_add_to_cart"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.581"
+                app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toEndOf="@+id/btn_add_to_cart"
                 app:layout_constraintTop_toTopOf="@+id/btn_add_to_cart"
                 app:layout_constraintVertical_bias="0.0" />

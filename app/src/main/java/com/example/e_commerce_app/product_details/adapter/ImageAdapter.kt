@@ -9,7 +9,8 @@ import com.bumptech.glide.Glide
 import com.example.e_commerce_app.R
 import com.example.e_commerce_app.model.product.Image
 
-class ImageAdapter(private val images: List<Image>) : RecyclerView.Adapter<ImageAdapter.ImageViewHolder>() {
+class ImageAdapter(private val images: List<Image>) :
+    RecyclerView.Adapter<ImageAdapter.ImageViewHolder>() {
 
     class ImageViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val imageView: ImageView = itemView.findViewById(R.id.image_view)

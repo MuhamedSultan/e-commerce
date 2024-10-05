@@ -1,7 +1,6 @@
 package com.example.e_commerce_app.product_details.view
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -12,6 +11,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.viewpager2.widget.ViewPager2
 import com.example.e_commerce_app.R
 import com.example.e_commerce_app.model.product.Product
 import com.example.e_commerce_app.model.repo.ShopifyRepoImpl
@@ -22,9 +22,12 @@ import com.example.e_commerce_app.product_details.adapter.ImageAdapter
 import com.example.e_commerce_app.product_details.viewmodel.ProductDetailsViewModel
 import com.example.e_commerce_app.product_details.viewmodel.ProductDetailsViewModelFactory
 import com.example.e_commerce_app.util.ApiState
+import com.example.e_commerce_app.util.ZoomOutPageTransformer
 import kotlinx.coroutines.launch
 
 class ProductDetailsFragment : Fragment() {
+
+
     private var productId: Long? = null
     private lateinit var viewModel: ProductDetailsViewModel
     private lateinit var colorAdapter: ColorAdapter
@@ -33,6 +36,7 @@ class ProductDetailsFragment : Fragment() {
     private lateinit var colorRecyclerView: RecyclerView
     private lateinit var sizeRecyclerView: RecyclerView
     private lateinit var imageRecyclerView: RecyclerView
+    private lateinit var imageViewPager: ViewPager2
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -53,13 +57,13 @@ class ProductDetailsFragment : Fragment() {
 
         colorRecyclerView = view.findViewById(R.id.productColorRecyclerView)
         sizeRecyclerView = view.findViewById(R.id.productSizeRecyclerView)
-        imageRecyclerView = view.findViewById(R.id.productImageRecyclerView)
+
+        imageViewPager = view.findViewById(R.id.productImageViewPager)
+
 
         colorRecyclerView.layoutManager =
             LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
         sizeRecyclerView.layoutManager =
-            LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
-        imageRecyclerView.layoutManager =
             LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
 
         productId?.let {
@@ -112,7 +116,10 @@ class ProductDetailsFragment : Fragment() {
 
         val images = product.images
         imageAdapter = ImageAdapter(images)
-        imageRecyclerView.adapter = imageAdapter
+
+        imageViewPager.adapter = imageAdapter
+        imageViewPager.setPageTransformer(ZoomOutPageTransformer())
+
     }
 
     private fun showError(message: String) {
