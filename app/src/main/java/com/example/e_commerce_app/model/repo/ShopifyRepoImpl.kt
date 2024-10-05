@@ -48,6 +48,14 @@ class ShopifyRepoImpl(
 
     }
 
+    override suspend fun getAllFavorites(): List<Product> {
+        return localDataSource?.getAllFavorites() ?: emptyList()
+    }
+
+    override suspend fun removeFavorite(product: Product) {
+        localDataSource?.removeFavorite(product)
+    }
+
 
     override suspend fun getRandomProducts(): ApiState<ProductResponse> {
         return remoteDataSource.getRandomProducts()

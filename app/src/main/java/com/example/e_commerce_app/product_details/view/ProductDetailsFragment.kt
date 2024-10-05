@@ -111,10 +111,13 @@ class ProductDetailsFragment : Fragment() {
         view?.findViewById<TextView>(R.id.productPrice)?.text =
             product.variants.firstOrNull()?.price ?: "$0.00"
 
+        val favoriteButton = view?.findViewById<Button>(R.id.btn_add_to_favorite)
 
         view?.findViewById<Button>(R.id.btn_add_to_favorite)?.setOnClickListener {
             lifecycleScope.launch {
                 viewModel.addToFavorite(product)
+                Toast.makeText(context, "Product added to favorite", Toast.LENGTH_SHORT).show()
+                favoriteButton?.setBackgroundResource(R.drawable.favfill)
 
             }
         }

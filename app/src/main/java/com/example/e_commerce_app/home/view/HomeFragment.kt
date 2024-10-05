@@ -33,6 +33,8 @@ class HomeFragment : Fragment() {
     private lateinit var homeViewModel: HomeViewModel
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+
         val remoteDataSource = RemoteDataSourceImpl()
         val repo = ShopifyRepoImpl(remoteDataSource)
         val factory = HomeViewModelFactory(repo)
@@ -44,11 +46,20 @@ class HomeFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         binding = FragmentHomeBinding.inflate(layoutInflater)
+
+
+
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        binding.imageView.setOnClickListener {
+            val action = HomeFragmentDirections.actionHomeFragmentToFavoriteFragment()
+            findNavController().navigate(action)
+        }
+
 
         homeViewModel.getAllBrands()
         homeViewModel.getRandomProducts()

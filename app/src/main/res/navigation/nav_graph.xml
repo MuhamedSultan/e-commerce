@@ -111,7 +111,7 @@
     </fragment>
     <fragment
         android:id="@+id/favoriteFragment"
-        android:name="com.example.e_commerce_app.favorite.FavoriteFragment"
+        android:name="com.example.e_commerce_app.favorite.view.FavoriteFragment"
         android:label="Favorites"
         tools:layout="@layout/fragment_favorite">
         <action

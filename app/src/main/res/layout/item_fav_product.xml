@@ -58,10 +58,11 @@
             android:layout_width="30dp"
             android:layout_height="30dp"
             android:layout_gravity="end"
+            android:layout_marginTop="68dp"
             android:contentDescription="Delete Product"
             android:src="@drawable/deleteicon"
-            tools:layout_editor_absoluteX="313dp"
-            tools:layout_editor_absoluteY="66dp" />
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
