@@ -21,7 +21,6 @@
 
     <ProgressBar
         android:id="@+id/loadingIndicator"
-        style="?android:attr/progressBarStyle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:indeterminateTint="@color/yellow"
@@ -41,7 +40,7 @@
         android:background="@drawable/ed_search_bg"
         android:drawableEnd="@drawable/ic_search"
         android:elevation="16dp"
-        android:hint="Search here"
+        android:hint="@string/search_here"
         android:inputType="text"
         android:paddingHorizontal="12dp"
         app:layout_constraintEnd_toEndOf="parent"

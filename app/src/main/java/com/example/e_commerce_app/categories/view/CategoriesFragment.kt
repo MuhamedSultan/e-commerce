@@ -12,6 +12,7 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.e_commerce_app.R
 import com.example.e_commerce_app.categories.view.adapter.CategoriesAdapter
 import com.example.e_commerce_app.categories.view.adapter.CategoriesProductsAdapter
 import com.example.e_commerce_app.categories.view.adapter.OnCategoryClick
@@ -27,7 +28,7 @@ import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.launch
 
 
-class CategoriesFragment : Fragment(),OnCategoryClick{
+class CategoriesFragment : Fragment(), OnCategoryClick {
     private lateinit var binding: FragmentCategoriesBinding
     private lateinit var categoriesViewModel: CategoriesViewModel
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -50,6 +51,7 @@ class CategoriesFragment : Fragment(),OnCategoryClick{
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         categoriesViewModel.getCategorise()
+        categoriesViewModel.getProductsOfSelectedCategory(482200682811)
         lifecycleScope.launch {
             viewLifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 categoriesViewModel.categoriesResult.collect { result ->
@@ -79,16 +81,18 @@ class CategoriesFragment : Fragment(),OnCategoryClick{
                 categoriesViewModel.productsResult.collect { result ->
                     when (result) {
                         is ApiState.Loading -> {
-
+                            showLoadingIndicator()
                         }
 
                         is ApiState.Success -> {
+                            hideLoadingIndicator()
                             setupCategoriesProductsRecyclerview(
                                 result.data?.products ?: emptyList()
                             )
                         }
 
                         is ApiState.Error -> {
+                            hideLoadingIndicator()
                             showError(result.message.toString())
                         }
 
@@ -100,12 +104,22 @@ class CategoriesFragment : Fragment(),OnCategoryClick{
 
     }
 
+    private fun showLoadingIndicator() {
+        binding.loadingIndicator.visibility = View.VISIBLE
+        binding.groupLayout.visibility = View.GONE
+    }
+
+    private fun hideLoadingIndicator() {
+        binding.loadingIndicator.visibility = View.GONE
+        binding.groupLayout.visibility = View.VISIBLE
+    }
+
     private fun showError(message: String) {
         Snackbar.make(requireView(), message, Snackbar.LENGTH_SHORT).show()
     }
 
     private fun setupCategoriesRecyclerview(collection: List<CustomCollection>) {
-        val categoriesAdapter = CategoriesAdapter(collection,this)
+        val categoriesAdapter = CategoriesAdapter(collection, this)
         val manager = LinearLayoutManager(requireContext())
         manager.orientation = LinearLayoutManager.HORIZONTAL
         binding.categoriesRv.apply {
@@ -116,14 +130,14 @@ class CategoriesFragment : Fragment(),OnCategoryClick{
 
     private fun setupCategoriesProductsRecyclerview(product: List<Product>) {
         val categoriesProductsAdapter =
-            CategoriesProductsAdapter(product, requireContext()){selectedProduct ->
-        val action =
-            CategoriesFragmentDirections.actionCategoriesFragmentToProductDetailsFragment(
-                selectedProduct.id
-            )
-        findNavController().navigate(action)
-    }
-        val manager = GridLayoutManager(requireContext(),2)
+            CategoriesProductsAdapter(product, requireContext()) { selectedProduct ->
+                val action =
+                    CategoriesFragmentDirections.actionCategoriesFragmentToProductDetailsFragment(
+                        selectedProduct.id
+                    )
+                findNavController().navigate(action)
+            }
+        val manager = GridLayoutManager(requireContext(), 2)
 
         binding.productsRv.apply {
             adapter = categoriesProductsAdapter
@@ -133,6 +147,7 @@ class CategoriesFragment : Fragment(),OnCategoryClick{
 
     override fun onCategoryClick(categoryId: Long) {
         categoriesViewModel.getProductsOfSelectedCategory(categoryId)
+
 
     }
 }
