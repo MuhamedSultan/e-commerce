@@ -16,6 +16,7 @@ import retrofit2.http.Headers
 import retrofit2.http.DELETE
 import retrofit2.http.POST
 import retrofit2.http.Path
+import retrofit2.http.Query
 
 interface ShopifyService {
 
@@ -39,11 +40,14 @@ interface ShopifyService {
     suspend fun getAllBrands(): SmartCollectionResponse
 
     @GET("products.json")
-    suspend fun getRandomProducts(): ProductResponse
+    suspend fun getRandomProducts(@Query("limit") limit: Int = 250): ProductResponse
 
 
     @GET("products/{id}.json")
     suspend fun fetchProductById(@Path("id") productId: Long): Response<SingleProductResponse>
+
+    @GET("products.json")
+    suspend fun getBrandProducts(@Query("vendor") brandName: String): ProductResponse
 
 
 }

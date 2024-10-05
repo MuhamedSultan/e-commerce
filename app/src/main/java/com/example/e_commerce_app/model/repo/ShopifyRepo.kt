@@ -10,7 +10,7 @@ import com.example.e_commerce_app.util.ApiState
 interface ShopifyRepo {
     suspend fun getAllBrands(): ApiState<SmartCollectionResponse>
     suspend fun getRandomProducts(): ApiState<ProductResponse>
-
+    suspend fun getBrandProducts(brandName:String):ApiState<ProductResponse>
 
 
     suspend fun signInUser(email: String, password: String): ApiState<UserData>

@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/white"
-    tools:context=".brand_products.Brand_ProductsFragment">
+    tools:context=".brand_products.view.BrandProductsFragment">
 
     <EditText
         android:id="@+id/edSearch"
@@ -26,6 +26,7 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/productBrandRv"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginTop="16dp"

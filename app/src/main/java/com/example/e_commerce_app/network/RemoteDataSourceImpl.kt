@@ -115,10 +115,20 @@ class RemoteDataSourceImpl : RemoteDataSource {
 
     override suspend fun getRandomProducts(): ApiState<ProductResponse> {
         return try {
-            val response=Network.shopifyService.getRandomProducts()
+            val response = Network.shopifyService.getRandomProducts(250)
             ApiState.Success(response)
-        }catch (e:Exception){
+        } catch (e: Exception) {
             ApiState.Error(e.message.toString())
+        }
+    }
+
+    override suspend fun getBrandProducts(brandName:String): ApiState<ProductResponse> {
+        return try {
+            val response = Network.shopifyService.getBrandProducts(brandName)
+            ApiState.Success(response)
+        } catch (e: Exception) {
+            ApiState.Error(e.message.toString())
+
         }
     }
 }
