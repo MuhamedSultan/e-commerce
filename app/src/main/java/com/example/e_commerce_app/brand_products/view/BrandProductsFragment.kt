@@ -21,6 +21,7 @@ import com.example.e_commerce_app.model.product.Product
 import com.example.e_commerce_app.model.repo.ShopifyRepoImpl
 import com.example.e_commerce_app.network.RemoteDataSourceImpl
 import com.example.e_commerce_app.util.ApiState
+import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.launch
 
 class BrandProductsFragment : Fragment() {
@@ -68,7 +69,7 @@ class BrandProductsFragment : Fragment() {
 
                         is ApiState.Error -> {
                             hideLoadingIndicator()
-                            //showError(result.message.toString())
+                            showError(result.message.toString())
                         }
                     }
                 }
@@ -77,15 +78,18 @@ class BrandProductsFragment : Fragment() {
     }
 
     private fun showLoadingIndicator() {
-//        binding.loadingIndicator.visibility = View.VISIBLE
-//        binding.groupLayout.visibility = View.GONE
+        binding.loadingIndicator.visibility = View.VISIBLE
+        binding.groupLayout.visibility = View.GONE
     }
 
     private fun hideLoadingIndicator() {
-//        binding.loadingIndicator.visibility = View.GONE
-//        binding.groupLayout.visibility = View.VISIBLE
+        binding.loadingIndicator.visibility = View.GONE
+        binding.groupLayout.visibility = View.VISIBLE
     }
 
+    private fun showError(message: String) {
+        Snackbar.make(requireView(), message, Snackbar.LENGTH_SHORT).show()
+    }
     private fun setupBrandProductsRecyclerview(product: List<Product>) {
         val brandProductsAdapter =
             BrandProductsAdapter(product, requireContext()) { selectedProduct ->
