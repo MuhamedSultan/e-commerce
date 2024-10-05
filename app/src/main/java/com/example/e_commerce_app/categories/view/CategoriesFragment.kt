@@ -13,6 +13,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.e_commerce_app.brand_products.view.BrandProductsAdapter
+import com.example.e_commerce_app.brand_products.view.BrandProductsFragmentDirections
 import com.example.e_commerce_app.categories.view.adapter.CategoriesAdapter
 import com.example.e_commerce_app.categories.view.adapter.CategoriesProductsAdapter
 import com.example.e_commerce_app.categories.view.adapter.OnCategoryClick
@@ -118,7 +119,13 @@ class CategoriesFragment : Fragment(){
 
     private fun setupCategoriesProductsRecyclerview(product: List<Product>) {
         val categoriesProductsAdapter =
-            CategoriesProductsAdapter(product, requireContext())
+            CategoriesProductsAdapter(product, requireContext()){selectedProduct ->
+        val action =
+            CategoriesFragmentDirections.actionCategoriesFragmentToProductDetailsFragment(
+                selectedProduct.id
+            )
+        findNavController().navigate(action)
+    }
         val manager = GridLayoutManager(requireContext(),2)
 
         binding.productsRv.apply {
