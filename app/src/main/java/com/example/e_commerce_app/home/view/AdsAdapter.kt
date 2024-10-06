@@ -40,8 +40,8 @@ class DiscountPagerAdapter(
 //            imageView.setImageResource(discount.imageResId)
             Glide.with(itemView.context)
                 .load(discount.imageUrl)
-                .placeholder(R.drawable.ic_launcher_background) // Optional placeholder
-                .error(R.drawable.ic_launcher_foreground) // Optional error image
+                .placeholder(R.drawable.discount_place_holder) // Optional placeholder
+                .error(R.drawable.discount_place_holder) // Optional error image
                 .into(imageView)
             // Set long-click listener to copy discount code
             imageView.setOnLongClickListener {
