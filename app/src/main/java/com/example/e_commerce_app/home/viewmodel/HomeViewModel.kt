@@ -21,13 +21,29 @@ class HomeViewModel(private val shopifyRepo: ShopifyRepo) : ViewModel() {
     val randProductsResult: StateFlow<ApiState<ProductResponse>> = _randProductsResult
 
     fun getAllBrands() = viewModelScope.launch(Dispatchers.IO) {
-        val result = shopifyRepo.getAllBrands().data
-        _brandsResult.value = ApiState.Success(result!!)
+        try {
+            val result = shopifyRepo.getAllBrands().data
+            result?.let {
+                _brandsResult.value = ApiState.Success(it)
+            } ?: run {
+                _brandsResult.value = ApiState.Error("No brands data found")
+            }
+        } catch (e: Exception) {
+            _brandsResult.value = ApiState.Error(e.message ?: "Unknown error")
+        }
+
     }
 
     fun getRandomProducts() = viewModelScope.launch(Dispatchers.IO) {
-        val result=shopifyRepo.getRandomProducts().data
-        _randProductsResult.value=ApiState.Success(result!!)
-
+        try {
+            val result = shopifyRepo.getRandomProducts().data
+            result?.let {
+                _randProductsResult.value = ApiState.Success(it)
+            } ?: run {
+                _randProductsResult.value = ApiState.Error("No product data found")
+            }
+        } catch (e: Exception) {
+            _randProductsResult.value = ApiState.Error(e.message ?: "Unknown error")
+        }
     }
 }
