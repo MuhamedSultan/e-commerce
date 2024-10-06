@@ -1,5 +1,8 @@
 package com.example.e_commerce_app.network
 
+import com.example.e_commerce_app.model.address.AddressRequest
+import com.example.e_commerce_app.model.address.AddressResponse
+import com.example.e_commerce_app.model.address.AddressesResponse
 import com.example.e_commerce_app.model.cart.CartResponse
 import com.example.e_commerce_app.model.cart.DeleteProductResponse
 import com.example.e_commerce_app.model.custom_collection.CustomCollectionResponse
@@ -16,6 +19,7 @@ import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.DELETE
 import retrofit2.http.POST
+import retrofit2.http.PUT
 import retrofit2.http.Path
 import retrofit2.http.Query
 
@@ -63,6 +67,41 @@ interface ShopifyService {
         @Query("title") title: String
     ): Response<ProductResponse>
 
+    /// cart apis
+    /*@POST("draft_orders.json")
+    suspend fun createFavoriteDraft(@Body draftOrderRequest: DraftOrderRequest): Response<DraftOrderResponse>
+    @GET("draft_orders/{draftFavoriteId}.json")
+    suspend fun getProductsIdForDraftFavorite(
+        @Path("draftFavoriteId") draftFavoriteId: Long
+    ): Response<DraftOrderResponse>
+    @PUT("draft_orders/{draftFavoriteId}.json")
+    suspend fun backUpDraftFavorite(@Body draftOrderRequest: DraftOrderRequest,
+                                    @Path("draftFavoriteId") draftFavoriteId: Long
+    ): Response<DraftOrderResponse>*/
+
+    // Adress Api Funs
+    @GET("customers/{customerId}/addresses.json")
+    suspend fun getAddressesOfCustomer(
+        @Path("customerId") customerId: Long
+    ): Response<AddressesResponse>
+
+    @PUT("customers/{customerId}/addresses/{addressId}")
+    suspend fun updateAddressOfCustomer(
+        @Path("customerId") customerId: Long,
+        @Path("addressId") addressId: Long,
+        @Body updatedAddress: AddressRequest
+    ): Response<AddressResponse>
+
+    @DELETE("customers/{customerId}/addresses/{addressId}")
+    suspend fun deleteAddressOfCustomer(
+        @Path("customerId") customerId: Long,
+        @Path("addressId") addressId: Long
+    )
+
+    @POST("customers/{customerId}/addresses.json")
+    suspend fun addAddressToCustomer(
+        @Path("customerId") customerId: Long,
+        @Body address: AddressRequest
+    ): Response<AddressResponse>
+
 }
-
-
