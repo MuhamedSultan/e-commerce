@@ -111,6 +111,9 @@
         <action
             android:id="@+id/action_mapFragment_to_paymentFragment"
             app:destination="@id/paymentFragment" />
+        <action
+            android:id="@+id/action_mapFragment_to_addressDetailsFragment"
+            app:destination="@id/addressDetailsFragment" />
     </fragment>
     <fragment
         android:id="@+id/favoriteFragment"
@@ -134,7 +137,23 @@
         android:id="@+id/addressFragment2"
         android:name="com.example.e_commerce_app.map.AddressFragment"
         android:label="fragment_address"
-        tools:layout="@layout/fragment_address" />
+        tools:layout="@layout/fragment_address" >
+        <action
+            android:id="@+id/action_addressFragment2_to_mapFragment"
+            app:destination="@id/mapFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/addressDetailsFragment"
+        android:name="com.example.e_commerce_app.map.AddressDetailsFragment"
+        android:label="fragment_address_details"
+        tools:layout="@layout/fragment_address_details" >
+        <argument
+            android:name="latitude"
+            app:argType="float" />
+        <argument
+            android:name="longitude"
+            app:argType="float" />
+    </fragment>
 
 
 </navigation>
