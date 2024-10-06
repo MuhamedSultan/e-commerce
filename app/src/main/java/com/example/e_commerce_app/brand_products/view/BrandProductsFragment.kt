@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.SeekBar
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ViewModelProvider
@@ -28,6 +29,8 @@ class BrandProductsFragment : Fragment() {
     private lateinit var binding: FragmentBrandProductsBinding
     private lateinit var brandProductViewModel: BrandProductViewModel
     private lateinit var brandName: String
+    private var allProducts: List<Product> = emptyList()
+    private var filteredProducts: List<Product> = emptyList()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -49,7 +52,20 @@ class BrandProductsFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        binding.filterPrice.setOnClickListener {
+            binding.seekBar.visibility = View.VISIBLE
+            binding.priceTv.visibility = View.VISIBLE
+            binding.priceTextTv.visibility = View.VISIBLE
+        }
+        binding.seekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+            override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
+                filterProductsByPrice(progress)
+                binding.priceTv.text = progress.toString()
+            }
 
+            override fun onStartTrackingTouch(seekBar: SeekBar?) {}
+            override fun onStopTrackingTouch(seekBar: SeekBar?) {}
+        })
         brandProductViewModel.getBrandProducts(brandName)
         lifecycleScope.launch {
             viewLifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
@@ -62,8 +78,8 @@ class BrandProductsFragment : Fragment() {
                         is ApiState.Success -> {
                             hideLoadingIndicator()
                             result.data?.let { product ->
-                                hideLoadingIndicator()
-                                setupBrandProductsRecyclerview(product.products)
+                                allProducts = product.products
+                                setupBrandProductsRecyclerview(allProducts)
                             }
                         }
 
@@ -75,6 +91,13 @@ class BrandProductsFragment : Fragment() {
                 }
             }
         }
+    }
+
+    private fun filterProductsByPrice(maxPrice: Int) {
+        filteredProducts = allProducts.filter {
+            it.variants[0].price.toDouble() <= maxPrice
+        }
+        setupBrandProductsRecyclerview(filteredProducts)
     }
 
     private fun showLoadingIndicator() {
@@ -90,16 +113,17 @@ class BrandProductsFragment : Fragment() {
     private fun showError(message: String) {
         Snackbar.make(requireView(), message, Snackbar.LENGTH_SHORT).show()
     }
+
     private fun setupBrandProductsRecyclerview(product: List<Product>) {
         val brandProductsAdapter =
             BrandProductsAdapter(product, requireContext()) { selectedProduct ->
                 val action =
                     BrandProductsFragmentDirections.actionBrandProductsFragmentToProductDetailsFragment(
-                    selectedProduct.id
+                        selectedProduct.id
                     )
                 findNavController().navigate(action)
             }
-        val manager = GridLayoutManager(requireContext(),2)
+        val manager = GridLayoutManager(requireContext(), 2)
 
         binding.productBrandRv.apply {
             adapter = brandProductsAdapter

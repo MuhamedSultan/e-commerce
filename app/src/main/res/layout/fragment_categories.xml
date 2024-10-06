@@ -45,7 +45,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/seekBar2" />
+        app:layout_constraintTop_toBottomOf="@+id/seekBar" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/categoriesRv"
@@ -68,7 +68,7 @@
         app:layout_constraintTop_toTopOf="@+id/edSearch" />
 
     <SeekBar
-        android:id="@+id/seekBar2"
+        android:id="@+id/seekBar"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
@@ -77,7 +77,7 @@
         android:max="1000"
         android:thumbTint="@color/yellow"
         android:visibility="gone"
-        app:layout_constraintEnd_toStartOf="@+id/textView16"
+        app:layout_constraintEnd_toStartOf="@+id/priceTextTv"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/categoriesRv" />
 
@@ -89,12 +89,12 @@
         android:textColor="@color/black"
         android:textSize="22sp"
         android:visibility="gone"
-        app:layout_constraintBottom_toBottomOf="@+id/textView16"
+        app:layout_constraintBottom_toBottomOf="@+id/priceTextTv"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/textView16" />
+        app:layout_constraintTop_toTopOf="@+id/priceTextTv" />
 
     <TextView
-        android:id="@+id/textView16"
+        android:id="@+id/priceTextTv"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="8dp"
@@ -102,9 +102,9 @@
         android:textColor="@color/black"
         android:textSize="20sp"
         android:visibility="gone"
-        app:layout_constraintBottom_toBottomOf="@+id/seekBar2"
+        app:layout_constraintBottom_toBottomOf="@+id/seekBar"
         app:layout_constraintEnd_toStartOf="@+id/priceTv"
-        app:layout_constraintTop_toTopOf="@+id/seekBar2" />
+        app:layout_constraintTop_toTopOf="@+id/seekBar" />
 
     <TextView
         android:id="@+id/filterPrice"

@@ -56,11 +56,12 @@ class CategoriesFragment : Fragment(), OnCategoryClick {
         super.onViewCreated(view, savedInstanceState)
 
         binding.filterPrice.setOnClickListener {
-            binding.seekBar2.visibility = View.VISIBLE
+            binding.seekBar.visibility = View.VISIBLE
             binding.priceTv.visibility = View.VISIBLE
+            binding.priceTextTv.visibility = View.VISIBLE
         }
         binding.priceTv.text = "0"
-        binding.seekBar2.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+        binding.seekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
             override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
                 binding.priceTv.text = progress.toString()
                 currentSeekBarProgress = progress
@@ -177,7 +178,7 @@ class CategoriesFragment : Fragment(), OnCategoryClick {
 
     override fun onCategoryClick(categoryId: Long) {
         categoriesViewModel.getProductsOfSelectedCategory(categoryId)
-        binding.seekBar2.progress = 0
+        binding.seekBar.progress = 0
         binding.priceTv.text = "0"
 
     }

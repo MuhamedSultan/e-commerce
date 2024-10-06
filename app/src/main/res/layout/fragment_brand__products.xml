@@ -43,9 +43,65 @@
         android:hint="@string/search_here"
         android:inputType="text"
         android:paddingHorizontal="12dp"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/filterPrice"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+
+    <SeekBar
+        android:id="@+id/seekBar"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
+        android:max="1000"
+        android:thumbTint="@color/yellow"
+        android:visibility="gone"
+        app:layout_constraintEnd_toStartOf="@+id/priceTextTv"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/edSearch" />
+
+    <TextView
+        android:id="@+id/priceTv"
+        android:layout_width="60dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:textColor="@color/black"
+        android:textSize="22sp"
+        android:text="0"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="@+id/priceTextTv"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/priceTextTv" />
+
+    <TextView
+        android:id="@+id/priceTextTv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:text="@string/price"
+        android:textColor="@color/black"
+        android:textSize="20sp"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="@+id/seekBar"
+        app:layout_constraintEnd_toStartOf="@+id/priceTv"
+        app:layout_constraintTop_toTopOf="@+id/seekBar" />
+
+    <TextView
+        android:id="@+id/filterPrice"
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:layout_marginEnd="16dp"
+        android:drawablePadding="12dp"
+        android:text="@string/filter"
+        android:gravity="center"
+        android:textSize="22sp"
+        app:drawableEndCompat="@drawable/ic_filter"
+        app:layout_constraintBottom_toBottomOf="@+id/edSearch"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/edSearch" />
+
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/productBrandRv"
@@ -56,7 +112,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/edSearch">
+        app:layout_constraintTop_toBottomOf="@+id/seekBar">
 
     </androidx.recyclerview.widget.RecyclerView>
 </androidx.constraintlayout.widget.ConstraintLayout>
