@@ -61,5 +61,7 @@
     <string name="total_cost">Total Cost :</string>
     <string name="search_here">Search here</string>
     <string name="Coupon">Coupon Image</string>
+    <string name="filter">Filter</string>
+    <string name="price">Price :</string>
 
 </resources>

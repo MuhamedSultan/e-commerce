@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.SeekBar
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ViewModelProvider
@@ -31,6 +32,9 @@ import kotlinx.coroutines.launch
 class CategoriesFragment : Fragment(), OnCategoryClick {
     private lateinit var binding: FragmentCategoriesBinding
     private lateinit var categoriesViewModel: CategoriesViewModel
+    private var allProducts: List<Product> = emptyList()
+    private var filteredProducts: List<Product> = emptyList()
+    private var currentSeekBarProgress: Int = 0
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -50,6 +54,25 @@ class CategoriesFragment : Fragment(), OnCategoryClick {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        binding.filterPrice.setOnClickListener {
+            binding.seekBar2.visibility = View.VISIBLE
+            binding.priceTv.visibility = View.VISIBLE
+        }
+        binding.priceTv.text = "0"
+        binding.seekBar2.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+            override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
+                binding.priceTv.text = progress.toString()
+                currentSeekBarProgress = progress
+                filterProductsByPrice(currentSeekBarProgress)
+            }
+
+            override fun onStartTrackingTouch(seekBar: SeekBar?) {
+            }
+
+            override fun onStopTrackingTouch(seekBar: SeekBar?) {
+            }
+        })
         categoriesViewModel.getCategorise()
         categoriesViewModel.getProductsOfSelectedCategory(482200682811)
         lifecycleScope.launch {
@@ -86,9 +109,8 @@ class CategoriesFragment : Fragment(), OnCategoryClick {
 
                         is ApiState.Success -> {
                             hideLoadingIndicator()
-                            setupCategoriesProductsRecyclerview(
-                                result.data?.products ?: emptyList()
-                            )
+                            allProducts = result.data?.products ?: emptyList()
+                            setupCategoriesProductsRecyclerview(allProducts)
                         }
 
                         is ApiState.Error -> {
@@ -103,6 +125,14 @@ class CategoriesFragment : Fragment(), OnCategoryClick {
         }
 
     }
+
+    private fun filterProductsByPrice(maxPrice: Int) {
+        filteredProducts = allProducts.filter {
+            it.variants[0].price.toDouble() <= maxPrice
+        }
+        setupCategoriesProductsRecyclerview(filteredProducts)
+    }
+
 
     private fun showLoadingIndicator() {
         binding.loadingIndicator.visibility = View.VISIBLE
@@ -147,7 +177,8 @@ class CategoriesFragment : Fragment(), OnCategoryClick {
 
     override fun onCategoryClick(categoryId: Long) {
         categoriesViewModel.getProductsOfSelectedCategory(categoryId)
-
+        binding.seekBar2.progress = 0
+        binding.priceTv.text = "0"
 
     }
 }
