@@ -43,7 +43,6 @@ interface ShopifyService {
     @GET("products.json")
     suspend fun getRandomProducts(): ProductResponse
 
-
     @GET("products/{id}.json")
     suspend fun fetchProductById(@Path("id") productId: Long): Response<SingleProductResponse>
 
@@ -55,4 +54,16 @@ interface ShopifyService {
 
     @GET("products.json")
     suspend fun getProductsOfSelectedCategory(@Query("collection_id") collectionId: Long): ProductResponse
+    /// cart apis
+    /*@POST("draft_orders.json")
+    suspend fun createFavoriteDraft(@Body draftOrderRequest: DraftOrderRequest): Response<DraftOrderResponse>
+    @GET("draft_orders/{draftFavoriteId}.json")
+    suspend fun getProductsIdForDraftFavorite(
+        @Path("draftFavoriteId") draftFavoriteId: Long
+    ): Response<DraftOrderResponse>
+    @PUT("draft_orders/{draftFavoriteId}.json")
+    suspend fun backUpDraftFavorite(@Body draftOrderRequest: DraftOrderRequest,
+                                    @Path("draftFavoriteId") draftFavoriteId: Long
+    ): Response<DraftOrderResponse>*/
+
 }

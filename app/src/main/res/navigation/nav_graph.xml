@@ -67,6 +67,9 @@
         <action
             android:id="@+id/action_settingFragment_to_mapFragment"
             app:destination="@id/mapFragment" />
+        <action
+            android:id="@+id/action_settingFragment_to_addressFragment2"
+            app:destination="@id/addressFragment2" />
     </fragment>
     <fragment
         android:id="@+id/productDetailsFragment"
@@ -127,6 +130,11 @@
             android:id="@+id/action_creditCardFragment_to_paymentFragment"
             app:destination="@id/paymentFragment" />
     </fragment>
+    <fragment
+        android:id="@+id/addressFragment2"
+        android:name="com.example.e_commerce_app.map.AddressFragment"
+        android:label="fragment_address"
+        tools:layout="@layout/fragment_address" />
 
 
 </navigation>
