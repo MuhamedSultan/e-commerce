@@ -13,6 +13,8 @@ data class Product @JvmOverloads constructor(
     val body_html: String = "",
     val created_at: String = "",
     val handle: String = "",
+
+    val shopifyCustomerId: String = "",
     @PrimaryKey
     val id: Long = 0L,
     val image: Image = Image(
@@ -40,5 +42,5 @@ data class Product @JvmOverloads constructor(
     val updated_at: String = "",
     val variants: List<Variant> = emptyList(),
     val vendor: String = "",
-    val userId: String = ""
+    val userId: String = "",
 )

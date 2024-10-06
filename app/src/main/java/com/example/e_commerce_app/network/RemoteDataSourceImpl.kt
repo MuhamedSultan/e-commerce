@@ -29,11 +29,9 @@ class RemoteDataSourceImpl : RemoteDataSource {
 
     override suspend fun signInUser(email: String, password: String): ApiState<UserData> {
         return try {
-            // Sign in with Firebase Auth
             val authResult = firebaseAuth.signInWithEmailAndPassword(email, password).await()
             val userId = authResult.user?.uid ?: throw Exception("User ID not found")
 
-            // Fetch user data from Firestore
             val userData = firestore.collection("users").document(userId).get().await()
                 .toObject(UserData::class.java)
                 ?: throw Exception("User data not found")
@@ -45,12 +43,11 @@ class RemoteDataSourceImpl : RemoteDataSource {
     }
 
 
+
     override suspend fun registerUser(userData: UserData): ApiState<Unit> {
         return try {
             // Register with Firebase Auth
-            val authResult =
-                firebaseAuth.createUserWithEmailAndPassword(userData.email, userData.password)
-                    .await()
+            val authResult = firebaseAuth.createUserWithEmailAndPassword(userData.email, userData.password).await()
             val userId = authResult.user?.uid ?: throw Exception("User ID not found")
 
             // Save user data to Firestore
@@ -66,13 +63,34 @@ class RemoteDataSourceImpl : RemoteDataSource {
                     password_confirmation = userData.password
                 )
             )
-            createShopifyCustomer(customerRequest)
+
+            // Shopify customer creation result
+            val shopifyResult = createShopifyCustomer(customerRequest)
+
+            if (shopifyResult is ApiState.Success) {
+                // Handle nullable shopifyCustomerId
+                val shopifyCustomerId = shopifyResult.data ?: throw Exception("Shopify customer ID not found")
+                saveShopifyCustomerIdToFirestore(userId, shopifyCustomerId)
+            }
 
             ApiState.Success(Unit)
         } catch (e: Exception) {
             ApiState.Error("Registration failed: ${e.message}")
         }
     }
+
+
+
+    override suspend fun saveShopifyCustomerIdToFirestore(userId: String, shopifyCustomerId: String): ApiState<Unit> {
+        return try {
+            firestore.collection("users").document(userId).update("shopifyCustomerId", shopifyCustomerId).await()
+            ApiState.Success(Unit)
+        } catch (e: Exception) {
+            ApiState.Error("Failed to save Shopify customer ID: ${e.message}")
+        }
+    }
+
+
 
     private suspend fun saveUserDataToFirestore(
         userId: String,
@@ -87,11 +105,12 @@ class RemoteDataSourceImpl : RemoteDataSource {
     }
 
 
-    override suspend fun createShopifyCustomer(customerRequest: CustomerRequest): ApiState<Unit> {
+    override suspend fun createShopifyCustomer(customerRequest: CustomerRequest): ApiState<String> {
         return try {
             val response = Network.shopifyService.createCustomer(customerRequest)
             if (response.isSuccessful) {
-                ApiState.Success(Unit)
+                val customerId = response.body()?.customer?.id?.toString() ?: throw Exception("Customer ID not found")
+                ApiState.Success(customerId)
             } else {
                 ApiState.Error("Failed to create Shopify customer: ${response.message()}")
             }
@@ -99,6 +118,10 @@ class RemoteDataSourceImpl : RemoteDataSource {
             ApiState.Error("Error creating Shopify customer: ${e.message}")
         }
     }
+
+
+
+
 
     override suspend fun getProductById(productId: Long): ApiState<Product> {
         return try {

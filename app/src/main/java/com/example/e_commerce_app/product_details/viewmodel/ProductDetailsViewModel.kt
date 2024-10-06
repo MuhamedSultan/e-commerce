@@ -1,6 +1,7 @@
 package com.example.e_commerce_app.product_details.viewmodel
 
 import android.content.SharedPreferences
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.e_commerce_app.model.product.Product
@@ -29,10 +30,12 @@ class ProductDetailsViewModel(
 
     fun addToFavorite(product: Product) {
         viewModelScope.launch {
-            val userId = sharedPreferences.getString("userId", null)
-            if (userId != null) {
-                val productWithUserId = product.copy(userId = userId)
-                repository.addToFavorite(productWithUserId)
+            val shopifyCustomerId = sharedPreferences.getString("shopifyCustomerId", null)
+            if (shopifyCustomerId != null) {
+                val productWithShopifyId = product.copy(shopifyCustomerId = shopifyCustomerId)
+                repository.addToFavorite(productWithShopifyId)
+            } else {
+                Log.e("FavoriteViewModel", "Shopify Customer ID is null. Cannot add to favorites.")
             }
         }
     }

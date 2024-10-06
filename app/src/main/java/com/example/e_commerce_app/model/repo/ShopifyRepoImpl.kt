@@ -50,9 +50,10 @@ class ShopifyRepoImpl(
         return remoteDataSource.registerUser(userData)
     }
 
-    override suspend fun createShopifyCustomer(customerRequest: CustomerRequest): ApiState<Unit> {
+    override suspend fun createShopifyCustomer(customerRequest: CustomerRequest): ApiState<String> {
         return remoteDataSource.createShopifyCustomer(customerRequest)
     }
+
 
     override suspend fun getProductById(productId: Long): ApiState<Product> {
         return remoteDataSource.getProductById(productId)
@@ -80,12 +81,19 @@ class ShopifyRepoImpl(
         localDataSource?.removeFavorite(product)
     }
 
-    override suspend fun getAllFavorites(userId: String): List<Product> {
-        return localDataSource?.getAllFavorites(userId) ?: emptyList()
+    override suspend fun getAllFavorites(shopifyCustomerId: String): List<Product> {
+        return localDataSource?.getAllFavorites(shopifyCustomerId) ?: emptyList()
     }
 
     override suspend fun searchProductsByTitle(title: String): ApiState<ProductResponse> {
         return remoteDataSource.searchProductsByTitle(title)
+    }
+
+    override suspend fun saveShopifyCustomerId(
+        userId: String,
+        shopifyCustomerId: String
+    ): ApiState<Unit> {
+        return remoteDataSource.saveShopifyCustomerIdToFirestore(userId, shopifyCustomerId)
     }
 
 

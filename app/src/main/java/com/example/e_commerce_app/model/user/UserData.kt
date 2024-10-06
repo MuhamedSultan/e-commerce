@@ -6,5 +6,7 @@ class UserData(
     val email: String = "",
     val password: String = "",
     val phoneNumber: String = "",
-    val profileImageUrl: String = ""
+    val profileImageUrl: String = "",
+    val shopifyCustomerId: String? = null,
+
 )

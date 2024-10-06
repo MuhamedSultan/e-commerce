@@ -42,6 +42,7 @@ class HomeFragment : Fragment() {
     private lateinit var viewPager: ViewPager2
     private lateinit var dotsIndicator: DotsIndicator
     private lateinit var discountPagerAdapter: DiscountPagerAdapter
+    private var lastSearchText: String? = null // To retain last search text
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -163,7 +164,6 @@ class HomeFragment : Fragment() {
     }
 
 
-
     //search
     private fun searchSetUp() {
         binding.suggestionsRv.visibility = View.GONE
@@ -258,4 +258,15 @@ class HomeFragment : Fragment() {
             layoutManager = manager
         }
     }
+
+    override fun onPause() {
+        super.onPause()
+        binding.suggestionsRv.visibility = View.GONE
+    }
+    override fun onResume() {
+        super.onResume()
+        binding.suggestionsRv.visibility = View.GONE
+        binding.edSearch.text?.clear()
+    }
+
 }

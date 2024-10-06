@@ -19,12 +19,15 @@ class LoginViewModel(
     fun signInUser(email: String, password: String) {
         viewModelScope.launch {
             _loginState.value = ApiState.Loading()
-            shopifyRepo.signInUser(email, password).let { result ->
-                _loginState.value = result
+            val result = shopifyRepo.signInUser(email, password)
+
+            if (result is ApiState.Success) {
+                _loginState.value = result // Successful login
+            } else if (result is ApiState.Error) {
+                _loginState.value = ApiState.Error(result.message ?: "Unknown error occurred")
             }
         }
     }
-
 
     fun validateInput(email: String, password: String): Boolean {
         if (!android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {

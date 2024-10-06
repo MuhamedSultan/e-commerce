@@ -9,6 +9,7 @@ import com.example.e_commerce_app.model.product.Product
 
 @Dao
 interface ShopifyDao {
+
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun addToFavorite(product: Product)
 
@@ -20,8 +21,8 @@ interface ShopifyDao {
     suspend fun removeFavorite(product: Product)
 
 
-    @Query("SELECT * FROM fav_table WHERE userId = :userId")
-    suspend fun getAllFavorites(userId: String): List<Product>
+    @Query("SELECT * FROM fav_table WHERE shopifyCustomerId = :shopifyCustomerId")
+    suspend fun getAllFavorites(shopifyCustomerId: String): List<Product>
 
 
 }

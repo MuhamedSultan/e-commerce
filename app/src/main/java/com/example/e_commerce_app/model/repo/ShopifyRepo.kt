@@ -14,21 +14,24 @@ interface ShopifyRepo {
     suspend fun getBrandProducts(brandName: String): ApiState<ProductResponse>
     suspend fun signInUser(email: String, password: String): ApiState<UserData>
     suspend fun registerUser(userData: UserData): ApiState<Unit>
-    suspend fun createShopifyCustomer(customerRequest: CustomerRequest): ApiState<Unit>
+    suspend fun createShopifyCustomer(customerRequest: CustomerRequest): ApiState<String>
     suspend fun getProductById(productId: Long): ApiState<Product>
     suspend fun getCategories(): ApiState<CustomCollectionResponse>
     suspend fun getProductsOfSelectedCategory(collectionId: Long): ApiState<ProductResponse>
 
 
     suspend fun addToFavorite(product: Product)
-//    suspend fun getAllFavorites(): List<Product>
+
+    //    suspend fun getAllFavorites(): List<Product>
     suspend fun removeFavorite(product: Product)
 
 //    fun getAllCartProducts(): Flow<CartResponse>
     //suspend fun getDraftIds(customerId: String): Flow<ApiState<List<String>>>
 
-    suspend fun getAllFavorites(userId: String): List<Product>
-
+    suspend fun getAllFavorites(shopifyCustomerId: String): List<Product>
     suspend fun searchProductsByTitle(title: String): ApiState<ProductResponse>
 
+    suspend fun saveShopifyCustomerId(userId: String, shopifyCustomerId: String): ApiState<Unit>
+
 }
+

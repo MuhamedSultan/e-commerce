@@ -1,4 +1,5 @@
 import android.content.SharedPreferences
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.e_commerce_app.model.product.Product
@@ -18,16 +19,22 @@ class FavoriteViewModel(
     fun getAllFavorites() {
         viewModelScope.launch {
             try {
-                val userId = sharedPreferences.getString("userId", null)
-                if (userId != null) {
-                    val favoriteProducts = shopifyRepo.getAllFavorites(userId)
+                val shopifyCustomerId = sharedPreferences.getString("shopifyCustomerId", null)
+                Log.d("FavoriteViewModel", "Retrieved ShopifyCustomerId from SharedPreferences: $shopifyCustomerId")
+                if (shopifyCustomerId != null) {
+                    val favoriteProducts = shopifyRepo.getAllFavorites(shopifyCustomerId)
                     _favorites.value = favoriteProducts
+                    Log.d("FavoriteViewModel", "Retrieved ${favoriteProducts.size} favorite products")
+                } else {
+                    Log.e("FavoriteViewModel", "ShopifyCustomerId is null when retrieving favorites")
                 }
             } catch (e: Exception) {
-
+                Log.e("FavoriteViewModel", "Error retrieving favorites", e)
             }
         }
     }
+
+
 
     fun removeFavorite(product: Product) {
         viewModelScope.launch {

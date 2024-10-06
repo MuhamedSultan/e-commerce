@@ -32,12 +32,19 @@ class SignUpViewModel(
 
         viewModelScope.launch {
             _signUpState.value = ApiState.Loading()
-            shopifyRepo.registerUser(userData).let { result ->
-                _signUpState.value = result
+            val result = shopifyRepo.registerUser(userData)
+
+            _signUpState.value = when (result) {
+                is ApiState.Success -> {
+                    // Assuming the success case may return additional data in the future
+                    ApiState.Success(Unit) // Adjust as needed to reflect success state
+                }
+
+                is ApiState.Error -> ApiState.Error(result.message ?: "Unknown error occurred")
+                is ApiState.Loading -> TODO()
             }
         }
     }
-
 
     fun validateInput(
         email: String,
@@ -63,5 +70,4 @@ class SignUpViewModel(
         }
         return true
     }
-
 }

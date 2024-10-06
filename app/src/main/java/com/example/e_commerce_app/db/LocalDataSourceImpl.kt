@@ -15,7 +15,9 @@ class LocalDataSourceImpl(private val shopifyDao: ShopifyDao) : LocalDataSource 
         return shopifyDao.removeFavorite(product)
     }
 
-    override suspend fun getAllFavorites(userId: String): List<Product> {
-        return shopifyDao.getAllFavorites(userId)
+    override suspend fun getAllFavorites(shopifyCustomerId: String): List<Product> {
+        return shopifyDao.getAllFavorites(shopifyCustomerId)
     }
+
+
 }
