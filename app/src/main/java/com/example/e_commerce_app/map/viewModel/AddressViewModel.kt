@@ -16,9 +16,9 @@ class AddressViewModel(val repo: ShopifyRepo) : ViewModel() {
         MutableStateFlow(ApiState.Loading())
     val addressesResult: StateFlow<ApiState<AddressesResponse>> = _addressesResult
 
-    fun getAllAddresses() = viewModelScope.launch(Dispatchers.IO) {
-        var sharedPreferences = getSharedPreferences("UserPrefs", Context.MODE_PRIVATE)
-        val customerId :String= repo.getCustomerIdSHP()
+
+
+    fun getAllAddresses(customerId:String) = viewModelScope.launch(Dispatchers.IO) {
         val result=repo.getAllAddresses(customerId)
         _addressesResult.value=result
     }

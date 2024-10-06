@@ -1,6 +1,7 @@
 package com.example.e_commerce_app.model.repo
 
 import com.example.e_commerce_app.db.LocalDataSource
+import com.example.e_commerce_app.model.address.AddressesResponse
 import com.example.e_commerce_app.model.custom_collection.CustomCollectionResponse
 import com.example.e_commerce_app.model.product.Product
 import com.example.e_commerce_app.model.product.ProductResponse
@@ -94,6 +95,10 @@ class ShopifyRepoImpl(
         shopifyCustomerId: String
     ): ApiState<Unit> {
         return remoteDataSource.saveShopifyCustomerIdToFirestore(userId, shopifyCustomerId)
+    }
+
+    override suspend fun getAllAddresses(customerId: String): ApiState<AddressesResponse> {
+        return remoteDataSource.getAllAddresses(customerId)
     }
 
 

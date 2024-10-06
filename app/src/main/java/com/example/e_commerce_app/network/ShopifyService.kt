@@ -83,7 +83,7 @@ interface ShopifyService {
     @GET("customers/{customerId}/addresses.json")
     suspend fun getAddressesOfCustomer(
         @Path("customerId") customerId: Long
-    ): Response<AddressesResponse>
+    ): AddressesResponse
 
     @PUT("customers/{customerId}/addresses/{addressId}")
     suspend fun updateAddressOfCustomer(

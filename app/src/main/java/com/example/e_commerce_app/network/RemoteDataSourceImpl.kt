@@ -1,5 +1,6 @@
 package com.example.e_commerce_app.network
 
+import com.example.e_commerce_app.model.address.AddressesResponse
 import com.example.e_commerce_app.model.custom_collection.CustomCollectionResponse
 import com.example.e_commerce_app.model.product.Product
 import com.example.e_commerce_app.model.product.ProductResponse
@@ -90,6 +91,14 @@ class RemoteDataSourceImpl : RemoteDataSource {
         }
     }
 
+    override suspend fun getAllAddresses(customerId: String) : ApiState<AddressesResponse>{
+        return try {
+            val response = Network.shopifyService.getAddressesOfCustomer(customerId.toLong())
+            ApiState.Success(response)
+        } catch (e: Exception) {
+            ApiState.Error(e.message.toString())
+        }
+    }
 
 
     private suspend fun saveUserDataToFirestore(
