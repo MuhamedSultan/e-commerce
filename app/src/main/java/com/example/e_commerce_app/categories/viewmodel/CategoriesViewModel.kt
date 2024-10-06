@@ -3,6 +3,7 @@ package com.example.e_commerce_app.categories.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.e_commerce_app.model.custom_collection.CustomCollectionResponse
+import com.example.e_commerce_app.model.product.Product
 import com.example.e_commerce_app.model.product.ProductResponse
 import com.example.e_commerce_app.model.repo.ShopifyRepo
 import com.example.e_commerce_app.util.ApiState
@@ -26,9 +27,17 @@ class CategoriesViewModel(private val shopifyRepo: ShopifyRepo) : ViewModel() {
         _categoriesResult.value = result
     }
 
-    fun getProductsOfSelectedCategory(collectionId:Long) = viewModelScope.launch(Dispatchers.IO) {
+    fun getProductsOfSelectedCategory(collectionId: Long) = viewModelScope.launch(Dispatchers.IO) {
         val result = shopifyRepo.getProductsOfSelectedCategory(collectionId)
         _productsResult.value = result
+    }
+
+    fun addProductToFavourite(product: Product) = viewModelScope.launch {
+        shopifyRepo.addToFavorite(product)
+    }
+
+    fun deleteProductToFavourite(product: Product) = viewModelScope.launch {
+        shopifyRepo.removeFavorite(product)
     }
 
 }

@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.SeekBar
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ViewModelProvider
@@ -20,6 +21,8 @@ import com.example.e_commerce_app.categories.view.adapter.OnCategoryClick
 import com.example.e_commerce_app.categories.viewmodel.CategoriesViewModel
 import com.example.e_commerce_app.categories.viewmodel.CategoriesViewModelFactory
 import com.example.e_commerce_app.databinding.FragmentCategoriesBinding
+import com.example.e_commerce_app.db.LocalDataSourceImpl
+import com.example.e_commerce_app.db.ShopifyDB
 import com.example.e_commerce_app.model.custom_collection.CustomCollection
 import com.example.e_commerce_app.model.product.Product
 import com.example.e_commerce_app.model.repo.ShopifyRepoImpl
@@ -38,8 +41,10 @@ class CategoriesFragment : Fragment(), OnCategoryClick {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        val dao=ShopifyDB.getInstance(requireContext()).shopifyDao()
+        val localDataSource=LocalDataSourceImpl(dao)
         val remoteDataSource = RemoteDataSourceImpl()
-        val repo = ShopifyRepoImpl(remoteDataSource)
+        val repo = ShopifyRepoImpl(remoteDataSource,localDataSource)
         val factory = CategoriesViewModelFactory(repo)
         categoriesViewModel = ViewModelProvider(this, factory)[CategoriesViewModel::class.java]
     }
@@ -161,13 +166,28 @@ class CategoriesFragment : Fragment(), OnCategoryClick {
 
     private fun setupCategoriesProductsRecyclerview(product: List<Product>) {
         val categoriesProductsAdapter =
-            CategoriesProductsAdapter(product, requireContext()) { selectedProduct ->
+            CategoriesProductsAdapter(product, requireContext(), { selectedProduct ->
                 val action =
                     CategoriesFragmentDirections.actionCategoriesFragmentToProductDetailsFragment(
                         selectedProduct.id
                     )
                 findNavController().navigate(action)
-            }
+            }, onFavouriteClick = { product, isFavorite ->
+                if (isFavorite) {
+                    categoriesViewModel.addProductToFavourite(product)
+                    Toast.makeText(requireContext(), "Added to favorites", Toast.LENGTH_SHORT)
+                        .show()
+                } else {
+                    categoriesViewModel.deleteProductToFavourite(product)
+                    Toast.makeText(requireContext(), "Removed from favorites", Toast.LENGTH_SHORT)
+                        .show()
+                }
+                LocalDataSourceImpl.setMealFavoriteStatus(
+                    requireContext(),
+                    product.id.toString(),
+                    isFavorite
+                )
+            })
         val manager = GridLayoutManager(requireContext(), 2)
 
         binding.productsRv.apply {
