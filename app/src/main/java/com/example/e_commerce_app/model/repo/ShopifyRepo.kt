@@ -28,4 +28,7 @@ interface ShopifyRepo {
     //suspend fun getDraftIds(customerId: String): Flow<ApiState<List<String>>>
 
     suspend fun getAllFavorites(userId: String): List<Product>
+
+    suspend fun searchProductsByTitle(title: String): ApiState<ProductResponse>
+
 }

@@ -1,6 +1,8 @@
 package com.example.e_commerce_app.home.view
 
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -19,6 +21,7 @@ import androidx.viewpager2.widget.ViewPager2
 import com.example.e_commerce_app.databinding.FragmentHomeBinding
 import com.example.e_commerce_app.home.view.adapter.BrandsAdapter
 import com.example.e_commerce_app.home.view.adapter.RandomProductsAdapter
+import com.example.e_commerce_app.home.view.adapter.SuggestionsAdapter
 import com.example.e_commerce_app.home.viewmodel.HomeViewModel
 import com.example.e_commerce_app.home.viewmodel.HomeViewModelFactory
 import com.example.e_commerce_app.model.coupon.Discount
@@ -59,17 +62,36 @@ class HomeFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+
+        searchSetUp()
+
+
         // Find views
         viewPager = binding.couponPager
         dotsIndicator = binding.dotsIndicator
 
         // Sample data
         val discounts = listOf(
-            Discount("https://img.freepik.com/premium-vector/trendy-flat-advertising-with-25-percent-discount-flat-badge-promo-design-poster-badge_123447-1341.jpg", "XKK1CF4D5QHW"),
-            Discount("https://t4.ftcdn.net/jpg/06/16/99/51/360_F_616995128_xWAth0i92Adkm4A9b6RGXCnO5yocUmnU.jpg", "A7GQS8QFAT1Z"),
-            Discount("https://static.vecteezy.com/system/resources/thumbnails/013/549/310/small/15-percent-off-special-discount-offer-15-off-sale-of-advertising-campaign-graphics-free-vector.jpg", "9GZABPQP6CGZ"),
-            Discount("https://media.istockphoto.com/id/1490275605/vector/hand-drawn-style-10-percent-off-discount-sale-promotion-label-illustration-vector.jpg?s=612x612&w=0&k=20&c=GAoOKGrDaIO-6fZzzTchg5tM5wJKINt5igU34ipbDYs=", "SATR3GWQR9PT"),
-            Discount("https://drive.google.com/uc?export=download&id=1zAUMAjtzIXoF475iIHL8zEdfyY9LuyXh", "4X5JCEG8FTD0"),
+            Discount(
+                "https://img.freepik.com/premium-vector/trendy-flat-advertising-with-25-percent-discount-flat-badge-promo-design-poster-badge_123447-1341.jpg",
+                "XKK1CF4D5QHW"
+            ),
+            Discount(
+                "https://t4.ftcdn.net/jpg/06/16/99/51/360_F_616995128_xWAth0i92Adkm4A9b6RGXCnO5yocUmnU.jpg",
+                "A7GQS8QFAT1Z"
+            ),
+            Discount(
+                "https://static.vecteezy.com/system/resources/thumbnails/013/549/310/small/15-percent-off-special-discount-offer-15-off-sale-of-advertising-campaign-graphics-free-vector.jpg",
+                "9GZABPQP6CGZ"
+            ),
+            Discount(
+                "https://media.istockphoto.com/id/1490275605/vector/hand-drawn-style-10-percent-off-discount-sale-promotion-label-illustration-vector.jpg?s=612x612&w=0&k=20&c=GAoOKGrDaIO-6fZzzTchg5tM5wJKINt5igU34ipbDYs=",
+                "SATR3GWQR9PT"
+            ),
+            Discount(
+                "https://drive.google.com/uc?export=download&id=1zAUMAjtzIXoF475iIHL8zEdfyY9LuyXh",
+                "4X5JCEG8FTD0"
+            ),
         )
 
         // Set up ViewPager2 adapter
@@ -139,6 +161,56 @@ class HomeFragment : Fragment() {
             }
         }
     }
+
+
+
+    //search
+    private fun searchSetUp() {
+        binding.suggestionsRv.visibility = View.GONE
+
+        binding.edSearch.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                val searchText = s.toString()
+                homeViewModel.filterProducts(searchText)
+
+                binding.suggestionsRv.visibility = if (searchText.isNotEmpty()) View.VISIBLE else View.GONE
+            }
+
+            override fun afterTextChanged(s: Editable?) {}
+        })
+
+        lifecycleScope.launch {
+            viewLifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                homeViewModel.filteredProducts.collect { filteredList ->
+                    setupSuggestionsRecyclerview(filteredList)
+                    setupRandomProductsRecyclerview(filteredList.ifEmpty { homeViewModel.originalProducts })
+                    if (filteredList.isEmpty() && binding.edSearch.text.isNotEmpty()) {
+                        binding.suggestionsRv.visibility = View.GONE
+                    }
+                }
+            }
+        }
+    }
+
+
+    private fun setupSuggestionsRecyclerview(filteredList: List<Product>) {
+        val suggestions = filteredList.map { it.title }
+
+        if (suggestions.isNotEmpty()) {
+            binding.suggestionsRv.visibility = View.VISIBLE
+            val suggestionsAdapter = SuggestionsAdapter(suggestions) { selectedSuggestion ->
+                binding.edSearch.setText(selectedSuggestion)
+                binding.suggestionsRv.visibility = View.GONE
+            }
+            binding.suggestionsRv.adapter = suggestionsAdapter
+            binding.suggestionsRv.layoutManager = LinearLayoutManager(requireContext())
+        } else {
+            binding.suggestionsRv.visibility = View.GONE
+        }
+    }
+
 
     private fun showError(message: String) {
         Snackbar.make(requireView(), message, Snackbar.LENGTH_SHORT).show()

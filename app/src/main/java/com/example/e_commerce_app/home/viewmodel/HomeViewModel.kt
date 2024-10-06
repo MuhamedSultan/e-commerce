@@ -2,6 +2,7 @@ package com.example.e_commerce_app.home.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.e_commerce_app.model.product.Product
 import com.example.e_commerce_app.model.product.ProductResponse
 import com.example.e_commerce_app.model.smart_collection.SmartCollectionResponse
 import com.example.e_commerce_app.model.repo.ShopifyRepo
@@ -20,6 +21,11 @@ class HomeViewModel(private val shopifyRepo: ShopifyRepo) : ViewModel() {
         MutableStateFlow(ApiState.Loading())
     val randProductsResult: StateFlow<ApiState<ProductResponse>> = _randProductsResult
 
+    private val _filteredProducts: MutableStateFlow<List<Product>> = MutableStateFlow(emptyList())
+    val filteredProducts: StateFlow<List<Product>> = _filteredProducts
+    var originalProducts: List<Product> = emptyList()
+
+
     fun getAllBrands() = viewModelScope.launch(Dispatchers.IO) {
         try {
             val result = shopifyRepo.getAllBrands().data
@@ -35,6 +41,12 @@ class HomeViewModel(private val shopifyRepo: ShopifyRepo) : ViewModel() {
     }
 
     fun getRandomProducts() = viewModelScope.launch(Dispatchers.IO) {
+        val result = shopifyRepo.getRandomProducts().data
+        _randProductsResult.value = ApiState.Success(result!!)
+
+        originalProducts = result.products
+        _filteredProducts.value = emptyList()
+
         try {
             val result = shopifyRepo.getRandomProducts().data
             result?.let {
@@ -46,4 +58,20 @@ class HomeViewModel(private val shopifyRepo: ShopifyRepo) : ViewModel() {
             _randProductsResult.value = ApiState.Error(e.message ?: "Unknown error")
         }
     }
+
+
+    fun filterProducts(query: String) {
+        if (query.isEmpty()) {
+            _filteredProducts.value = originalProducts
+        } else {
+            val filteredList = originalProducts.filter { product ->
+                product.title.contains(query, ignoreCase = true)
+            }
+            _filteredProducts.value = filteredList
+        }
+    }
+
 }
+
+
+

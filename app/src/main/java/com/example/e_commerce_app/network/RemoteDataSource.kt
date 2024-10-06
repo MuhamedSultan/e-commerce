@@ -20,5 +20,6 @@ interface RemoteDataSource {
     suspend fun getCategories(): ApiState<CustomCollectionResponse>
     suspend fun getProductsOfSelectedBrand(collectionId: Long): ApiState<ProductResponse>
 
+    suspend fun searchProductsByTitle(title: String): ApiState<ProductResponse>
 
 }

@@ -55,4 +55,14 @@ interface ShopifyService {
 
     @GET("products.json")
     suspend fun getProductsOfSelectedCategory(@Query("collection_id") collectionId: Long): ProductResponse
+
+
+    // Search products by title
+    @GET("products.json")
+    suspend fun searchProductsByTitle(
+        @Query("title") title: String
+    ): Response<ProductResponse>
+
 }
+
+

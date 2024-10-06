@@ -31,6 +31,21 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/suggestionsRv"
+            android:layout_width="0dp"
+            android:background="@drawable/gradient_background"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="16dp"
+            android:elevation="16dp"
+            android:visibility="gone"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/edSearch" />
+
+
         <androidx.cardview.widget.CardView
             android:id="@+id/cardView"
             android:layout_width="50dp"
@@ -86,7 +101,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/couponPager"
             app:progressMode="true"
-            app:selectedDotColor="@color/figma_main_color"/>
+            app:selectedDotColor="@color/figma_main_color" />
 
 
         <TextView
@@ -109,10 +124,10 @@
             android:visibility="visible"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.5"
-            app:layout_constraintHorizontal_bias="0.5"/>
+            app:layout_constraintVertical_bias="0.5" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/brandRv"

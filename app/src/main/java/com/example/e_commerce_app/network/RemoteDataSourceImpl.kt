@@ -150,4 +150,17 @@ class RemoteDataSourceImpl : RemoteDataSource {
             ApiState.Error(e.message.toString())
         }
     }
+
+    override suspend fun searchProductsByTitle(title: String): ApiState<ProductResponse> {
+        return try {
+            val response = Network.shopifyService.searchProductsByTitle(title)
+            if (response.isSuccessful) {
+                ApiState.Success(response.body() ?: throw Exception("No products found"))
+            } else {
+                ApiState.Error("Error: ${response.message()}")
+            }
+        } catch (e: Exception) {
+            ApiState.Error("Error searching products: ${e.message}")
+        }
+    }
 }

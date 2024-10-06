@@ -84,6 +84,10 @@ class ShopifyRepoImpl(
         return localDataSource?.getAllFavorites(userId) ?: emptyList()
     }
 
+    override suspend fun searchProductsByTitle(title: String): ApiState<ProductResponse> {
+        return remoteDataSource.searchProductsByTitle(title)
+    }
+
 
     override suspend fun getRandomProducts(): ApiState<ProductResponse> {
         return remoteDataSource.getRandomProducts()
