@@ -6,16 +6,18 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView.Adapter
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import com.bumptech.glide.Glide
+import com.example.e_commerce_app.R
 import com.example.e_commerce_app.databinding.ItemProductBinding
+import com.example.e_commerce_app.db.LocalDataSourceImpl
 import com.example.e_commerce_app.model.product.Product
 
 class RandomProductsAdapter(
-    private val product: List<Product>,
+    private val productList: List<Product>,
     private val context: Context,
-    private val onProductClick: (Product) -> Unit
+    private val onProductClick: (Product) -> Unit,
+    private val onFavouriteClick: (Product, Boolean) -> Unit
 ) :
     Adapter<RandomProductsAdapter.RandomProductsViewHolder>() {
-
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RandomProductsViewHolder {
         val view = ItemProductBinding.inflate(LayoutInflater.from(parent.context), parent, false)
@@ -23,18 +25,30 @@ class RandomProductsAdapter(
     }
 
     override fun getItemCount(): Int {
-        return product.size
+        return productList.size
     }
 
     override fun onBindViewHolder(holder: RandomProductsViewHolder, position: Int) {
-        val productList = product[position]
-        Glide.with(context).load(productList.image.src).into(holder.productImage)
-        holder.productName.text = productList.title.split('|').getOrNull(1)?.trim() ?: ""
-        holder.productPrice.text = productList.variants[0].price
-        holder.itemView.setOnClickListener {
-            onProductClick(productList)
-        }
+        val product = productList[position]
+        Glide.with(context).load(product.image.src).into(holder.productImage)
+        holder.productName.text = product.title.split('|').getOrNull(1)?.trim()
+        holder.productPrice.text = product.variants[0].price
+        var isFavorite = LocalDataSourceImpl.isMealFavorite(context, product.id.toString())
+        holder.favouriteIcon.setImageResource(
+            if (isFavorite) R.drawable.ic_favourite_fill
+            else R.drawable.ic_favourite_border
+        )
 
+        holder.itemView.setOnClickListener { onProductClick(product) }
+
+        holder.favouriteIcon.setOnClickListener {
+            isFavorite = !isFavorite
+            onFavouriteClick(product, isFavorite)
+            holder.favouriteIcon.setImageResource(
+                if (isFavorite) R.drawable.ic_favourite_fill
+                else R.drawable.ic_favourite_border
+            )
+        }
     }
 
     class RandomProductsViewHolder(binding: ItemProductBinding) :
@@ -42,6 +56,7 @@ class RandomProductsAdapter(
         val productImage = binding.productImage
         val productName = binding.productNameTv
         val productPrice = binding.productPriceTv
+        val favouriteIcon = binding.favouriteIcon
     }
 
 }

@@ -19,6 +19,8 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.viewpager2.widget.ViewPager2
 import com.example.e_commerce_app.databinding.FragmentHomeBinding
+import com.example.e_commerce_app.db.LocalDataSourceImpl
+import com.example.e_commerce_app.db.ShopifyDB
 import com.example.e_commerce_app.home.view.adapter.BrandsAdapter
 import com.example.e_commerce_app.home.view.adapter.RandomProductsAdapter
 import com.example.e_commerce_app.home.view.adapter.SuggestionsAdapter
@@ -38,16 +40,16 @@ import kotlinx.coroutines.launch
 class HomeFragment : Fragment() {
     private lateinit var binding: FragmentHomeBinding
     private lateinit var homeViewModel: HomeViewModel
-
     private lateinit var viewPager: ViewPager2
     private lateinit var dotsIndicator: DotsIndicator
     private lateinit var discountPagerAdapter: DiscountPagerAdapter
-    private var lastSearchText: String? = null // To retain last search text
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        val dao = ShopifyDB.getInstance(requireContext()).shopifyDao()
+        val localDataSource = LocalDataSourceImpl(dao)
         val remoteDataSource = RemoteDataSourceImpl()
-        val repo = ShopifyRepoImpl(remoteDataSource)
+        val repo = ShopifyRepoImpl(remoteDataSource, localDataSource)
         val factory = HomeViewModelFactory(repo)
         homeViewModel = ViewModelProvider(this, factory)[HomeViewModel::class.java]
     }
@@ -175,7 +177,8 @@ class HomeFragment : Fragment() {
                 val searchText = s.toString()
                 homeViewModel.filterProducts(searchText)
 
-                binding.suggestionsRv.visibility = if (searchText.isNotEmpty()) View.VISIBLE else View.GONE
+                binding.suggestionsRv.visibility =
+                    if (searchText.isNotEmpty()) View.VISIBLE else View.GONE
             }
 
             override fun afterTextChanged(s: Editable?) {}
@@ -244,12 +247,26 @@ class HomeFragment : Fragment() {
 
     private fun setupRandomProductsRecyclerview(product: List<Product>) {
         val randomProductsAdapter =
-            RandomProductsAdapter(product, requireContext()) { selectedProduct ->
+            RandomProductsAdapter(product, requireContext(), { selectedProduct ->
                 val action = HomeFragmentDirections.actionHomeFragmentToProductDetailsFragment(
                     selectedProduct.id
                 )
                 findNavController().navigate(action)
-            }
+            }, onFavouriteClick = { product, isFavorite ->
+                if (isFavorite) {
+                    homeViewModel.addProductToFavourite(product)
+                    Toast.makeText(requireContext(), "Added to favorites", Toast.LENGTH_SHORT).show()
+                } else {
+                    homeViewModel.deleteProductToFavourite(product)
+                    Toast.makeText(requireContext(), "Removed from favorites", Toast.LENGTH_SHORT).show()
+                }
+                LocalDataSourceImpl.setMealFavoriteStatus(
+                    requireContext(),
+                    product.id.toString(),
+                    isFavorite
+                )
+            })
+
         val manager = LinearLayoutManager(requireContext())
         manager.orientation = LinearLayoutManager.HORIZONTAL
 
@@ -263,6 +280,7 @@ class HomeFragment : Fragment() {
         super.onPause()
         binding.suggestionsRv.visibility = View.GONE
     }
+
     override fun onResume() {
         super.onResume()
         binding.suggestionsRv.visibility = View.GONE

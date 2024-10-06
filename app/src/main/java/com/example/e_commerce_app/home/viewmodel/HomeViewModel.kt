@@ -71,6 +71,15 @@ class HomeViewModel(private val shopifyRepo: ShopifyRepo) : ViewModel() {
         }
     }
 
+     fun addProductToFavourite(product: Product)=viewModelScope.launch {
+        shopifyRepo.addToFavorite(product)
+    }
+
+     fun deleteProductToFavourite(product: Product)=viewModelScope.launch {
+        shopifyRepo.removeFavorite(product)
+    }
+
+
 }
 
 
