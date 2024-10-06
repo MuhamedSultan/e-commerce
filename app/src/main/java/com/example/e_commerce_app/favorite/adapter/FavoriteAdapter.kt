@@ -46,29 +46,27 @@ class FavoriteAdapter(
         fun bind(product: Product, onDeleteClick: (Product) -> Unit) {
             productName.text = product.title
 
-            // Access price safely
             val price = product.variants.firstOrNull()?.price ?: "N/A"
             productPrice.text = "$$price"
 
             // Access the image URL safely
-            val imageUrl = product.image?.src // Adjust this based on your Image class structure
+            val imageUrl = product.image?.src
             if (!imageUrl.isNullOrEmpty()) {
-                // Log the image URL for debugging
-                Log.d("FavoriteAdapter", "Loading image for product: ${product.title}, Image URL: $imageUrl")
+                Log.d(
+                    "FavoriteAdapter",
+                    "Loading image for product: ${product.title}, Image URL: $imageUrl"
+                )
 
-                // Load the product image using Glide
                 Glide.with(itemView.context)
                     .load(imageUrl)
-                    .placeholder(R.drawable.nofav2) // Use a placeholder image
-                    .error(R.drawable.delete_svg) // Handle error image
+                    .placeholder(R.drawable.nofav2)
+                    .error(R.drawable.delete_svg)
                     .into(productImage)
             } else {
-                // Set a default image if the image URL is invalid
-                productImage.setImageResource(R.drawable.nofav2) // Default image
+                productImage.setImageResource(R.drawable.nofav2)
                 Log.d("FavoriteAdapter", "No valid image URL for product: ${product.title}")
             }
 
-            // Handle delete icon click
             deleteIcon.setOnClickListener {
                 onDeleteClick(product)
             }

@@ -7,7 +7,7 @@ import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import com.example.e_commerce_app.model.product.Product
 
-@Database([Product::class], version = 2, exportSchema = false)
+@Database([Product::class], version = 3, exportSchema = false)
 @TypeConverters(ProductTypeConverters::class)
 abstract class ShopifyDB : RoomDatabase() {
 

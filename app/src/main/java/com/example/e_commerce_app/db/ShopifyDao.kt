@@ -13,11 +13,15 @@ interface ShopifyDao {
     suspend fun addToFavorite(product: Product)
 
 
-    @Query("SELECT * FROM fav_table")
-    suspend fun getAllFavorites(): List<Product>
+//    @Query("SELECT * FROM fav_table")
+//    suspend fun getAllFavorites(): List<Product>
 
     @Delete
     suspend fun removeFavorite(product: Product)
+
+
+    @Query("SELECT * FROM fav_table WHERE userId = :userId")
+    suspend fun getAllFavorites(userId: String): List<Product>
 
 
 }

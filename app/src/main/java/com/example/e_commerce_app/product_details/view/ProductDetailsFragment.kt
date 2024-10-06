@@ -30,7 +30,6 @@ import kotlinx.coroutines.launch
 
 class ProductDetailsFragment : Fragment() {
 
-
     private var productId: Long? = null
     private lateinit var viewModel: ProductDetailsViewModel
     private lateinit var colorAdapter: ColorAdapter
@@ -38,7 +37,6 @@ class ProductDetailsFragment : Fragment() {
     private lateinit var imageAdapter: ImageAdapter
     private lateinit var colorRecyclerView: RecyclerView
     private lateinit var sizeRecyclerView: RecyclerView
-    private lateinit var imageRecyclerView: RecyclerView
     private lateinit var imageViewPager: ViewPager2
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -47,11 +45,11 @@ class ProductDetailsFragment : Fragment() {
             productId = it.getLong("productId")
         }
 
+        val sharedPreferences = requireContext().getSharedPreferences("UserPrefs", 0)
         val shopifyDao = ShopifyDB.getInstance(requireContext()).shopifyDao()
         val localDataSource = LocalDataSourceImpl(shopifyDao)
-
         val repo = ShopifyRepoImpl(RemoteDataSourceImpl(), localDataSource)
-        val factory = ProductDetailsViewModelFactory(repo)
+        val factory = ProductDetailsViewModelFactory(repo, sharedPreferences) // Pass SharedPreferences
         viewModel = ViewModelProvider(this, factory)[ProductDetailsViewModel::class.java]
     }
 
@@ -63,9 +61,7 @@ class ProductDetailsFragment : Fragment() {
 
         colorRecyclerView = view.findViewById(R.id.productColorRecyclerView)
         sizeRecyclerView = view.findViewById(R.id.productSizeRecyclerView)
-
         imageViewPager = view.findViewById(R.id.productImageViewPager)
-
 
         colorRecyclerView.layoutManager =
             LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
@@ -104,7 +100,6 @@ class ProductDetailsFragment : Fragment() {
         }
     }
 
-
     private fun updateUI(product: Product) {
         view?.findViewById<TextView>(R.id.productTitle)?.text = product.title
         view?.findViewById<TextView>(R.id.productDescription)?.text = product.body_html
@@ -113,12 +108,11 @@ class ProductDetailsFragment : Fragment() {
 
         val favoriteButton = view?.findViewById<Button>(R.id.btn_add_to_favorite)
 
-        view?.findViewById<Button>(R.id.btn_add_to_favorite)?.setOnClickListener {
+        favoriteButton?.setOnClickListener {
             lifecycleScope.launch {
                 viewModel.addToFavorite(product)
                 Toast.makeText(context, "Product added to favorite", Toast.LENGTH_SHORT).show()
-                favoriteButton?.setBackgroundResource(R.drawable.favfill)
-
+                favoriteButton.setBackgroundResource(R.drawable.favfill)
             }
         }
 
@@ -136,8 +130,6 @@ class ProductDetailsFragment : Fragment() {
 
         imageViewPager.adapter = imageAdapter
         imageViewPager.setPageTransformer(ZoomOutPageTransformer())
-
-
     }
 
     private fun showError(message: String) {

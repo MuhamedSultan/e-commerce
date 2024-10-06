@@ -39,5 +39,6 @@ data class Product @JvmOverloads constructor(
     val title: String = "",
     val updated_at: String = "",
     val variants: List<Variant> = emptyList(),
-    val vendor: String = ""
+    val vendor: String = "",
+    val userId: String = ""
 )

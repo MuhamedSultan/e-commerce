@@ -1,6 +1,11 @@
+
 package com.example.e_commerce_app.favorite.view
 
+
 import FavoriteViewModel
+import FavoriteViewModelFactory
+import android.content.Context
+import android.content.SharedPreferences
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -16,7 +21,6 @@ import com.example.e_commerce_app.R
 import com.example.e_commerce_app.db.LocalDataSourceImpl
 import com.example.e_commerce_app.db.ShopifyDB
 import com.example.e_commerce_app.favorite.adapter.FavoriteAdapter
-import com.example.e_commerce_app.favorite.viewmodel.FavoriteViewModelFactory
 import com.example.e_commerce_app.model.repo.ShopifyRepoImpl
 import com.example.e_commerce_app.network.RemoteDataSourceImpl
 import kotlinx.coroutines.flow.collectLatest
@@ -26,18 +30,21 @@ class FavoriteFragment : Fragment() {
     private lateinit var recyclerView: RecyclerView
     private lateinit var imageView: ImageView
     private lateinit var textView: TextView
+    private lateinit var sharedPreferences: SharedPreferences
 
     private val favoriteViewModel: FavoriteViewModel by viewModels {
         FavoriteViewModelFactory(
             ShopifyRepoImpl(
                 RemoteDataSourceImpl(),
                 LocalDataSourceImpl(ShopifyDB.getInstance(requireContext()).shopifyDao())
-            )
+            ),
+            sharedPreferences
         )
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        sharedPreferences = requireContext().getSharedPreferences("UserPrefs", Context.MODE_PRIVATE)
     }
 
     override fun onCreateView(
