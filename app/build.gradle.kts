@@ -154,7 +154,7 @@ dependencies {
     implementation("com.google.android.material:material:1.8.0")
 
 
-    implementation("com.google.android.gms:play-services-auth:20.4.0") // Check for the latest version
+    implementation("com.google.android.gms:play-services-auth:20.4.0")
 
     //view Pager
     implementation("androidx.viewpager2:viewpager2:1.0.0")

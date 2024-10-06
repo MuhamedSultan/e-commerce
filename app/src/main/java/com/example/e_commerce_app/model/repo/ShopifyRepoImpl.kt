@@ -72,12 +72,16 @@ class ShopifyRepoImpl(
 
     }
 
-    override suspend fun getAllFavorites(): List<Product> {
-        return localDataSource?.getAllFavorites() ?: emptyList()
-    }
+//    override suspend fun getAllFavorites(): List<Product> {
+//        return localDataSource?.getAllFavorites() ?: emptyList()
+//    }
 
     override suspend fun removeFavorite(product: Product) {
         localDataSource?.removeFavorite(product)
+    }
+
+    override suspend fun getAllFavorites(userId: String): List<Product> {
+        return localDataSource?.getAllFavorites(userId) ?: emptyList()
     }
 
 

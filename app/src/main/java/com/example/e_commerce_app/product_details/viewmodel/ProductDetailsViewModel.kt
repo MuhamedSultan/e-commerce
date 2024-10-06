@@ -1,5 +1,6 @@
 package com.example.e_commerce_app.product_details.viewmodel
 
+import android.content.SharedPreferences
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.e_commerce_app.model.product.Product
@@ -9,10 +10,12 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
-class ProductDetailsViewModel(private val repository: ShopifyRepo) : ViewModel() {
+class ProductDetailsViewModel(
+    private val repository: ShopifyRepo,
+    private val sharedPreferences: SharedPreferences
+) : ViewModel() {
     private val _productState = MutableStateFlow<ApiState<Product>>(ApiState.Loading())
     val productState: StateFlow<ApiState<Product>> = _productState
-
 
     fun fetchProductDetails(productId: Long) {
         viewModelScope.launch {
@@ -24,10 +27,13 @@ class ProductDetailsViewModel(private val repository: ShopifyRepo) : ViewModel()
         }
     }
 
-
     fun addToFavorite(product: Product) {
         viewModelScope.launch {
-            repository.addToFavorite(product)
+            val userId = sharedPreferences.getString("userId", null)
+            if (userId != null) {
+                val productWithUserId = product.copy(userId = userId)
+                repository.addToFavorite(productWithUserId)
+            }
         }
     }
 }
