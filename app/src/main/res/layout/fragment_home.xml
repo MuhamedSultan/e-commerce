@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -13,29 +13,6 @@
         android:paddingHorizontal="8dp"
         tools:context=".home.view.HomeFragment">
 
-    <androidx.constraintlayout.widget.Group
-        android:id="@+id/groupLayout"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginTop="32dp"
-        android:visibility="invisible"
-        app:constraint_referenced_ids="constraint, imageSlider, textView, brandRv, textView2, recommendedProductsRv"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/constraint"
-        android:layout_width="match_parent"
-        android:layout_height="92dp"
-        android:background="@color/light_gray"
-        android:elevation="0dp"
-        app:layout_constraintBottom_toTopOf="@+id/imageSlider"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"> <!-- Centered vertically -->
 
         <EditText
             android:id="@+id/edSearch"
@@ -44,14 +21,12 @@
             android:layout_marginStart="8dp"
             android:layout_marginTop="16dp"
             android:layout_marginEnd="16dp"
-            android:layout_marginBottom="8dp"
             android:background="@drawable/ed_search_bg"
             android:drawableEnd="@drawable/ic_search"
             android:elevation="16dp"
             android:hint="@string/search_here"
             android:inputType="text"
             android:paddingHorizontal="12dp"
-            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/cardView"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -80,38 +55,40 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:visibility="invisible"
-            app:constraint_referenced_ids="edSearch,cardView,imageSlider, textView, brandRv, textView2, recommendedProductsRv"
+            app:constraint_referenced_ids="edSearch,cardView, textView, brandRv, textView2, recommendedProductsRv"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
 
-    <androidx.viewpager2.widget.ViewPager2
-        android:id="@+id/couponPager"
-        android:layout_width="match_parent"
-        android:layout_height="150sp"
-        android:orientation="horizontal"
-        android:visibility="gone"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/constraint" />
+        <androidx.viewpager2.widget.ViewPager2
+            android:id="@+id/couponPager"
+            android:layout_width="match_parent"
+            android:layout_height="150sp"
+            android:orientation="horizontal"
+            android:visibility="gone"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            android:layout_marginTop="8dp"
+            app:layout_constraintTop_toBottomOf="@+id/edSearch" />
 
-    <com.tbuonomo.viewpagerdotsindicator.DotsIndicator
-        android:id="@+id/dots_indicator"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:visibility="gone"
-        app:dotsColor="@color/light_gray"
-        app:dotsCornerRadius="8dp"
-        app:dotsSize="8dp"
-        app:dotsSpacing="4dp"
-        app:dotsWidthFactor="2.5"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/couponPager"
-        app:progressMode="true"
-        app:selectedDotColor="@color/figma_main_color" />
+        <com.tbuonomo.viewpagerdotsindicator.DotsIndicator
+            android:id="@+id/dots_indicator"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            app:dotsColor="@color/light_gray"
+            app:dotsCornerRadius="8dp"
+            app:dotsSize="8dp"
+            app:dotsSpacing="4dp"
+            app:dotsWidthFactor="2.5"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/couponPager"
+            app:progressMode="true"
+            app:selectedDotColor="@color/figma_main_color" />
+
 
         <TextView
             android:id="@+id/textView"
@@ -124,7 +101,7 @@
             android:textSize="18sp"
             android:textStyle="bold"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/imageSlider" />
+            app:layout_constraintTop_toBottomOf="@id/couponPager" />
 
         <ProgressBar
             android:id="@+id/loadingIndicator"
