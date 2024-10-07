@@ -8,22 +8,16 @@ data class DraftOrderRequest(
 data class CustomerDraftRequest(val id: Long)
 
 data class DraftOrderDetailsRequest(
-    val line_items: List<LineItems> =  listOf(LineItems(
-        quantity = 1,
-        price = 0.0,
-        title = "n",
-        product_id = "",
-        variant_id = null,
-    )),
-    val customer: CustomerDraftRequest
+    val line_items: List<LineItems> =  listOf(LineItems()),
+    val customer: CustomerDraftRequest,
+    val note :String = "note"
 )
 
 data class LineItems(
     val quantity: Int=1,
-    val price: Double = 0.0,
-    val title: String? = null,
+    val price: String = "0.0",
+    val title: String? = "m",
     val product_id: String = "",
-    val variant_id: Long? ,
-
+    val variant_id: Long? =null
     )
 

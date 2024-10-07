@@ -26,6 +26,16 @@ class SharedPrefsManager private constructor(context: Context) {
         return sharedPreferences.getString("shopifyCustomerId", null)
     }
 
+    fun setDraftedOrderId(draftedId : Long) {
+        val editor = sharedPreferences.edit()
+        editor.putLong("draftId", draftedId)
+        editor.apply()
+    }
+
+    fun getDraftedOrderId(): Long? {
+        return sharedPreferences.getLong("draftId", 0)
+    }
+
 
 }
 

@@ -22,6 +22,7 @@ class LoginViewModel(
             val result = shopifyRepo.signInUser(email, password)
 
             if (result is ApiState.Success) {
+
                 _loginState.value = result // Successful login
             } else if (result is ApiState.Error) {
                 _loginState.value = ApiState.Error(result.message ?: "Unknown error occurred")
