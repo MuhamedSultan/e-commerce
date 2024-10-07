@@ -70,6 +70,9 @@
         <action
             android:id="@+id/action_settingFragment_to_addressFragment2"
             app:destination="@id/addressFragment2" />
+        <action
+            android:id="@+id/action_settingFragment_to_favoriteFragment"
+            app:destination="@id/favoriteFragment" />
     </fragment>
     <fragment
         android:id="@+id/productDetailsFragment"
@@ -82,12 +85,15 @@
     </fragment>
     <fragment
         android:id="@+id/ordersFragment"
-        android:name="com.example.e_commerce_app.orders.OrdersFragment"
+        android:name="com.example.e_commerce_app.orders.view.OrdersFragment"
         android:label="Orders"
         tools:layout="@layout/fragment_orders">
         <action
             android:id="@+id/action_ordersFragment_to_orderDetailsFragment"
             app:destination="@id/orderDetailsFragment" />
+        <argument
+            android:name="customerName"
+            app:argType="string" />
     </fragment>
     <fragment
         android:id="@+id/orderDetailsFragment"

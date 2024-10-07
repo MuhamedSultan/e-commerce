@@ -10,6 +10,7 @@ import com.example.e_commerce_app.model.cart.DraftOrderResponse
 import com.example.e_commerce_app.model.cart.UpdateCartItemRequest
 import com.example.e_commerce_app.model.cart.UpdateCartItemResponse
 import com.example.e_commerce_app.model.custom_collection.CustomCollectionResponse
+import com.example.e_commerce_app.model.orders.CustomerOrders
 import com.example.e_commerce_app.model.product.Product
 import com.example.e_commerce_app.model.product.ProductResponse
 import com.example.e_commerce_app.model.smart_collection.SmartCollectionResponse
@@ -50,6 +51,8 @@ interface ShopifyRepo {
     suspend fun backUpDraftFavorite(draftOrderRequest: DraftOrderRequest, draftFavoriteId: Long): ApiState<DraftOrderResponse>
 
     suspend fun getCartById(cartId: String): ApiState<CartResponse>
+    suspend fun getCustomerOrders(customerId: Long): ApiState<CustomerOrders>
+
 
 }
 
