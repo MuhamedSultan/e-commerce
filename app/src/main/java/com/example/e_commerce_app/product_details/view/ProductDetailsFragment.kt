@@ -156,15 +156,32 @@ class ProductDetailsFragment : Fragment() {
         }
 
 
-
+        lifecycleScope.launch {
+            val isFavorite = viewModel.isProductFavorite(product.id)
+            if (isFavorite) {
+                favoriteButton?.setBackgroundResource(R.drawable.favfill)
+            } else {
+                favoriteButton?.setBackgroundResource(R.drawable.favadd)
+            }
+        }
 
         favoriteButton?.setOnClickListener {
             lifecycleScope.launch {
-                viewModel.addToFavorite(product)
-                Toast.makeText(context, "Product added to favorite", Toast.LENGTH_SHORT).show()
-                favoriteButton.setBackgroundResource(R.drawable.favfill)
+                val isFavorite = viewModel.isProductFavorite(product.id)
+                if (isFavorite) {
+                    viewModel.removeFavorite(product)
+                    Toast.makeText(context, "Removed from favorites", Toast.LENGTH_SHORT).show()
+                    favoriteButton.setBackgroundResource(R.drawable.favadd)
+                } else {
+                    viewModel.addToFavorite(product)
+                    Toast.makeText(context, "Added to favorites", Toast.LENGTH_SHORT).show()
+                    favoriteButton.setBackgroundResource(R.drawable.favfill)
+                }
             }
         }
+
+
+
 
         val colors = product.options.find { it.name == "Color" }?.values ?: emptyList()
         val sizes = product.options.find { it.name == "Size" }?.values ?: emptyList()

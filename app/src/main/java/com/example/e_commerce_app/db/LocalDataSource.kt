@@ -6,7 +6,6 @@ interface LocalDataSource {
 
     suspend fun addToFavorite(product: Product)
 
-    //   suspend fun getAllFavorites(): List<Product>
     suspend fun removeFavorite(product: Product)
 
 

@@ -53,6 +53,28 @@ class ProductDetailsViewModel(
     }
 
 
+    fun removeFavorite(product: Product) {
+        viewModelScope.launch {
+            val shopifyCustomerId = sharedPreferences.getString("shopifyCustomerId", null)
+            if (shopifyCustomerId != null) {
+                val productWithShopifyId = product.copy(shopifyCustomerId = shopifyCustomerId)
+                repository.removeFavorite(productWithShopifyId)
+            } else {
+                Log.e("ProductDetailsViewModel", "Shopify Customer ID is null. Cannot remove from favorites.")
+            }
+        }
+    }
+
+
+    suspend fun isProductFavorite(productId: Long): Boolean {
+        val shopifyCustomerId = sharedPreferences.getString("shopifyCustomerId", null)
+        return if (shopifyCustomerId != null) {
+            val favorites = repository.getAllFavorites(shopifyCustomerId)
+            favorites.any { it.id == productId }
+        } else {
+            false
+        }
+    }
 
 
     fun addToCart(draftOrderRequest: DraftOrderRequest) {
@@ -76,25 +98,6 @@ class ProductDetailsViewModel(
 
 
 
-    // Function to fetch product IDs from the draft order (getting products in cart)
-    fun getProductsFromDraftOrder(draftFavoriteId: Long) {
-        viewModelScope.launch {
-            _draftOrderState.value = ApiState.Loading()
-            val result = repository.getProductsIdForDraftFavorite(draftFavoriteId)
-            _draftOrderState.value = result
-        }
-    }
-
-
-
-    // Function to update (back up) the draft order
-    fun updateDraftOrder(draftOrderRequest: DraftOrderRequest, draftFavoriteId: Long) {
-        viewModelScope.launch {
-            _draftOrderState.value = ApiState.Loading()
-            val result = repository.backUpDraftFavorite(draftOrderRequest, draftFavoriteId)
-            _draftOrderState.value = result
-        }
-    }
 
 
 

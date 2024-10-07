@@ -1,5 +1,6 @@
 package com.example.e_commerce_app.favorite.adapter
 
+import android.app.AlertDialog
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -10,9 +11,12 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.e_commerce_app.R
 import com.example.e_commerce_app.model.product.Product
+import android.content.Context
+
 
 class FavoriteAdapter(
-    private val onDeleteClick: (Product) -> Unit
+    private val onDeleteClick: (Product) -> Unit,
+    private val onProductClick: (Long) -> Unit
 ) : RecyclerView.Adapter<FavoriteAdapter.FavoriteViewHolder>() {
 
     private var favoriteProducts: List<Product> = listOf()
@@ -25,31 +29,35 @@ class FavoriteAdapter(
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FavoriteViewHolder {
         val view = LayoutInflater.from(parent.context)
             .inflate(R.layout.item_fav_product, parent, false)
-        return FavoriteViewHolder(view)
+        return FavoriteViewHolder(view, parent.context)
     }
 
     override fun onBindViewHolder(holder: FavoriteViewHolder, position: Int) {
         val product = favoriteProducts[position]
-        holder.bind(product, onDeleteClick)
+        holder.bind(product, onDeleteClick, onProductClick)
     }
 
     override fun getItemCount(): Int {
         return favoriteProducts.size
     }
 
-    class FavoriteViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+    class FavoriteViewHolder(itemView: View, private val context: Context) :
+        RecyclerView.ViewHolder(itemView) {
         private val productImage: ImageView = itemView.findViewById(R.id.productImage)
         private val productName: TextView = itemView.findViewById(R.id.productName)
         private val productPrice: TextView = itemView.findViewById(R.id.productPrice)
         private val deleteIcon: ImageView = itemView.findViewById(R.id.deleteIcon)
 
-        fun bind(product: Product, onDeleteClick: (Product) -> Unit) {
+        fun bind(
+            product: Product,
+            onDeleteClick: (Product) -> Unit,
+            onProductClick: (Long) -> Unit
+        ) {
             productName.text = product.title
 
             val price = product.variants.firstOrNull()?.price ?: "N/A"
             productPrice.text = "$$price"
 
-            // Access the image URL safely
             val imageUrl = product.image?.src
             if (!imageUrl.isNullOrEmpty()) {
                 Log.d(
@@ -68,8 +76,30 @@ class FavoriteAdapter(
             }
 
             deleteIcon.setOnClickListener {
-                onDeleteClick(product)
+                showDeleteConfirmationDialog(product, onDeleteClick)
             }
+
+            itemView.setOnClickListener {
+                onProductClick(product.id)
+            }
+
+        }
+
+        private fun showDeleteConfirmationDialog(
+            product: Product,
+            onDeleteClick: (Product) -> Unit
+        ) {
+            val builder = AlertDialog.Builder(context)
+            builder.setTitle("Delete Confirmation")
+            builder.setMessage("Are you sure you want to delete ${product.title} from favorites?")
+            builder.setPositiveButton("Yes") { dialog, _ ->
+                onDeleteClick(product)
+                dialog.dismiss()
+            }
+            builder.setNegativeButton("No") { dialog, _ ->
+                dialog.dismiss()
+            }
+            builder.create().show()
         }
     }
 }

@@ -10,24 +10,17 @@ import kotlinx.coroutines.launch
 
 class FavoriteViewModel(
     private val shopifyRepo: ShopifyRepo,
-    private val sharedPreferences: SharedPreferences
 ) : ViewModel() {
 
     private val _favorites = MutableStateFlow<List<Product>>(emptyList())
     val favorites: StateFlow<List<Product>> = _favorites
 
-    fun getAllFavorites() {
+    fun getAllFavorites(shopifyCustomerId: String) {
         viewModelScope.launch {
             try {
-                val shopifyCustomerId = sharedPreferences.getString("shopifyCustomerId", null)
-                Log.d("FavoriteViewModel", "Retrieved ShopifyCustomerId from SharedPreferences: $shopifyCustomerId")
-                if (shopifyCustomerId != null) {
-                    val favoriteProducts = shopifyRepo.getAllFavorites(shopifyCustomerId)
-                    _favorites.value = favoriteProducts
-                    Log.d("FavoriteViewModel", "Retrieved ${favoriteProducts.size} favorite products")
-                } else {
-                    Log.e("FavoriteViewModel", "ShopifyCustomerId is null when retrieving favorites")
-                }
+                val favoriteProducts = shopifyRepo.getAllFavorites(shopifyCustomerId)
+                _favorites.value = favoriteProducts
+                Log.d("FavoriteViewModel", "Retrieved ${favoriteProducts.size} favorite products")
             } catch (e: Exception) {
                 Log.e("FavoriteViewModel", "Error retrieving favorites", e)
             }
@@ -35,11 +28,14 @@ class FavoriteViewModel(
     }
 
 
-
-    fun removeFavorite(product: Product) {
+    fun removeFavorite(product: Product, shopifyCustomerId: String) {
         viewModelScope.launch {
-            shopifyRepo.removeFavorite(product)
-            getAllFavorites()
+            try {
+                shopifyRepo.removeFavorite(product)
+                getAllFavorites(shopifyCustomerId)
+            } catch (e: Exception) {
+                Log.e("FavoriteViewModel", "Error removing favorite", e)
+            }
         }
     }
 }
