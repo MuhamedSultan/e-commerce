@@ -74,7 +74,7 @@ class HomeViewModel(private val shopifyRepo: ShopifyRepo) : ViewModel() {
 
 
 
-    fun addToFavorite(product: Product, shopifyCustomerId: String) {
+    fun addProductToFavourite(product: Product, shopifyCustomerId: String) {
         viewModelScope.launch {
             val productWithShopifyId = product.copy(shopifyCustomerId = shopifyCustomerId)
             shopifyRepo.addToFavorite(productWithShopifyId)
@@ -83,18 +83,12 @@ class HomeViewModel(private val shopifyRepo: ShopifyRepo) : ViewModel() {
 
 
 
-    fun removeFavorite(product: Product, shopifyCustomerId: String) {
+    fun deleteProductFromFavourite(product: Product, shopifyCustomerId: String) {
         viewModelScope.launch {
             val productWithShopifyId = product.copy(shopifyCustomerId = shopifyCustomerId)
             shopifyRepo.removeFavorite(productWithShopifyId)
         }
     }
-    suspend fun isProductFavorite(productId: Long, shopifyCustomerId: String): Boolean {
-        val favorites = shopifyRepo.getAllFavorites(shopifyCustomerId)
-        return favorites.any { it.id == productId }
-    }
-
-
 
 }
 

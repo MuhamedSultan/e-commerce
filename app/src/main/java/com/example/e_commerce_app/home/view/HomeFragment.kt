@@ -1,6 +1,5 @@
 package com.example.e_commerce_app.home.view
 
-import android.content.Context
 import android.content.SharedPreferences
 import android.os.Bundle
 import android.text.Editable
@@ -15,9 +14,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
-import androidx.navigation.fragment.navArgs
 
-import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.viewpager2.widget.ViewPager2
 import com.example.e_commerce_app.databinding.FragmentHomeBinding
@@ -266,13 +263,11 @@ class HomeFragment : Fragment() {
 
                 if (shopifyCustomerId != null) {
                     lifecycleScope.launch {
-                        val isCurrentlyFavorite = homeViewModel.isProductFavorite(product.id, shopifyCustomerId)
-
                         if (isFavorite) {
-                            homeViewModel.addToFavorite(product, shopifyCustomerId)
+                            homeViewModel.addProductToFavourite(product, shopifyCustomerId)
                             Toast.makeText(requireContext(), "Added to favorites", Toast.LENGTH_SHORT).show()
                         } else {
-                            homeViewModel.removeFavorite(product, shopifyCustomerId)
+                            homeViewModel.deleteProductFromFavourite(product, shopifyCustomerId)
                             Toast.makeText(requireContext(), "Removed from favorites", Toast.LENGTH_SHORT).show()
                         }
                         LocalDataSourceImpl.setMealFavoriteStatus(

@@ -32,12 +32,18 @@ class CategoriesViewModel(private val shopifyRepo: ShopifyRepo) : ViewModel() {
         _productsResult.value = result
     }
 
-    fun addProductToFavourite(product: Product) = viewModelScope.launch {
-        shopifyRepo.addToFavorite(product)
+    fun addProductToFavourite(product: Product, shopifyCustomerId: String) {
+        viewModelScope.launch {
+            val productWithShopifyId = product.copy(shopifyCustomerId = shopifyCustomerId)
+            shopifyRepo.addToFavorite(productWithShopifyId)
+        }
     }
 
-    fun deleteProductToFavourite(product: Product) = viewModelScope.launch {
-        shopifyRepo.removeFavorite(product)
+    fun deleteProductFromFavourite(product: Product, shopifyCustomerId: String) {
+        viewModelScope.launch {
+            val productWithShopifyId = product.copy(shopifyCustomerId = shopifyCustomerId)
+            shopifyRepo.removeFavorite(productWithShopifyId)
+        }
     }
 
 }
