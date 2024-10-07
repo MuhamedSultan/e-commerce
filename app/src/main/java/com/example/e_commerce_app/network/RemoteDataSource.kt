@@ -3,6 +3,12 @@ package com.example.e_commerce_app.network
 import com.example.e_commerce_app.model.address.AddressRequest
 import com.example.e_commerce_app.model.address.AddressResponse
 import com.example.e_commerce_app.model.address.AddressesResponse
+import com.example.e_commerce_app.model.cart.CartResponse
+import com.example.e_commerce_app.model.cart.DeleteProductResponse
+import com.example.e_commerce_app.model.cart.DraftOrderRequest
+import com.example.e_commerce_app.model.cart.DraftOrderResponse
+import com.example.e_commerce_app.model.cart.UpdateCartItemRequest
+import com.example.e_commerce_app.model.cart.UpdateCartItemResponse
 import com.example.e_commerce_app.model.custom_collection.CustomCollectionResponse
 import com.example.e_commerce_app.model.product.Product
 import com.example.e_commerce_app.model.product.ProductResponse
@@ -28,5 +34,13 @@ interface RemoteDataSource {
     suspend fun saveShopifyCustomerIdToFirestore(userId: String, shopifyCustomerId: String): ApiState<Unit>
     suspend fun getAllAddresses(customerId: String) : ApiState<AddressesResponse>
     suspend fun insertAddress(customerId: Long, addressResponse: AddressRequest): ApiState<AddressResponse>
+
+
+    suspend fun createFavoriteDraft(draftOrderRequest: DraftOrderRequest): ApiState<DraftOrderResponse>
+    suspend fun getProductsIdForDraftFavorite(draftFavoriteId: Long): ApiState<DraftOrderResponse>
+    suspend fun backUpDraftFavorite(draftOrderRequest: DraftOrderRequest, draftFavoriteId: Long): ApiState<DraftOrderResponse>
+
+    suspend fun getCartById(cartId: String): ApiState<CartResponse>
+
 
 }

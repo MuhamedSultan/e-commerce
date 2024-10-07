@@ -121,6 +121,7 @@
                 tools:listitem="@layout/item_color" />
 
             <Button
+                android:drawableLeft="@drawable/ic_cart"
                 android:id="@+id/btn_add_to_cart"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

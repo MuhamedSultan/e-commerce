@@ -1,6 +1,8 @@
 package com.example.e_commerce_app.product_details.view
 
+import android.content.SharedPreferences
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -16,6 +18,10 @@ import androidx.viewpager2.widget.ViewPager2
 import com.example.e_commerce_app.R
 import com.example.e_commerce_app.db.LocalDataSourceImpl
 import com.example.e_commerce_app.db.ShopifyDB
+import com.example.e_commerce_app.model.cart.CustomerDraftRequest
+import com.example.e_commerce_app.model.cart.DraftOrderDetailsRequest
+import com.example.e_commerce_app.model.cart.DraftOrderRequest
+import com.example.e_commerce_app.model.cart.LineItems
 import com.example.e_commerce_app.model.product.Product
 import com.example.e_commerce_app.model.repo.ShopifyRepoImpl
 import com.example.e_commerce_app.network.RemoteDataSourceImpl
@@ -38,6 +44,7 @@ class ProductDetailsFragment : Fragment() {
     private lateinit var colorRecyclerView: RecyclerView
     private lateinit var sizeRecyclerView: RecyclerView
     private lateinit var imageViewPager: ViewPager2
+    private lateinit var sharedPreferences: SharedPreferences
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -45,11 +52,11 @@ class ProductDetailsFragment : Fragment() {
             productId = it.getLong("productId")
         }
 
-        val sharedPreferences = requireContext().getSharedPreferences("UserPrefs", 0)
+        sharedPreferences = requireContext().getSharedPreferences("UserPrefs", 0)
         val shopifyDao = ShopifyDB.getInstance(requireContext()).shopifyDao()
         val localDataSource = LocalDataSourceImpl(shopifyDao)
         val repo = ShopifyRepoImpl(RemoteDataSourceImpl(), localDataSource)
-        val factory = ProductDetailsViewModelFactory(repo, sharedPreferences) // Pass SharedPreferences
+        val factory = ProductDetailsViewModelFactory(repo, sharedPreferences)
         viewModel = ViewModelProvider(this, factory)[ProductDetailsViewModel::class.java]
     }
 
@@ -106,7 +113,50 @@ class ProductDetailsFragment : Fragment() {
         view?.findViewById<TextView>(R.id.productPrice)?.text =
             product.variants.firstOrNull()?.price ?: "$0.00"
 
+
+        val addToCartButton = view?.findViewById<Button>(R.id.btn_add_to_cart)
+
         val favoriteButton = view?.findViewById<Button>(R.id.btn_add_to_favorite)
+
+        addToCartButton?.setOnClickListener {
+            val variant = product.variants.firstOrNull()
+            if (variant != null) {
+                val lineItem = LineItems(
+                    quantity = 1,
+                    price = variant.price.toDouble(),
+                    title = product.title,
+                    product_id = product.id.toString(),
+                    variant_id = variant.id
+                )
+
+                val shopifyCustomerId = sharedPreferences.getString("shopifyCustomerId", null)
+                val customerDraftRequest = if (shopifyCustomerId != null) {
+                    CustomerDraftRequest(id = shopifyCustomerId.toLong())
+                } else {
+                    CustomerDraftRequest(id = -1)
+                }
+
+                val draftOrderDetailsRequest = DraftOrderDetailsRequest(
+                    line_items = listOf(lineItem),
+                    customer = customerDraftRequest
+                )
+
+                val draftOrderRequest = DraftOrderRequest(
+                    draft_order = draftOrderDetailsRequest
+                )
+                lifecycleScope.launch {
+                    viewModel.addToCart(draftOrderRequest)
+                    Toast.makeText(context, "Product added to cart", Toast.LENGTH_SHORT).show()
+                    Log.d("ProductDetailsFragment", "Product added to cart: ${product.title}")
+                }
+            } else {
+                Toast.makeText(context, "No variant available for this product", Toast.LENGTH_SHORT)
+                    .show()
+            }
+        }
+
+
+
 
         favoriteButton?.setOnClickListener {
             lifecycleScope.launch {

@@ -3,6 +3,9 @@ package com.example.e_commerce_app.network
 import com.example.e_commerce_app.model.address.AddressRequest
 import com.example.e_commerce_app.model.address.AddressResponse
 import com.example.e_commerce_app.model.address.AddressesResponse
+import com.example.e_commerce_app.model.cart.CartResponse
+import com.example.e_commerce_app.model.cart.DraftOrderRequest
+import com.example.e_commerce_app.model.cart.DraftOrderResponse
 import com.example.e_commerce_app.model.custom_collection.CustomCollectionResponse
 import com.example.e_commerce_app.model.product.Product
 import com.example.e_commerce_app.model.product.ProductResponse
@@ -46,11 +49,12 @@ class RemoteDataSourceImpl : RemoteDataSource {
     }
 
 
-
     override suspend fun registerUser(userData: UserData): ApiState<Unit> {
         return try {
             // Register with Firebase Auth
-            val authResult = firebaseAuth.createUserWithEmailAndPassword(userData.email, userData.password).await()
+            val authResult =
+                firebaseAuth.createUserWithEmailAndPassword(userData.email, userData.password)
+                    .await()
             val userId = authResult.user?.uid ?: throw Exception("User ID not found")
 
             // Save user data to Firestore
@@ -72,7 +76,8 @@ class RemoteDataSourceImpl : RemoteDataSource {
 
             if (shopifyResult is ApiState.Success) {
                 // Handle nullable shopifyCustomerId
-                val shopifyCustomerId = shopifyResult.data ?: throw Exception("Shopify customer ID not found")
+                val shopifyCustomerId =
+                    shopifyResult.data ?: throw Exception("Shopify customer ID not found")
                 saveShopifyCustomerIdToFirestore(userId, shopifyCustomerId)
             }
 
@@ -83,17 +88,20 @@ class RemoteDataSourceImpl : RemoteDataSource {
     }
 
 
-
-    override suspend fun saveShopifyCustomerIdToFirestore(userId: String, shopifyCustomerId: String): ApiState<Unit> {
+    override suspend fun saveShopifyCustomerIdToFirestore(
+        userId: String,
+        shopifyCustomerId: String
+    ): ApiState<Unit> {
         return try {
-            firestore.collection("users").document(userId).update("shopifyCustomerId", shopifyCustomerId).await()
+            firestore.collection("users").document(userId)
+                .update("shopifyCustomerId", shopifyCustomerId).await()
             ApiState.Success(Unit)
         } catch (e: Exception) {
             ApiState.Error("Failed to save Shopify customer ID: ${e.message}")
         }
     }
 
-    override suspend fun getAllAddresses(customerId: String) : ApiState<AddressesResponse>{
+    override suspend fun getAllAddresses(customerId: String): ApiState<AddressesResponse> {
         return try {
             val response = Network.shopifyService.getAddressesOfCustomer(customerId.toLong())
             ApiState.Success(response)
@@ -102,14 +110,88 @@ class RemoteDataSourceImpl : RemoteDataSource {
         }
     }
 
-    override suspend fun insertAddress(customerId: Long, addressRequest: AddressRequest): ApiState<AddressResponse> {
+    override suspend fun insertAddress(
+        customerId: Long,
+        addressRequest: AddressRequest
+    ): ApiState<AddressResponse> {
         return try {
-            val response = Network.shopifyService.addAddressToCustomer(customerId,
+            val response = Network.shopifyService.addAddressToCustomer(
+                customerId,
                 addressRequest
             )
             ApiState.Success(response)
         } catch (e: Exception) {
             ApiState.Error(e.message.toString())
+        }
+    }
+
+    override suspend fun createFavoriteDraft(draftOrderRequest: DraftOrderRequest): ApiState<DraftOrderResponse> {
+        return try {
+            val response = Network.shopifyService.createFavoriteDraft(draftOrderRequest)
+            if (response.isSuccessful) {
+                ApiState.Success(response.body() ?: throw Exception("Draft order creation failed"))
+            } else {
+                ApiState.Error("Error: ${response.message()}")
+            }
+        } catch (e: Exception) {
+            ApiState.Error("Error creating draft order: ${e.message}")
+        }
+
+    }
+
+    override suspend fun getProductsIdForDraftFavorite(draftFavoriteId: Long): ApiState<DraftOrderResponse> {
+
+        return try {
+            val response = Network.shopifyService.getProductsIdForDraftFavorite(draftFavoriteId)
+            if (response.isSuccessful) {
+                ApiState.Success(
+                    response.body() ?: throw Exception("No products found for the draft order")
+                )
+            } else {
+                when (response.code()) {
+                    404 -> ApiState.Error("Draft order not found.")
+                    else -> ApiState.Error("Error: ${response.message()}")
+                }
+            }
+        } catch (e: Exception) {
+            ApiState.Error("Error fetching draft order: ${e.message}")
+        }
+
+
+    }
+
+    override suspend fun backUpDraftFavorite(
+        draftOrderRequest: DraftOrderRequest,
+        draftFavoriteId: Long
+    ): ApiState<DraftOrderResponse> {
+
+        return try {
+            val response =
+                Network.shopifyService.backUpDraftFavorite(draftOrderRequest, draftFavoriteId)
+            if (response.isSuccessful) {
+                ApiState.Success(response.body() ?: throw Exception("Draft order backup failed"))
+            } else {
+                ApiState.Error("Error: ${response.message()}")
+            }
+        } catch (e: Exception) {
+            ApiState.Error("Error backing up draft order: ${e.message}")
+        }
+
+    }
+
+    override suspend fun getCartById(cartId: String): ApiState<CartResponse> {
+        return try {
+            // Make the network call to get the cart by ID
+            val response = Network.shopifyService.getCartById(cartId)
+
+            // Check if the response is successful and return the data
+            if (response.isSuccessful) {
+                ApiState.Success(response.body() ?: throw Exception("Cart not found"))
+            } else {
+                ApiState.Error("Error: ${response.message()}")
+            }
+        } catch (e: Exception) {
+            ApiState.Error("Error fetching cart: ${e.message}")
         }
     }
 
@@ -131,7 +213,8 @@ class RemoteDataSourceImpl : RemoteDataSource {
         return try {
             val response = Network.shopifyService.createCustomer(customerRequest)
             if (response.isSuccessful) {
-                val customerId = response.body()?.customer?.id?.toString() ?: throw Exception("Customer ID not found")
+                val customerId = response.body()?.customer?.id?.toString()
+                    ?: throw Exception("Customer ID not found")
                 ApiState.Success(customerId)
             } else {
                 ApiState.Error("Failed to create Shopify customer: ${response.message()}")
@@ -140,9 +223,6 @@ class RemoteDataSourceImpl : RemoteDataSource {
             ApiState.Error("Error creating Shopify customer: ${e.message}")
         }
     }
-
-
-
 
 
     override suspend fun getProductById(productId: Long): ApiState<Product> {
