@@ -22,6 +22,7 @@ import com.example.e_commerce_app.map.viewModel.AddressViewModel
 import com.example.e_commerce_app.map.viewModel.AddressViewModelFactory
 import com.example.e_commerce_app.model.address.AddressReqModel
 import com.example.e_commerce_app.model.address.AddressRequest
+import com.example.e_commerce_app.model.address.testAdd
 import com.example.e_commerce_app.model.repo.ShopifyRepoImpl
 import com.example.e_commerce_app.network.RemoteDataSourceImpl
 import com.example.e_commerce_app.util.ApiState
@@ -73,23 +74,34 @@ class AddressDetailsFragment : Fragment() {
                 if (addresses != null && addresses.isNotEmpty()) {
                     val address = addresses[0]
                     val city = address.locality ?: "Unknown City"
-                    val addressResponse = AddressReqModel(
+                    /*val addressResponse = AddressReqModel(
                         address1 = binding.detailedAddress.text.toString(),
                         address2 = "$city, ${address.countryCode}, ${address.adminArea}, ${address.subAdminArea}",
                         city = city,
-                        country = address.countryName,
+                        country = "Canada",
                         country_name = address.countryName,
                         country_code = address.countryCode,
                         name = "mohamed khedr",
                         phone = binding.etPhone.text.toString(),
-                        province = city,
+                        province = "Quebec",
                         zip = binding.etZip.text.toString(),
                         company = "ITI" ,
                         first_name = "moahmed",
                         last_name = "khedr",
                         province_code = "QC"
+                    )*/
+                    val testAdd1 = testAdd(
+                        address1 = binding.detailedAddress.text.toString(),
+                        address2 = "$city, ${address.countryCode}, ${address.adminArea}, ${address.subAdminArea}",
+                        city = city,
+                        country = "Canada",
+                        phone = binding.etPhone.text.toString(),
+                        province = "Quebec",
+                        first_name = "moahmed",
+                        last_name = "khedr"
                     )
-                    viewModel.insertAddress(customerId,AddressRequest(addressResponse))
+                    Log.i("TAG", "onViewCreated: $testAdd1")
+                    viewModel.insertAddress(customerId,AddressRequest(testAdd1))
                     observeInsertAddress()
                 }
 

@@ -3,9 +3,18 @@ package com.example.e_commerce_app.model.address
 import com.google.gson.annotations.SerializedName
 
 data class AddressRequest(
-    val address: AddressReqModel
+    val address: testAdd
 )
-
+data class testAdd(
+    val address1: String,
+    val address2: String?,
+    val city: String,
+    val first_name: String,
+    val last_name: String,
+    val phone: String?,
+    val province: String,
+    val country: String
+)
 data class AddressReqModel(
     val address1: String,
     val address2: String?,

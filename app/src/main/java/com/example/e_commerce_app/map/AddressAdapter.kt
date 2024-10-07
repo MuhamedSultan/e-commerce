@@ -29,7 +29,7 @@ class AddressAdapter() :
 
     override fun onBindViewHolder(holder: AddressHolder, position: Int) {
         val address = getItem(position)
-        binding.tvAddressCountryName.text = address.country
+        binding.tvAddressCountryName.text = address.address2
         binding.tvAddressDetails.text = address.address1
         // Format the phone number using PhoneNumberUtils.formatNumber
         binding.tvAddressPhone.text = address.phone
