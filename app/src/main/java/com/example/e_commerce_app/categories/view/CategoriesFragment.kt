@@ -1,9 +1,13 @@
 package com.example.e_commerce_app.categories.view
 
+import android.animation.Animator
+import android.animation.AnimatorListenerAdapter
+import android.animation.ObjectAnimator
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.SeekBar
 import android.widget.Toast
 import androidx.fragment.app.Fragment
@@ -36,15 +40,17 @@ class CategoriesFragment : Fragment(), OnCategoryClick {
     private lateinit var binding: FragmentCategoriesBinding
     private lateinit var categoriesViewModel: CategoriesViewModel
     private var allProducts: List<Product> = emptyList()
-    private var filteredProducts: List<Product> = emptyList()
+    private var collectionId: Long = 0
     private var currentSeekBarProgress: Int = 0
+    private lateinit var menuItems: Array<ImageView>
+    private var isOpen = false
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        val dao=ShopifyDB.getInstance(requireContext()).shopifyDao()
-        val localDataSource=LocalDataSourceImpl(dao)
+        val dao = ShopifyDB.getInstance(requireContext()).shopifyDao()
+        val localDataSource = LocalDataSourceImpl(dao)
         val remoteDataSource = RemoteDataSourceImpl()
-        val repo = ShopifyRepoImpl(remoteDataSource,localDataSource)
+        val repo = ShopifyRepoImpl(remoteDataSource, localDataSource)
         val factory = CategoriesViewModelFactory(repo)
         categoriesViewModel = ViewModelProvider(this, factory)[CategoriesViewModel::class.java]
     }
@@ -60,25 +66,12 @@ class CategoriesFragment : Fragment(), OnCategoryClick {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        binding.filterPrice.setOnClickListener {
-            binding.seekBar.visibility = View.VISIBLE
-            binding.priceTv.visibility = View.VISIBLE
-            binding.priceTextTv.visibility = View.VISIBLE
-        }
-        binding.priceTv.text = "0"
-        binding.seekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
-            override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
-                binding.priceTv.text = progress.toString()
-                currentSeekBarProgress = progress
-                filterProductsByPrice(currentSeekBarProgress)
-            }
+        observeResults()
+        priceFiltering()
+        productTypeFiltering()
+    }
 
-            override fun onStartTrackingTouch(seekBar: SeekBar?) {
-            }
-
-            override fun onStopTrackingTouch(seekBar: SeekBar?) {
-            }
-        })
+    private fun observeResults() {
         categoriesViewModel.getCategorise()
         categoriesViewModel.getProductsOfSelectedCategory(482200682811)
         lifecycleScope.launch {
@@ -104,7 +97,6 @@ class CategoriesFragment : Fragment(), OnCategoryClick {
                 }
             }
         }
-
         lifecycleScope.launch {
             viewLifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 categoriesViewModel.productsResult.collect { result ->
@@ -129,11 +121,73 @@ class CategoriesFragment : Fragment(), OnCategoryClick {
                 }
             }
         }
+    }
+
+    private fun productTypeFiltering() {
+        menuItems = arrayOf(
+            binding.shirtsType,
+            binding.shoesType,
+            binding.accessoriesType
+        )
+        binding.filteringOptions.setOnClickListener {
+            if (isOpen) {
+                closeMenuItems()
+            } else {
+                showMenuItems()
+            }
+            isOpen = !isOpen
+        }
+        binding.shirtsType.setOnClickListener {
+            val tShirts = allProducts.filter { it.product_type == "T-SHIRTS" }
+            if (tShirts.isNotEmpty()) {
+                setupCategoriesProductsRecyclerview(tShirts)
+            } else {
+                showError("No T-shirts found")
+            }
+        }
+        binding.shoesType.setOnClickListener {
+            val shoes = allProducts.filter { it.product_type == "SHOES" }
+            if (shoes.isNotEmpty()) {
+                setupCategoriesProductsRecyclerview(shoes)
+            } else {
+                showError("No Shoes found")
+            }
+        }
+        binding.accessoriesType.setOnClickListener {
+            val accessories = allProducts.filter { it.product_type == "ACCESSORIES" }
+            if (accessories.isNotEmpty()) {
+                setupCategoriesProductsRecyclerview(accessories)
+            } else {
+                showError("No Accessories found")
+            }
+        }
+    }
+
+    private fun priceFiltering() {
+        binding.filterPrice.setOnClickListener {
+            binding.seekBar.visibility = View.VISIBLE
+            binding.priceTv.visibility = View.VISIBLE
+            binding.priceTextTv.visibility = View.VISIBLE
+        }
+        binding.priceTv.text = "0"
+        binding.seekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+            override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
+                binding.priceTv.text = progress.toString()
+                currentSeekBarProgress = progress
+                filterProductsByPrice(currentSeekBarProgress)
+            }
+
+            override fun onStartTrackingTouch(seekBar: SeekBar?) {
+            }
+
+            override fun onStopTrackingTouch(seekBar: SeekBar?) {
+            }
+        })
 
     }
 
     private fun filterProductsByPrice(maxPrice: Int) {
-        filteredProducts = allProducts.filter {
+        val filteredProducts = allProducts.filter {
             it.variants[0].price.toDouble() <= maxPrice
         }
         setupCategoriesProductsRecyclerview(filteredProducts)
@@ -197,9 +251,36 @@ class CategoriesFragment : Fragment(), OnCategoryClick {
     }
 
     override fun onCategoryClick(categoryId: Long) {
+        collectionId = categoryId
         categoriesViewModel.getProductsOfSelectedCategory(categoryId)
         binding.seekBar.progress = 0
         binding.priceTv.text = "0"
 
+    }
+
+
+    private fun showMenuItems() {
+        for (i in menuItems.indices) {
+            val item = menuItems[i]
+            item.visibility = View.VISIBLE
+            val animator = ObjectAnimator.ofFloat(item, "translationY", -(100 * (i + 1)).toFloat())
+            animator.setDuration(400)
+            animator.start()
+        }
+    }
+
+
+    private fun closeMenuItems() {
+        for (i in menuItems.indices) {
+            val item = menuItems[i]
+            val animator = ObjectAnimator.ofFloat(item, "translationY", (100 * (i + 2)).toFloat())
+            animator.setDuration(400)
+            animator.addListener(object : AnimatorListenerAdapter() {
+                override fun onAnimationEnd(animation: Animator) {
+                    item.visibility = View.GONE
+                }
+            })
+            animator.start()
+        }
     }
 }
