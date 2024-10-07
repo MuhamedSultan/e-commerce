@@ -1,5 +1,7 @@
 package com.example.e_commerce_app.home.view
 
+import android.content.Context
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -43,8 +45,12 @@ class HomeFragment : Fragment() {
     private lateinit var viewPager: ViewPager2
     private lateinit var dotsIndicator: DotsIndicator
     private lateinit var discountPagerAdapter: DiscountPagerAdapter
+    private lateinit var sharedPreferences: SharedPreferences
 
     override fun onCreate(savedInstanceState: Bundle?) {
+
+        sharedPreferences = requireContext().getSharedPreferences("UserPrefs", 0)
+
         super.onCreate(savedInstanceState)
         val dao = ShopifyDB.getInstance(requireContext()).shopifyDao()
         val localDataSource = LocalDataSourceImpl(dao)
@@ -246,26 +252,40 @@ class HomeFragment : Fragment() {
     }
 
     private fun setupRandomProductsRecyclerview(product: List<Product>) {
-        val randomProductsAdapter =
-            RandomProductsAdapter(product, requireContext(), { selectedProduct ->
+        val randomProductsAdapter = RandomProductsAdapter(
+            product,
+            requireContext(),
+            { selectedProduct ->
                 val action = HomeFragmentDirections.actionHomeFragmentToProductDetailsFragment(
                     selectedProduct.id
                 )
                 findNavController().navigate(action)
-            }, onFavouriteClick = { product, isFavorite ->
-                if (isFavorite) {
-                    homeViewModel.addProductToFavourite(product)
-                    Toast.makeText(requireContext(), "Added to favorites", Toast.LENGTH_SHORT).show()
+            },
+            onFavouriteClick = { product, isFavorite ->
+                val shopifyCustomerId = sharedPreferences.getString("shopifyCustomerId", null)
+
+                if (shopifyCustomerId != null) {
+                    lifecycleScope.launch {
+                        val isCurrentlyFavorite = homeViewModel.isProductFavorite(product.id, shopifyCustomerId)
+
+                        if (isFavorite) {
+                            homeViewModel.addToFavorite(product, shopifyCustomerId)
+                            Toast.makeText(requireContext(), "Added to favorites", Toast.LENGTH_SHORT).show()
+                        } else {
+                            homeViewModel.removeFavorite(product, shopifyCustomerId)
+                            Toast.makeText(requireContext(), "Removed from favorites", Toast.LENGTH_SHORT).show()
+                        }
+                        LocalDataSourceImpl.setMealFavoriteStatus(
+                            requireContext(),
+                            product.id.toString(),
+                            isFavorite
+                        )
+                    }
                 } else {
-                    homeViewModel.deleteProductToFavourite(product)
-                    Toast.makeText(requireContext(), "Removed from favorites", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(requireContext(), "Please log in to add favorites", Toast.LENGTH_SHORT).show()
                 }
-                LocalDataSourceImpl.setMealFavoriteStatus(
-                    requireContext(),
-                    product.id.toString(),
-                    isFavorite
-                )
-            })
+            }
+        )
 
         val manager = LinearLayoutManager(requireContext())
         manager.orientation = LinearLayoutManager.HORIZONTAL
@@ -275,6 +295,7 @@ class HomeFragment : Fragment() {
             layoutManager = manager
         }
     }
+
 
     override fun onPause() {
         super.onPause()

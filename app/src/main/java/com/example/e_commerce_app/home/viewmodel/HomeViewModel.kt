@@ -71,13 +71,29 @@ class HomeViewModel(private val shopifyRepo: ShopifyRepo) : ViewModel() {
         }
     }
 
-     fun addProductToFavourite(product: Product)=viewModelScope.launch {
-        shopifyRepo.addToFavorite(product)
+
+
+
+    fun addToFavorite(product: Product, shopifyCustomerId: String) {
+        viewModelScope.launch {
+            val productWithShopifyId = product.copy(shopifyCustomerId = shopifyCustomerId)
+            shopifyRepo.addToFavorite(productWithShopifyId)
+        }
     }
 
-     fun deleteProductToFavourite(product: Product)=viewModelScope.launch {
-        shopifyRepo.removeFavorite(product)
+
+
+    fun removeFavorite(product: Product, shopifyCustomerId: String) {
+        viewModelScope.launch {
+            val productWithShopifyId = product.copy(shopifyCustomerId = shopifyCustomerId)
+            shopifyRepo.removeFavorite(productWithShopifyId)
+        }
     }
+    suspend fun isProductFavorite(productId: Long, shopifyCustomerId: String): Boolean {
+        val favorites = shopifyRepo.getAllFavorites(shopifyCustomerId)
+        return favorites.any { it.id == productId }
+    }
+
 
 
 }
