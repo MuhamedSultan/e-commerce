@@ -49,7 +49,7 @@
     </fragment>
     <fragment
         android:id="@+id/cartFragment"
-        android:name="com.example.e_commerce_app.cart.CartFragment"
+        android:name="com.example.e_commerce_app.cart.view.CartFragment"
         android:label="Cart"
         tools:layout="@layout/fragment_cart">
         <action

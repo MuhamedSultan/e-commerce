@@ -5,6 +5,8 @@ import com.example.e_commerce_app.model.address.AddressResponse
 import com.example.e_commerce_app.model.address.AddressesResponse
 import com.example.e_commerce_app.model.cart.CartResponse
 import com.example.e_commerce_app.model.cart.DeleteProductResponse
+import com.example.e_commerce_app.model.cart.DraftOrderRequest
+import com.example.e_commerce_app.model.cart.DraftOrderResponse
 import com.example.e_commerce_app.model.custom_collection.CustomCollectionResponse
 import com.example.e_commerce_app.model.product.ProductResponse
 import com.example.e_commerce_app.model.product.SingleProductResponse
@@ -68,22 +70,34 @@ interface ShopifyService {
     ): Response<ProductResponse>
 
     /// cart apis
-    /*@POST("draft_orders.json")
+
+    @POST("draft_orders.json")
     suspend fun createFavoriteDraft(@Body draftOrderRequest: DraftOrderRequest): Response<DraftOrderResponse>
+
+
     @GET("draft_orders/{draftFavoriteId}.json")
     suspend fun getProductsIdForDraftFavorite(
         @Path("draftFavoriteId") draftFavoriteId: Long
     ): Response<DraftOrderResponse>
+
+    // Get a specific cart by its ID
+    @GET("carts/{cartId}.json")
+    suspend fun getCartById(
+        @Path("cartId") cartId: String
+    ): Response<CartResponse>
+
+
     @PUT("draft_orders/{draftFavoriteId}.json")
     suspend fun backUpDraftFavorite(@Body draftOrderRequest: DraftOrderRequest,
                                     @Path("draftFavoriteId") draftFavoriteId: Long
-    ): Response<DraftOrderResponse>*/
+    ): Response<DraftOrderResponse>
 
     // Adress Api Funs
     @GET("customers/{customerId}/addresses.json")
     suspend fun getAddressesOfCustomer(
         @Path("customerId") customerId: Long
     ): AddressesResponse
+
 
     @PUT("customers/{customerId}/addresses/{addressId}")
     suspend fun updateAddressOfCustomer(

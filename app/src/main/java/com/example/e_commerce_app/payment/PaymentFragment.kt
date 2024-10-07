@@ -7,7 +7,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.navigation.fragment.findNavController
 import com.example.e_commerce_app.R
-import com.example.e_commerce_app.cart.CartFragmentDirections
 import com.example.e_commerce_app.databinding.FragmentCartBinding
 import com.example.e_commerce_app.databinding.FragmentPaymentBinding
 

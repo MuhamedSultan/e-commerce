@@ -1,4 +1,3 @@
-
 package com.example.e_commerce_app.favorite.view
 
 
@@ -15,6 +14,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
+import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.e_commerce_app.R
@@ -87,6 +87,8 @@ class FavoriteFragment : Fragment() {
             favoriteViewModel.removeFavorite(product)
         }
         recyclerView.apply {
+
+            //layoutManager = GridLayoutManager(context, 2)
             layoutManager = LinearLayoutManager(context)
             adapter = favoriteAdapter
         }

@@ -25,7 +25,11 @@ data class LineItem(
     @SerializedName("price")
     val price: String,
     @SerializedName("total_price")
-    val totalPrice: String
+    val totalPrice: String,
+
+    @SerializedName("image")
+    val imageUrl: String
+
 )
 
 data class DeleteProductResponse(
