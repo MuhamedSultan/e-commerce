@@ -166,5 +166,16 @@
         app:layout_constraintBottom_toTopOf="@id/shoesType"
         app:layout_constraintEnd_toEndOf="@id/filteringOptions" />
 
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/allProducts"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="8dp"
+        android:visibility="gone"
+        android:backgroundTint="@color/yellow"
+        android:src="@drawable/all_product"
+        app:layout_constraintBottom_toTopOf="@id/accessoriesType"
+
+        app:layout_constraintEnd_toEndOf="@id/filteringOptions" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -44,6 +44,8 @@ class CategoriesFragment : Fragment(), OnCategoryClick {
     private var currentSeekBarProgress: Int = 0
     private lateinit var menuItems: Array<ImageView>
     private var isOpen = false
+    private var selectedProductType: String? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -127,7 +129,8 @@ class CategoriesFragment : Fragment(), OnCategoryClick {
         menuItems = arrayOf(
             binding.shirtsType,
             binding.shoesType,
-            binding.accessoriesType
+            binding.accessoriesType,
+            binding.allProducts
         )
         binding.filteringOptions.setOnClickListener {
             if (isOpen) {
@@ -138,53 +141,75 @@ class CategoriesFragment : Fragment(), OnCategoryClick {
             isOpen = !isOpen
         }
         binding.shirtsType.setOnClickListener {
-            val tShirts = allProducts.filter { it.product_type == "T-SHIRTS" }
-            if (tShirts.isNotEmpty()) {
-                setupCategoriesProductsRecyclerview(tShirts)
-            } else {
-                showError("No T-shirts found")
-            }
+            selectedProductType = "T-SHIRTS"
+            showProductsByType()
         }
         binding.shoesType.setOnClickListener {
-            val shoes = allProducts.filter { it.product_type == "SHOES" }
-            if (shoes.isNotEmpty()) {
-                setupCategoriesProductsRecyclerview(shoes)
-            } else {
-                showError("No Shoes found")
-            }
+            selectedProductType = "SHOES"
+            showProductsByType()
         }
         binding.accessoriesType.setOnClickListener {
-            val accessories = allProducts.filter { it.product_type == "ACCESSORIES" }
-            if (accessories.isNotEmpty()) {
-                setupCategoriesProductsRecyclerview(accessories)
-            } else {
-                showError("No Accessories found")
-            }
+            selectedProductType = "ACCESSORIES"
+            showProductsByType()
+        }
+        binding.allProducts.setOnClickListener {
+            selectedProductType=null
+            showAllProducts()
         }
     }
+    private fun showAllProducts() {
+        setupCategoriesProductsRecyclerview(allProducts)
+       resetPriceFilter()
+    }
 
+
+    private fun resetPriceFilter() {
+        binding.seekBar.progress = 0
+        binding.priceTv.text = "0"
+        val filteredProducts = if (selectedProductType != null) {
+            allProducts.filter { product -> product.product_type == selectedProductType }
+        } else {
+            allProducts
+        }
+        setupCategoriesProductsRecyclerview(filteredProducts)
+    }
+    private fun showProductsByType() {
+        val filteredProducts = allProducts.filter { product ->
+            product.product_type == selectedProductType
+        }
+        setupCategoriesProductsRecyclerview(filteredProducts)
+       resetPriceFilter()
+    }
     private fun priceFiltering() {
         binding.filterPrice.setOnClickListener {
             binding.seekBar.visibility = View.VISIBLE
             binding.priceTv.visibility = View.VISIBLE
             binding.priceTextTv.visibility = View.VISIBLE
         }
+        binding.seekBar.progress = 0
         binding.priceTv.text = "0"
+
         binding.seekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
             override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
                 binding.priceTv.text = progress.toString()
-                currentSeekBarProgress = progress
-                filterProductsByPrice(currentSeekBarProgress)
+                filterProductsByTypeAndPrice()
+                 currentSeekBarProgress = progress
             }
 
-            override fun onStartTrackingTouch(seekBar: SeekBar?) {
-            }
-
+            override fun onStartTrackingTouch(seekBar: SeekBar?) {}
             override fun onStopTrackingTouch(seekBar: SeekBar?) {
             }
         })
-
     }
+    private fun filterProductsByTypeAndPrice() {
+        val filteredProducts = allProducts.filter { product ->
+            val matchesType = selectedProductType?.let { product.product_type == it } ?: true
+            val matchesPrice = product.variants[0].price.toDouble() <= currentSeekBarProgress
+            matchesType && matchesPrice
+        }
+        setupCategoriesProductsRecyclerview(filteredProducts)
+    }
+
 
     private fun filterProductsByPrice(maxPrice: Int) {
         val filteredProducts = allProducts.filter {
