@@ -75,10 +75,11 @@ class SignUpActivity : AppCompatActivity() {
 
                     is ApiState.Success -> {
                         binding.progressBar3.visibility = View.GONE
+                        signUpViewModel.sendVerificationEmail() // Send verification email
 
                         Toast.makeText(
                             this@SignUpActivity,
-                            "SignUp Success! Back to Login",
+                            "SignUp Success! Please verify your email.",
                             Toast.LENGTH_SHORT
                         ).show()
                         val intent = Intent(this@SignUpActivity, LoginActivity::class.java)
