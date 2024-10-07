@@ -1,5 +1,6 @@
 package com.example.e_commerce_app.network
 
+import com.example.e_commerce_app.model.address.AddressResponse
 import com.example.e_commerce_app.model.address.AddressesResponse
 import com.example.e_commerce_app.model.custom_collection.CustomCollectionResponse
 import com.example.e_commerce_app.model.product.Product
@@ -25,5 +26,6 @@ interface RemoteDataSource {
     suspend fun registerUser(userData: UserData): ApiState<Unit>
     suspend fun saveShopifyCustomerIdToFirestore(userId: String, shopifyCustomerId: String): ApiState<Unit>
     suspend fun getAllAddresses(customerId: String) : ApiState<AddressesResponse>
+    suspend fun insertAddress(addressResponse: AddressResponse): ApiState<AddressResponse>
 
 }

@@ -102,6 +102,6 @@ interface ShopifyService {
     suspend fun addAddressToCustomer(
         @Path("customerId") customerId: Long,
         @Body address: AddressRequest
-    ): Response<AddressResponse>
+    ): AddressResponse
 
 }
