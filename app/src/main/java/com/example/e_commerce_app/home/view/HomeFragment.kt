@@ -205,14 +205,14 @@ class HomeFragment : Fragment() {
 
 
     private fun setupSuggestionsRecyclerview(filteredList: List<Product>) {
-        val suggestions = filteredList.map { it.title }
-
-        if (suggestions.isNotEmpty()) {
+        if (filteredList.isNotEmpty()) {
             binding.suggestionsRv.visibility = View.VISIBLE
-            val suggestionsAdapter = SuggestionsAdapter(suggestions) { selectedSuggestion ->
-                binding.edSearch.setText(selectedSuggestion)
-                binding.suggestionsRv.visibility = View.GONE
+
+            val suggestionsAdapter = SuggestionsAdapter(filteredList) { selectedProduct ->
+                val action = HomeFragmentDirections.actionHomeFragmentToProductDetailsFragment(selectedProduct.id)
+                findNavController().navigate(action)
             }
+
             binding.suggestionsRv.adapter = suggestionsAdapter
             binding.suggestionsRv.layoutManager = LinearLayoutManager(requireContext())
         } else {
