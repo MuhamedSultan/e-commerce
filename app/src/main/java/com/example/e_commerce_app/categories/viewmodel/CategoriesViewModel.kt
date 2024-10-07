@@ -11,6 +11,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class CategoriesViewModel(private val shopifyRepo: ShopifyRepo) : ViewModel() {
 
@@ -21,6 +22,14 @@ class CategoriesViewModel(private val shopifyRepo: ShopifyRepo) : ViewModel() {
     private val _productsResult: MutableStateFlow<ApiState<ProductResponse>> =
         MutableStateFlow(ApiState.Loading())
     val productsResult: StateFlow<ApiState<ProductResponse>> = _productsResult
+
+
+    private val _filteredProducts: MutableStateFlow<List<Product>> = MutableStateFlow(emptyList())
+    val filteredProducts: StateFlow<List<Product>> = _filteredProducts
+    var originalProducts: List<Product> = emptyList()
+
+
+
 
     fun getCategorise() = viewModelScope.launch(Dispatchers.IO) {
         val result = shopifyRepo.getCategories()
@@ -46,4 +55,21 @@ class CategoriesViewModel(private val shopifyRepo: ShopifyRepo) : ViewModel() {
         }
     }
 
+
+
+
+    fun searchProducts(query: String) {
+        viewModelScope.launch(Dispatchers.Default) {
+            val filteredList = if (query.isBlank()) {
+                originalProducts // Return all products if the query is empty
+            } else {
+                originalProducts.filter { product ->
+                    product.title.contains(query, ignoreCase = true) // Modify this condition based on your search requirements
+                }
+            }
+            withContext(Dispatchers.Main) {
+                _filteredProducts.value = filteredList // Update the UI
+            }
+        }
+    }
 }
