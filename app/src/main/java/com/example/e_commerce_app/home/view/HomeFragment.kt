@@ -3,6 +3,7 @@ package com.example.e_commerce_app.home.view
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -20,6 +21,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.viewpager2.widget.ViewPager2
 import com.example.e_commerce_app.databinding.FragmentHomeBinding
 import com.example.e_commerce_app.db.LocalDataSourceImpl
+import com.example.e_commerce_app.db.SharedPrefsManager
 import com.example.e_commerce_app.db.ShopifyDB
 import com.example.e_commerce_app.home.view.adapter.BrandsAdapter
 import com.example.e_commerce_app.home.view.adapter.RandomProductsAdapter
@@ -52,20 +54,48 @@ class HomeFragment : Fragment() {
         val repo = ShopifyRepoImpl(remoteDataSource, localDataSource)
         val factory = HomeViewModelFactory(repo)
         homeViewModel = ViewModelProvider(this, factory)[HomeViewModel::class.java]
+        homeViewModel.getDraftOrderSaveInShP(requireContext())
     }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
+
         binding = FragmentHomeBinding.inflate(layoutInflater)
         return binding.root
+    }
+
+    private fun observeDraftOrderId() {
+        lifecycleScope.launch {
+            viewLifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                homeViewModel.creatingDraftOrder.collect { result ->
+                    when (result) {
+                        is ApiState.Loading -> {
+                        }
+
+                        is ApiState.Success -> {
+                            result.data?.let { collections ->
+                                SharedPrefsManager.getInstance().setDraftedOrderId(collections.draft_order.id)
+                                Log.i("TAG", "getDraftOrderSaveInShP: ${collections.draft_order.id}")
+                            }
+                        }
+
+                        is ApiState.Error -> {
+
+                            Log.e("TAG", "observeDraftOrderId: ${result.message}", )
+                            showError(result.message.toString())
+                        }
+                    }
+                }
+            }
+        }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-
+        observeDraftOrderId()
         searchSetUp()
 
 
