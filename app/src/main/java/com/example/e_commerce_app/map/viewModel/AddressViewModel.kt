@@ -30,7 +30,7 @@ class AddressViewModel(val repo: ShopifyRepo) : ViewModel() {
         _addressesResult.value=result
     }
 
-    fun insertAddress(addressResponse: AddressResponse) {
+    fun insertAddress(addressResponse: AddressResponse) = viewModelScope.launch(Dispatchers.IO) {
         val result=repo.insertAddress(addressResponse)
         _insertAddressesResult.value=result
     }

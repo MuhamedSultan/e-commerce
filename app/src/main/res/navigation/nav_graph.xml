@@ -153,6 +153,9 @@
         <argument
             android:name="longitude"
             app:argType="float" />
+        <action
+            android:id="@+id/action_addressDetailsFragment_to_addressFragment2"
+            app:destination="@id/addressFragment2" />
     </fragment>
 
 

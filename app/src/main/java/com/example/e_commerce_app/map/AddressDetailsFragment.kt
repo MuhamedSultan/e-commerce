@@ -9,7 +9,11 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
+import androidx.navigation.fragment.findNavController
 import com.example.e_commerce_app.databinding.FragmentAddressDetailsBinding
 import com.example.e_commerce_app.db.LocalDataSourceImpl
 import com.example.e_commerce_app.db.ShopifyDB
@@ -18,6 +22,9 @@ import com.example.e_commerce_app.map.viewModel.AddressViewModelFactory
 import com.example.e_commerce_app.model.address.AddressResponse
 import com.example.e_commerce_app.model.repo.ShopifyRepoImpl
 import com.example.e_commerce_app.network.RemoteDataSourceImpl
+import com.example.e_commerce_app.util.ApiState
+import com.google.android.material.snackbar.Snackbar
+import kotlinx.coroutines.launch
 import java.util.Locale
 
 class AddressDetailsFragment : Fragment() {
@@ -78,11 +85,60 @@ class AddressDetailsFragment : Fragment() {
                         zip = binding.etZip.text.toString().toLong()
                     )
                     viewModel.insertAddress(addressResponse)
+                    observeInsertAddress()
                 }
 
-                Toast.makeText(requireContext(), "Location details submitted!", Toast.LENGTH_SHORT).show()
             }
         }
+    }
+    private fun observeInsertAddress() {
+        lifecycleScope.launch {
+            viewLifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.insertAddressesResult.collect { result ->
+                    when (result) {
+                        is ApiState.Loading -> {
+                            showLoadingIndicator()
+                        }
+
+                        is ApiState.Success -> {
+                            hideLoadingIndicator()
+                            viewModel.getAllAddresses(customerId)
+                            Toast.makeText(requireContext(), "Location details submitted!", Toast.LENGTH_SHORT).show()
+                            val action = AddressDetailsFragmentDirections.actionAddressDetailsFragmentToAddressFragment2()
+                            findNavController().navigate(action)
+                        }
+
+                        is ApiState.Error -> {
+                            hideLoadingIndicator()
+                            showError(result.message.toString())
+                        }
+                    }
+                }
+            }
+        }
+    }
+    private fun showLoadingIndicator() {
+        binding.loadingIndicator.visibility = View.VISIBLE
+        binding.tvTitle.visibility = View.GONE
+        binding.mapAddress.visibility = View.GONE
+        binding.cityLayout.visibility = View.GONE
+        binding.zipLayout.visibility = View.GONE
+        binding.phoneLayout.visibility = View.GONE
+        binding.btnSubmit.visibility = View.GONE
+    }
+
+    private fun hideLoadingIndicator() {
+        binding.loadingIndicator.visibility = View.GONE
+        binding.tvTitle.visibility = View.VISIBLE
+        binding.mapAddress.visibility = View.VISIBLE
+        binding.cityLayout.visibility = View.VISIBLE
+        binding.zipLayout.visibility = View.VISIBLE
+        binding.phoneLayout.visibility = View.VISIBLE
+        binding.btnSubmit.visibility = View.VISIBLE
+    }
+
+    private fun showError(message: String) {
+        Snackbar.make(requireView(), message, Snackbar.LENGTH_SHORT).show()
     }
 
     // Function to validate input fields
