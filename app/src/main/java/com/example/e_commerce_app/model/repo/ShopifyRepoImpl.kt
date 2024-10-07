@@ -1,21 +1,17 @@
 package com.example.e_commerce_app.model.repo
 
 import com.example.e_commerce_app.db.LocalDataSource
+import com.example.e_commerce_app.model.address.AddressRequest
 import com.example.e_commerce_app.model.address.AddressResponse
 import com.example.e_commerce_app.model.address.AddressesResponse
 import com.example.e_commerce_app.model.custom_collection.CustomCollectionResponse
 import com.example.e_commerce_app.model.product.Product
 import com.example.e_commerce_app.model.product.ProductResponse
-import com.example.e_commerce_app.model.cart.CartResponse
 import com.example.e_commerce_app.model.smart_collection.SmartCollectionResponse
 import com.example.e_commerce_app.model.user.CustomerRequest
 import com.example.e_commerce_app.model.user.UserData
 import com.example.e_commerce_app.network.RemoteDataSource
 import com.example.e_commerce_app.util.ApiState
-import com.example.e_commerce_app.util.Constants
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.flow
 
 class ShopifyRepoImpl(
     private val remoteDataSource: RemoteDataSource,
@@ -102,8 +98,8 @@ class ShopifyRepoImpl(
         return remoteDataSource.getAllAddresses(customerId)
     }
 
-    override suspend fun insertAddress(addressResponse: AddressResponse): ApiState<AddressResponse> {
-        return remoteDataSource.insertAddress(addressResponse)
+    override suspend fun insertAddress(customerId: Long, addressResponse: AddressRequest): ApiState<AddressResponse> {
+        return remoteDataSource.insertAddress(customerId , addressResponse)
     }
 
 

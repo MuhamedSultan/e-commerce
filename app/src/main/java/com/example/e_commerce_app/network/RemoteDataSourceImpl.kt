@@ -102,10 +102,11 @@ class RemoteDataSourceImpl : RemoteDataSource {
         }
     }
 
-    override suspend fun insertAddress(addressResponse: AddressResponse): ApiState<AddressResponse> {
+    override suspend fun insertAddress(customerId: Long, addressRequest: AddressRequest): ApiState<AddressResponse> {
         return try {
-            val response = Network.shopifyService.addAddressToCustomer(addressResponse.customerId,
-                AddressRequest(addressResponse))
+            val response = Network.shopifyService.addAddressToCustomer(customerId,
+                addressRequest
+            )
             ApiState.Success(response)
         } catch (e: Exception) {
             ApiState.Error(e.message.toString())

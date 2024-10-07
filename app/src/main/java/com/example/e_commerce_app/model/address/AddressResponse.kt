@@ -1,8 +1,10 @@
 package com.example.e_commerce_app.model.address
 
 import com.google.gson.annotations.SerializedName
-
 data class AddressResponse(
+    val customer_address:AddressResponseModel
+)
+data class AddressResponseModel(
     @SerializedName("address1")
     val address1: String?,
     @SerializedName("address2")
@@ -36,5 +38,5 @@ data class AddressResponse(
     @SerializedName("province_code")
     val provinceCode: String? = null,
     @SerializedName("zip")
-    val zip: Long? = null
+    val zip: String? = null
 )

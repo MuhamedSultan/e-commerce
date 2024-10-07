@@ -12,11 +12,12 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.e_commerce_app.databinding.ItemAddressBinding
 import com.example.e_commerce_app.model.address.Address
 import com.example.e_commerce_app.model.address.AddressResponse
+import com.example.e_commerce_app.model.address.AddressResponseModel
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.*
 class AddressAdapter() :
-    ListAdapter<AddressResponse, AddressAdapter.AddressHolder>(AddressDiffUtilItem()) {
+    ListAdapter<AddressResponseModel, AddressAdapter.AddressHolder>(AddressDiffUtilItem()) {
     lateinit var binding : ItemAddressBinding
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): AddressHolder {
         //val view = LayoutInflater.from(parent.context).inflate(R.layout.product_item, parent, false)
@@ -31,19 +32,19 @@ class AddressAdapter() :
         binding.tvAddressCountryName.text = address.country
         binding.tvAddressDetails.text = address.address1
         // Format the phone number using PhoneNumberUtils.formatNumber
-        binding.tvAddressPhone.text = PhoneNumberUtils.formatNumber(address.phone, Locale.getDefault().country)
+        binding.tvAddressPhone.text = address.phone
 
     }
 
     class AddressHolder(var binding: ItemAddressBinding) : RecyclerView.ViewHolder(binding.root)
 
 
-    class AddressDiffUtilItem : DiffUtil.ItemCallback<AddressResponse>() {
-        override fun areItemsTheSame(oldItem: AddressResponse, newItem: AddressResponse): Boolean {
+    class AddressDiffUtilItem : DiffUtil.ItemCallback<AddressResponseModel>() {
+        override fun areItemsTheSame(oldItem: AddressResponseModel, newItem: AddressResponseModel): Boolean {
             return oldItem.id == newItem.id
         }
 
-        override fun areContentsTheSame(oldItem: AddressResponse, newItem: AddressResponse): Boolean {
+        override fun areContentsTheSame(oldItem: AddressResponseModel, newItem: AddressResponseModel): Boolean {
             return oldItem == newItem
         }
 
