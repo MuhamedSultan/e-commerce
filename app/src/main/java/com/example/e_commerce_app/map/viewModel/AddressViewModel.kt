@@ -2,9 +2,9 @@ package com.example.e_commerce_app.map.viewModel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.e_commerce_app.model.address.AddressRequest
 import com.example.e_commerce_app.model.address.AddressResponse
 import com.example.e_commerce_app.model.address.AddressesResponse
-import com.example.e_commerce_app.model.product.ProductResponse
 import com.example.e_commerce_app.model.repo.ShopifyRepo
 import com.example.e_commerce_app.util.ApiState
 import kotlinx.coroutines.Dispatchers
@@ -30,8 +30,8 @@ class AddressViewModel(val repo: ShopifyRepo) : ViewModel() {
         _addressesResult.value=result
     }
 
-    fun insertAddress(addressResponse: AddressResponse) = viewModelScope.launch(Dispatchers.IO) {
-        val result=repo.insertAddress(addressResponse)
+    fun insertAddress(customerId: String, addressRequest: AddressRequest) = viewModelScope.launch(Dispatchers.IO) {
+        val result=repo.insertAddress(customerId.toLong(),addressRequest)
         _insertAddressesResult.value=result
     }
 }

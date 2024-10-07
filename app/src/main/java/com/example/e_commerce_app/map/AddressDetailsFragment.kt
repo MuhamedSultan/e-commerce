@@ -3,6 +3,7 @@ package com.example.e_commerce_app.map
 import android.content.Context
 import android.location.Geocoder
 import android.os.Bundle
+import android.util.Log
 import android.util.Patterns
 import android.view.LayoutInflater
 import android.view.View
@@ -19,7 +20,8 @@ import com.example.e_commerce_app.db.LocalDataSourceImpl
 import com.example.e_commerce_app.db.ShopifyDB
 import com.example.e_commerce_app.map.viewModel.AddressViewModel
 import com.example.e_commerce_app.map.viewModel.AddressViewModelFactory
-import com.example.e_commerce_app.model.address.AddressResponse
+import com.example.e_commerce_app.model.address.AddressReqModel
+import com.example.e_commerce_app.model.address.AddressRequest
 import com.example.e_commerce_app.model.repo.ShopifyRepoImpl
 import com.example.e_commerce_app.network.RemoteDataSourceImpl
 import com.example.e_commerce_app.util.ApiState
@@ -43,6 +45,7 @@ class AddressDetailsFragment : Fragment() {
         viewModel = ViewModelProvider(this, factory)[AddressViewModel::class.java]
         var sharedPreferences = requireContext().getSharedPreferences("UserPrefs", Context.MODE_PRIVATE)
         customerId = sharedPreferences.getString("shopifyCustomerId", null)!!
+        Log.i("TAG", "customerId: $customerId")
         //viewModel.getAllAddresses(customerId)
         binding = FragmentAddressDetailsBinding.inflate(layoutInflater)
         return binding.root
@@ -70,21 +73,23 @@ class AddressDetailsFragment : Fragment() {
                 if (addresses != null && addresses.isNotEmpty()) {
                     val address = addresses[0]
                     val city = address.locality ?: "Unknown City"
-                    val addressResponse = AddressResponse(
+                    val addressResponse = AddressReqModel(
                         address1 = binding.detailedAddress.text.toString(),
                         address2 = "$city, ${address.countryCode}, ${address.adminArea}, ${address.subAdminArea}",
                         city = city,
-                        country = null,
-                        countryName = address.countryName,
-                        countryCode = address.countryCode,
-                        customerId = customerId.toLong(),
-                        id = (longitude+latitude).toLong(),
-                        name = "",
+                        country = address.countryName,
+                        country_name = address.countryName,
+                        country_code = address.countryCode,
+                        name = "mohamed khedr",
                         phone = binding.etPhone.text.toString(),
                         province = city,
-                        zip = binding.etZip.text.toString().toLong()
+                        zip = binding.etZip.text.toString(),
+                        company = "ITI" ,
+                        first_name = "moahmed",
+                        last_name = "khedr",
+                        province_code = "QC"
                     )
-                    viewModel.insertAddress(addressResponse)
+                    viewModel.insertAddress(customerId,AddressRequest(addressResponse))
                     observeInsertAddress()
                 }
 
@@ -110,6 +115,7 @@ class AddressDetailsFragment : Fragment() {
 
                         is ApiState.Error -> {
                             hideLoadingIndicator()
+                            Log.e("TAG", "observeInsertAddress: ", Throwable(result.message))
                             showError(result.message.toString())
                         }
                     }
