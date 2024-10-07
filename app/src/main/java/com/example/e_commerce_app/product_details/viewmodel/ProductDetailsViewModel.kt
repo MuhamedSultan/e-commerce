@@ -58,7 +58,7 @@ class ProductDetailsViewModel(
     fun addToCart(draftOrderRequest: DraftOrderRequest) {
         viewModelScope.launch {
             _draftOrderState.value = ApiState.Loading()
-            val result = repository.createFavoriteDraft(draftOrderRequest)
+            val result = repository.backUpDraftFavorite(draftOrderRequest,123)
             _draftOrderState.value = result
 
             when (result) {

@@ -85,7 +85,6 @@ class AddressFragment : Fragment() {
 
                         is ApiState.Error -> {
                             hideLoadingIndicator()
-                            throw Throwable(result.message)
                             showError(result.message.toString())
                         }
                     }

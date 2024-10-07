@@ -123,7 +123,7 @@ class ProductDetailsFragment : Fragment() {
             if (variant != null) {
                 val lineItem = LineItems(
                     quantity = 1,
-                    price = variant.price.toDouble(),
+                    price = variant.price,
                     title = product.title,
                     product_id = product.id.toString(),
                     variant_id = variant.id

@@ -128,11 +128,12 @@ class RemoteDataSourceImpl : RemoteDataSource {
     override suspend fun createFavoriteDraft(draftOrderRequest: DraftOrderRequest): ApiState<DraftOrderResponse> {
         return try {
             val response = Network.shopifyService.createFavoriteDraft(draftOrderRequest)
-            if (response.isSuccessful) {
+            ApiState.Success(response)
+            /*if (response.isSuccessful) {
                 ApiState.Success(response.body() ?: throw Exception("Draft order creation failed"))
             } else {
                 ApiState.Error("Error: ${response.message()}")
-            }
+            }*/
         } catch (e: Exception) {
             ApiState.Error("Error creating draft order: ${e.message}")
         }
