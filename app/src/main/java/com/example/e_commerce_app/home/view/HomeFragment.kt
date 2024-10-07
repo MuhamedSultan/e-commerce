@@ -82,7 +82,9 @@ class HomeFragment : Fragment() {
                         }
 
                         is ApiState.Error -> {
-
+                            var shp =SharedPrefsManager.getInstance()
+                            shp.setDraftedOrderId(58400190005563)
+                            Log.i("TAG", "Temperarly DraftOrderId: ${shp.getDraftedOrderId()}")
                             Log.e("TAG", "observeDraftOrderId: ${result.message}", )
                             showError(result.message.toString())
                         }
