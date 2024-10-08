@@ -33,6 +33,7 @@ import com.example.e_commerce_app.model.product.Product
 import com.example.e_commerce_app.model.repo.ShopifyRepoImpl
 import com.example.e_commerce_app.network.RemoteDataSourceImpl
 import com.example.e_commerce_app.util.ApiState
+import com.example.e_commerce_app.util.GuestUtil
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.launch
 
@@ -157,13 +158,14 @@ class CategoriesFragment : Fragment(), OnCategoryClick {
             showProductsByType()
         }
         binding.allProducts.setOnClickListener {
-            selectedProductType=null
+            selectedProductType = null
             showAllProducts()
         }
     }
+
     private fun showAllProducts() {
         setupCategoriesProductsRecyclerview(allProducts)
-       resetPriceFilter()
+        resetPriceFilter()
     }
 
 
@@ -177,13 +179,15 @@ class CategoriesFragment : Fragment(), OnCategoryClick {
         }
         setupCategoriesProductsRecyclerview(filteredProducts)
     }
+
     private fun showProductsByType() {
         val filteredProducts = allProducts.filter { product ->
             product.product_type == selectedProductType
         }
         setupCategoriesProductsRecyclerview(filteredProducts)
-       resetPriceFilter()
+        resetPriceFilter()
     }
+
     private fun priceFiltering() {
         binding.filterPrice.setOnClickListener {
             binding.seekBar.visibility = View.VISIBLE
@@ -197,7 +201,7 @@ class CategoriesFragment : Fragment(), OnCategoryClick {
             override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
                 binding.priceTv.text = progress.toString()
                 filterProductsByTypeAndPrice()
-                 currentSeekBarProgress = progress
+                currentSeekBarProgress = progress
             }
 
             override fun onStartTrackingTouch(seekBar: SeekBar?) {}
@@ -205,6 +209,7 @@ class CategoriesFragment : Fragment(), OnCategoryClick {
             }
         })
     }
+
     private fun filterProductsByTypeAndPrice() {
         val filteredProducts = allProducts.filter { product ->
             val matchesType = selectedProductType?.let { product.product_type == it } ?: true
@@ -256,13 +261,14 @@ class CategoriesFragment : Fragment(), OnCategoryClick {
                     )
                 findNavController().navigate(action)
             }, onFavouriteClick = { product, isFavorite ->
+                GuestUtil.handleFavoriteClick(requireContext(), sharedPreferences, product)
                 val shopifyCustomerId = sharedPreferences.getString("shopifyCustomerId", null)
                 if (isFavorite) {
-                    categoriesViewModel.addProductToFavourite(product,shopifyCustomerId?:"")
+                    categoriesViewModel.addProductToFavourite(product, shopifyCustomerId ?: "")
                     Toast.makeText(requireContext(), "Added to favorites", Toast.LENGTH_SHORT)
                         .show()
                 } else {
-                    categoriesViewModel.deleteProductFromFavourite(product,shopifyCustomerId?:"")
+                    categoriesViewModel.deleteProductFromFavourite(product, shopifyCustomerId ?: "")
                     Toast.makeText(requireContext(), "Removed from favorites", Toast.LENGTH_SHORT)
                         .show()
                 }

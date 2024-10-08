@@ -27,6 +27,7 @@ import com.example.e_commerce_app.model.product.Product
 import com.example.e_commerce_app.model.repo.ShopifyRepoImpl
 import com.example.e_commerce_app.network.RemoteDataSourceImpl
 import com.example.e_commerce_app.util.ApiState
+import com.example.e_commerce_app.util.GuestUtil
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.launch
 
@@ -155,6 +156,7 @@ class BrandProductsFragment : Fragment() {
                     )
                 findNavController().navigate(action)
             }, onFavouriteClick = { product, isFavorite ->
+                GuestUtil.handleFavoriteClick(requireContext(),sharedPreferences,product)
                 val shopifyCustomerId = sharedPreferences.getString("shopifyCustomerId", null)
 
                 if (isFavorite) {

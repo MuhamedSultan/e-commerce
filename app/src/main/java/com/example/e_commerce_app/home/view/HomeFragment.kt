@@ -33,6 +33,7 @@ import com.example.e_commerce_app.model.smart_collection.SmartCollection
 import com.example.e_commerce_app.model.repo.ShopifyRepoImpl
 import com.example.e_commerce_app.network.RemoteDataSourceImpl
 import com.example.e_commerce_app.util.ApiState
+import com.example.e_commerce_app.util.GuestUtil
 import com.google.android.material.snackbar.Snackbar
 import com.tbuonomo.viewpagerdotsindicator.DotsIndicator
 import kotlinx.coroutines.launch
@@ -79,16 +80,20 @@ class HomeFragment : Fragment() {
 
                         is ApiState.Success -> {
                             result.data?.let { collections ->
-                                SharedPrefsManager.getInstance().setDraftedOrderId(collections.draft_order.id)
-                                Log.i("TAG", "getDraftOrderSaveInShP: ${collections.draft_order.id}")
+                                SharedPrefsManager.getInstance()
+                                    .setDraftedOrderId(collections.draft_order.id)
+                                Log.i(
+                                    "TAG",
+                                    "getDraftOrderSaveInShP: ${collections.draft_order.id}"
+                                )
                             }
                         }
 
                         is ApiState.Error -> {
-                            var shp =SharedPrefsManager.getInstance()
+                            var shp = SharedPrefsManager.getInstance()
                             shp.setDraftedOrderId(58400190005563)
                             Log.i("TAG", "Temperarly DraftOrderId: ${shp.getDraftedOrderId()}")
-                            Log.e("TAG", "observeDraftOrderId: ${result.message}", )
+                            Log.e("TAG", "observeDraftOrderId: ${result.message}")
                             showError(result.message.toString())
                         }
                     }
@@ -238,7 +243,9 @@ class HomeFragment : Fragment() {
             binding.suggestionsRv.visibility = View.VISIBLE
 
             val suggestionsAdapter = SuggestionsAdapter(filteredList) { selectedProduct ->
-                val action = HomeFragmentDirections.actionHomeFragmentToProductDetailsFragment(selectedProduct.id)
+                val action = HomeFragmentDirections.actionHomeFragmentToProductDetailsFragment(
+                    selectedProduct.id
+                )
                 findNavController().navigate(action)
             }
 
@@ -292,15 +299,24 @@ class HomeFragment : Fragment() {
             },
             onFavouriteClick = { product, isFavorite ->
                 val shopifyCustomerId = sharedPreferences.getString("shopifyCustomerId", null)
+                GuestUtil.handleFavoriteClick(requireContext(), sharedPreferences, product)
 
                 if (shopifyCustomerId != null) {
                     lifecycleScope.launch {
                         if (isFavorite) {
                             homeViewModel.addProductToFavourite(product, shopifyCustomerId)
-                            Toast.makeText(requireContext(), "Added to favorites", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(
+                                requireContext(),
+                                "Added to favorites",
+                                Toast.LENGTH_SHORT
+                            ).show()
                         } else {
                             homeViewModel.deleteProductFromFavourite(product, shopifyCustomerId)
-                            Toast.makeText(requireContext(), "Removed from favorites", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(
+                                requireContext(),
+                                "Removed from favorites",
+                                Toast.LENGTH_SHORT
+                            ).show()
                         }
                         LocalDataSourceImpl.setMealFavoriteStatus(
                             requireContext(),
@@ -309,7 +325,11 @@ class HomeFragment : Fragment() {
                         )
                     }
                 } else {
-                    Toast.makeText(requireContext(), "Please log in to add favorites", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(
+                        requireContext(),
+                        "Please log in to add favorites",
+                        Toast.LENGTH_SHORT
+                    ).show()
                 }
             }
         )
@@ -321,7 +341,20 @@ class HomeFragment : Fragment() {
             adapter = randomProductsAdapter
             layoutManager = manager
         }
+
     }
+
+
+//    private fun handleFavoriteClick(product: Product) {
+//        val isGuest = sharedPreferences.getBoolean("isGuest", false)
+//
+//        if (isGuest) {
+//            Toast.makeText(requireContext(), "Please log in to add items to favorites.", Toast.LENGTH_SHORT).show()
+//        } else {
+//            Log.d("HomeFragment", "Added ${product.title} to favorites")
+//        }
+//    }
+//
 
 
     override fun onPause() {
@@ -334,5 +367,6 @@ class HomeFragment : Fragment() {
         binding.suggestionsRv.visibility = View.GONE
         binding.edSearch.text?.clear()
     }
+
 
 }

@@ -27,6 +27,7 @@ class LoginActivity : AppCompatActivity() {
     private lateinit var binding: ActivityLoginBinding
     private lateinit var tv_signUp: TextView
     private lateinit var sharedPreferences: SharedPreferences
+    private lateinit var tv_guest: TextView
 
     private val remoteDataSource by lazy { RemoteDataSourceImpl() }
     private val shopifyRepo by lazy { ShopifyRepoImpl(remoteDataSource) }
@@ -43,6 +44,13 @@ class LoginActivity : AppCompatActivity() {
         sharedPreferences = getSharedPreferences("UserPrefs", Context.MODE_PRIVATE)
 
         checkUserLoggedIn()
+
+        // Handle Guest Login
+        tv_guest = binding.tvGuest
+        tv_guest.setOnClickListener {
+            handleGuestLogin()
+        }
+
 
         tv_signUp = binding.tvSignUp
         tv_signUp.setOnClickListener {
@@ -63,6 +71,17 @@ class LoginActivity : AppCompatActivity() {
         }
 
         observeViewModel()
+    }
+
+    private fun handleGuestLogin() {
+        // Set guest flag in SharedPreferences
+        with(sharedPreferences.edit()) {
+            putBoolean("isGuest", true)
+            apply()
+        }
+        val intent = Intent(this, MainActivity::class.java)
+        startActivity(intent)
+        finish()
     }
 
     private fun checkUserLoggedIn() {
@@ -147,9 +166,10 @@ class LoginActivity : AppCompatActivity() {
             putString("userId", userData.id.toString())
             putString("userEmail", userData.email)
             putString("shopifyCustomerId", userData.shopifyCustomerId)
+            putBoolean("isGuest", false)
+
             apply()
         }
-        // Log the saved value for verification
         val savedShopifyCustomerId = sharedPreferences.getString("shopifyCustomerId", null)
         Log.d(
             "LoginActivity",
