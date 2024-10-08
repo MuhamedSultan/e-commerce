@@ -57,11 +57,22 @@ class HomeViewModel(private val shopifyRepo: ShopifyRepo) : ViewModel() {
     }
 
     fun getRandomProducts() = viewModelScope.launch(Dispatchers.IO) {
-        val result = shopifyRepo.getRandomProducts().data
-        _randProductsResult.value = ApiState.Success(result!!)
+        try {
 
-        originalProducts = result.products
-        _filteredProducts.value = emptyList()
+
+            val result = shopifyRepo.getRandomProducts().data
+            result?.let {
+                _randProductsResult.value = ApiState.Success(result)
+                originalProducts = result.products
+                _filteredProducts.value = emptyList()
+            } ?: run {
+                _randProductsResult.value = ApiState.Error("No Products data found")
+
+            }
+        } catch (e: Exception) {
+            _randProductsResult.value = ApiState.Error(e.message ?: "Unknown error")
+        }
+
 
         try {
             val result = shopifyRepo.getRandomProducts().data
