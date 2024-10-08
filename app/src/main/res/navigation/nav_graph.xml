@@ -53,8 +53,8 @@
         android:label="Cart"
         tools:layout="@layout/fragment_cart">
         <action
-            android:id="@+id/action_cartFragment_to_paymentFragment"
-            app:destination="@id/paymentFragment" />
+            android:id="@+id/action_cartFragment_to_addressFragment"
+            app:destination="@id/addressFragment" />
     </fragment>
     <fragment
         android:id="@+id/settingFragment"
@@ -69,7 +69,7 @@
             app:destination="@id/mapFragment" />
         <action
             android:id="@+id/action_settingFragment_to_addressFragment2"
-            app:destination="@id/addressFragment2" />
+            app:destination="@id/addressFragment" />
         <action
             android:id="@+id/action_settingFragment_to_favoriteFragment"
             app:destination="@id/favoriteFragment" />
@@ -127,6 +127,9 @@
         <action
             android:id="@+id/action_mapFragment_to_addressDetailsFragment"
             app:destination="@id/addressDetailsFragment" />
+        <argument
+            android:name="page"
+            app:argType="string" />
     </fragment>
     <fragment
         android:id="@+id/favoriteFragment"
@@ -147,13 +150,16 @@
             app:destination="@id/paymentFragment" />
     </fragment>
     <fragment
-        android:id="@+id/addressFragment2"
+        android:id="@+id/addressFragment"
         android:name="com.example.e_commerce_app.map.AddressFragment"
         android:label="fragment_address"
         tools:layout="@layout/fragment_address" >
         <action
             android:id="@+id/action_addressFragment2_to_mapFragment"
             app:destination="@id/mapFragment" />
+        <argument
+            android:name="page"
+            app:argType="string" />
     </fragment>
     <fragment
         android:id="@+id/addressDetailsFragment"
@@ -168,7 +174,10 @@
             app:argType="float" />
         <action
             android:id="@+id/action_addressDetailsFragment_to_addressFragment2"
-            app:destination="@id/addressFragment2" />
+            app:destination="@id/addressFragment" />
+        <argument
+            android:name="page"
+            app:argType="string" />
     </fragment>
     <fragment
         android:id="@+id/ratingFragment"
