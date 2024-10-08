@@ -171,7 +171,7 @@ class BrandProductsFragment : Fragment() {
                     Toast.makeText(requireContext(), "Removed from favorites", Toast.LENGTH_SHORT)
                         .show()
                 }
-                LocalDataSourceImpl.setMealFavoriteStatus(
+                LocalDataSourceImpl.setProductFavoriteStatus(
                     requireContext(),
                     product.id.toString(),
                     isFavorite

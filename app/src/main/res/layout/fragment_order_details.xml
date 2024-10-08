@@ -6,16 +6,16 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/white"
-    tools:context=".orders_details.OrderDetailsFragment">
+    tools:context=".orders_details.view.OrderDetailsFragment">
 
-    <TextView
-        android:id="@+id/orderId"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="32dp"
-        android:text="orderId"
-        android:textSize="18sp"
+    <androidx.constraintlayout.widget.Group
+        android:id="@+id/groupLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="invisible"
+        app:constraint_referenced_ids="productImage,constraintLayout,cardView3,textView7,subTotal,textView9,totalTax,textView11,totalCost,orderId,orderIdTv"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -25,7 +25,7 @@
         android:layout_height="0dp"
         android:layout_marginStart="16dp"
         android:layout_marginEnd="16dp"
-        android:text="TextView"
+        android:textSize="20sp"
         app:layout_constraintBottom_toBottomOf="@+id/orderId"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/orderId"
@@ -34,13 +34,13 @@
     <ImageView
         android:id="@+id/productImage"
         android:layout_width="0dp"
-        android:layout_height="150dp"
+        android:layout_height="250dp"
         android:layout_marginTop="32dp"
+        android:src="@drawable/box"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/orderIdTv"
-        tools:src="@tools:sample/backgrounds/scenic" />
+        app:layout_constraintTop_toBottomOf="@+id/orderIdTv" />
 
     <androidx.cardview.widget.CardView
         android:id="@+id/cardView3"
@@ -56,6 +56,7 @@
         app:layout_constraintTop_toBottomOf="@+id/productImage">
 
         <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/constraintLayout"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:background="@color/light_gray">
@@ -111,12 +112,14 @@
         app:layout_constraintTop_toBottomOf="@+id/cardView3" />
 
     <TextView
-        android:id="@+id/textView8"
+        android:id="@+id/subTotal"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginStart="8dp"
         android:layout_marginEnd="16dp"
         android:gravity="center"
+        android:textSize="20sp"
+        android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="@+id/textView7"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/textView7"
@@ -135,14 +138,16 @@
         app:layout_constraintTop_toBottomOf="@+id/textView7" />
 
     <TextView
-        android:id="@+id/textView10"
+        android:id="@+id/totalTax"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginEnd="16dp"
         android:gravity="center"
+        android:textSize="20sp"
+        android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="@+id/textView9"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="@+id/textView8"
+        app:layout_constraintStart_toStartOf="@+id/subTotal"
         app:layout_constraintTop_toTopOf="@+id/textView9" />
 
     <TextView
@@ -158,13 +163,39 @@
         app:layout_constraintTop_toBottomOf="@+id/textView9" />
 
     <TextView
-        android:id="@+id/textView12"
+        android:id="@+id/totalCost"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginEnd="16dp"
         android:gravity="center"
+        android:textSize="20sp"
+        android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="@+id/textView11"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="@+id/textView10"
+        app:layout_constraintStart_toStartOf="@+id/totalTax"
         app:layout_constraintTop_toTopOf="@+id/textView11" />
+
+    <TextView
+        android:id="@+id/orderId"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="32dp"
+        android:text="@string/orderId"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+    <ProgressBar
+        android:id="@+id/loadingIndicator"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:indeterminateTint="@color/yellow"
+        android:visibility="visible"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.5" />
 </androidx.constraintlayout.widget.ConstraintLayout>

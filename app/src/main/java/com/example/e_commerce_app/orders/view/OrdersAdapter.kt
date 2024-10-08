@@ -6,7 +6,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.e_commerce_app.databinding.ItemOrdersBinding
 import com.example.e_commerce_app.model.orders.Order
 
-class OrdersAdapter(private val ordersList: List<Order>) :
+class OrdersAdapter(private val ordersList: List<Order>, private val onOrderClick: (Order) -> Unit) :
     RecyclerView.Adapter<OrdersAdapter.OrdersViewHolder>() {
 
     private var isExpanded = false
@@ -21,6 +21,9 @@ class OrdersAdapter(private val ordersList: List<Order>) :
         holder.orderPrice.text = order.total_price
         holder.createdAt.text = order.created_at
         holder.currency.text = order.currency
+        holder.orderItem.setOnClickListener {
+            onOrderClick(order)
+        }
     }
 
     override fun getItemCount(): Int {
@@ -31,8 +34,11 @@ class OrdersAdapter(private val ordersList: List<Order>) :
         isExpanded = !isExpanded
         notifyDataSetChanged()
     }
+
     class OrdersViewHolder(binding: ItemOrdersBinding) :
         RecyclerView.ViewHolder(binding.root) {
+
+        val orderItem = binding.orderItem
         val orderNumber = binding.orderNumberTv
         val orderPrice = binding.OrderPriceTv
         val createdAt = binding.createdAtTv

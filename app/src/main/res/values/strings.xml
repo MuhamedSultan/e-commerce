@@ -68,5 +68,6 @@
     <string name="currency">EGP</string>
     <string name="orders">#Orders</string>
     <string name="view_all">View all</string>
+    <string name="orderId">order Id</string>
 
 </resources>

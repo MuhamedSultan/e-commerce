@@ -318,7 +318,7 @@ class HomeFragment : Fragment() {
                                 Toast.LENGTH_SHORT
                             ).show()
                         }
-                        LocalDataSourceImpl.setMealFavoriteStatus(
+                        LocalDataSourceImpl.setProductFavoriteStatus(
                             requireContext(),
                             product.id.toString(),
                             isFavorite

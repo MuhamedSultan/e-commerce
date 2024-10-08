@@ -218,7 +218,7 @@ class ProductDetailsFragment : Fragment() {
                             favoriteButton.setBackgroundResource(R.drawable.favadd)
                             Toast.makeText(context, "Removed from favorites", Toast.LENGTH_SHORT)
                                 .show()
-                            LocalDataSourceImpl.setMealFavoriteStatus(
+                            LocalDataSourceImpl.setProductFavoriteStatus(
                                 requireContext(),
                                 product.id.toString(),
                                 false
@@ -227,7 +227,7 @@ class ProductDetailsFragment : Fragment() {
                             viewModel.addToFavorite(product, shopifyCustomerId)
                             favoriteButton.setBackgroundResource(R.drawable.favfill)
                             Toast.makeText(context, "Added to favorites", Toast.LENGTH_SHORT).show()
-                            LocalDataSourceImpl.setMealFavoriteStatus(
+                            LocalDataSourceImpl.setProductFavoriteStatus(
                                 requireContext(),
                                 product.id.toString(),
                                 true

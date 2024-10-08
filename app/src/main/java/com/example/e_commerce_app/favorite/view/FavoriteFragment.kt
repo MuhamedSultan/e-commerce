@@ -18,7 +18,6 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.e_commerce_app.R
-import com.example.e_commerce_app.db.LocalDataSource
 import com.example.e_commerce_app.db.LocalDataSourceImpl
 import com.example.e_commerce_app.db.ShopifyDB
 import com.example.e_commerce_app.favorite.adapter.FavoriteAdapter
@@ -94,7 +93,7 @@ class FavoriteFragment : Fragment() {
                 // Pass shopifyCustomerId to removeFavorite only if it is not null
                 shopifyCustomerId?.let { id ->
                     favoriteViewModel.removeFavorite(product, id)
-                    LocalDataSourceImpl.setMealFavoriteStatus(
+                    LocalDataSourceImpl.setProductFavoriteStatus(
                         requireContext(),
                         product.id.toString(),
                         false

@@ -10,13 +10,16 @@ import com.example.e_commerce_app.model.cart.DraftOrderResponse
 import com.example.e_commerce_app.model.cart.UpdateCartItemRequest
 import com.example.e_commerce_app.model.cart.UpdateCartItemResponse
 import com.example.e_commerce_app.model.custom_collection.CustomCollectionResponse
+import com.example.e_commerce_app.model.order_details.OrderDetailsResponse
 import com.example.e_commerce_app.model.orders.CustomerOrders
+import com.example.e_commerce_app.model.orders.Order
 import com.example.e_commerce_app.model.product.Product
 import com.example.e_commerce_app.model.product.ProductResponse
 import com.example.e_commerce_app.model.smart_collection.SmartCollectionResponse
 import com.example.e_commerce_app.model.user.CustomerRequest
 import com.example.e_commerce_app.model.user.UserData
 import com.example.e_commerce_app.util.ApiState
+import retrofit2.http.Path
 import retrofit2.http.Query
 
 interface RemoteDataSource {
@@ -44,7 +47,6 @@ interface RemoteDataSource {
         addressResponse: AddressRequest
     ): ApiState<AddressResponse>
 
-
     suspend fun createFavoriteDraft(draftOrderRequest: DraftOrderRequest): ApiState<DraftOrderResponse>
     suspend fun getProductsIdForDraftFavorite(draftFavoriteId: Long): ApiState<DraftOrderResponse>
     suspend fun backUpDraftFavorite(
@@ -54,6 +56,8 @@ interface RemoteDataSource {
 
     suspend fun getCartById(cartId: String): ApiState<CartResponse>
     suspend fun getCustomerOrders(customerId: Long): ApiState<CustomerOrders>
+
+    suspend fun getOrderDetailsByID(orderId: Long): ApiState<OrderDetailsResponse>
 
 
 }

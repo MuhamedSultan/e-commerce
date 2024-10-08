@@ -33,7 +33,7 @@ class RandomProductsAdapter(
         Glide.with(context).load(product.image.src).into(holder.productImage)
         holder.productName.text = product.title.split('|').getOrNull(1)?.trim()
         holder.productPrice.text = product.variants[0].price
-        var isFavorite = LocalDataSourceImpl.isMealFavorite(context, product.id.toString())
+        var isFavorite = LocalDataSourceImpl.isProductFavorite(context, product.id.toString())
         holder.favouriteIcon.setImageResource(
             if (isFavorite) R.drawable.favfill
             else R.drawable.favadd

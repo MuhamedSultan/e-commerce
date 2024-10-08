@@ -12,7 +12,9 @@ import com.example.e_commerce_app.model.product.ProductResponse
 import com.example.e_commerce_app.model.product.SingleProductResponse
 import com.example.e_commerce_app.model.cart.UpdateCartItemRequest
 import com.example.e_commerce_app.model.cart.UpdateCartItemResponse
+import com.example.e_commerce_app.model.order_details.OrderDetailsResponse
 import com.example.e_commerce_app.model.orders.CustomerOrders
+import com.example.e_commerce_app.model.orders.Order
 import com.example.e_commerce_app.model.smart_collection.SmartCollectionResponse
 import com.example.e_commerce_app.model.user.CustomerRequest
 import com.example.e_commerce_app.model.user.CustomerResponse
@@ -90,8 +92,9 @@ interface ShopifyService {
 
 
     @PUT("draft_orders/{draftFavoriteId}.json")
-    suspend fun backUpDraftFavorite(@Body draftOrderRequest: DraftOrderRequest,
-                                    @Path("draftFavoriteId") draftFavoriteId: Long
+    suspend fun backUpDraftFavorite(
+        @Body draftOrderRequest: DraftOrderRequest,
+        @Path("draftFavoriteId") draftFavoriteId: Long
     ): Response<DraftOrderResponse>
 
     // Adress Api Funs
@@ -122,4 +125,8 @@ interface ShopifyService {
 
     @GET("orders.json")
     suspend fun getCustomerOrders(@Query("customer_id") customerId: Long): CustomerOrders
+
+    @GET("orders.json")
+    suspend fun getOrderDetailsByID(@Query("id") orderId: Long): OrderDetailsResponse
+
 }

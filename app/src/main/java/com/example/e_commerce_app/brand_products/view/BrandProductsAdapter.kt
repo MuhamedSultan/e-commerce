@@ -8,7 +8,6 @@ import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import com.bumptech.glide.Glide
 import com.example.e_commerce_app.R
 import com.example.e_commerce_app.databinding.ItemBrandProductBinding
-import com.example.e_commerce_app.databinding.ItemProductBinding
 import com.example.e_commerce_app.db.LocalDataSourceImpl
 import com.example.e_commerce_app.model.product.Product
 
@@ -32,7 +31,7 @@ class BrandProductsAdapter(
         holder.productName.text = product.title.split('|').getOrNull(1)?.trim() ?: ""
         holder.productPrice.text = product.variants[0].price
 
-        var isFavorite = LocalDataSourceImpl.isMealFavorite(context, product.id.toString())
+        var isFavorite = LocalDataSourceImpl.isProductFavorite(context, product.id.toString())
         holder.favouriteIcon.setImageResource(
             if (isFavorite) R.drawable.ic_favourite_fill
             else R.drawable.ic_favourite_border

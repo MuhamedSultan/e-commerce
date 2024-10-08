@@ -19,7 +19,6 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.e_commerce_app.R
 import com.example.e_commerce_app.categories.view.adapter.CategoriesAdapter
 import com.example.e_commerce_app.categories.view.adapter.CategoriesProductsAdapter
 import com.example.e_commerce_app.categories.view.adapter.OnCategoryClick
@@ -272,7 +271,7 @@ class CategoriesFragment : Fragment(), OnCategoryClick {
                     Toast.makeText(requireContext(), "Removed from favorites", Toast.LENGTH_SHORT)
                         .show()
                 }
-                LocalDataSourceImpl.setMealFavoriteStatus(
+                LocalDataSourceImpl.setProductFavoriteStatus(
                     requireContext(),
                     product.id.toString(),
                     isFavorite

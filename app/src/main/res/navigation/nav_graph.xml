@@ -91,18 +91,22 @@
         android:name="com.example.e_commerce_app.orders.view.OrdersFragment"
         android:label="Orders"
         tools:layout="@layout/fragment_orders">
-        <action
-            android:id="@+id/action_ordersFragment_to_orderDetailsFragment"
-            app:destination="@id/orderDetailsFragment" />
         <argument
             android:name="customerName"
             app:argType="string" />
+        <action
+            android:id="@+id/action_ordersFragment_to_orderDetailsFragment"
+            app:destination="@id/orderDetailsFragment" />
     </fragment>
     <fragment
         android:id="@+id/orderDetailsFragment"
-        android:name="com.example.e_commerce_app.orders_details.OrderDetailsFragment"
+        android:name="com.example.e_commerce_app.orders_details.view.OrderDetailsFragment"
         android:label="Order Details"
-        tools:layout="@layout/fragment_order_details" />
+        tools:layout="@layout/fragment_order_details" >
+        <argument
+            android:name="orderId"
+            app:argType="long" />
+    </fragment>
     <fragment
         android:id="@+id/paymentFragment"
         android:name="com.example.e_commerce_app.payment.PaymentFragment"

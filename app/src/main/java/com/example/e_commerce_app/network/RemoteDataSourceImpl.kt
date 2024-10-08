@@ -8,7 +8,9 @@ import com.example.e_commerce_app.model.cart.CartResponse
 import com.example.e_commerce_app.model.cart.DraftOrderRequest
 import com.example.e_commerce_app.model.cart.DraftOrderResponse
 import com.example.e_commerce_app.model.custom_collection.CustomCollectionResponse
+import com.example.e_commerce_app.model.order_details.OrderDetailsResponse
 import com.example.e_commerce_app.model.orders.CustomerOrders
+import com.example.e_commerce_app.model.orders.Order
 import com.example.e_commerce_app.model.product.Product
 import com.example.e_commerce_app.model.product.ProductResponse
 import com.example.e_commerce_app.model.smart_collection.SmartCollectionResponse
@@ -204,6 +206,15 @@ class RemoteDataSourceImpl : RemoteDataSource {
             val response = Network.shopifyService.getCustomerOrders(customerId)
             ApiState.Success(response)
         } catch (e: Exception) {
+            ApiState.Error(e.message.toString())
+        }
+    }
+
+    override suspend fun getOrderDetailsByID(orderId: Long): ApiState<OrderDetailsResponse> {
+        return try {
+            val response =Network.shopifyService.getOrderDetailsByID(orderId)
+            ApiState.Success(response)
+        }catch (e:Exception){
             ApiState.Error(e.message.toString())
         }
     }

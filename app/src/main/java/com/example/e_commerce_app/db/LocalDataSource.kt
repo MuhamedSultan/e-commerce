@@ -8,10 +8,6 @@ interface LocalDataSource {
 
     suspend fun removeFavorite(product: Product)
 
-
     suspend fun getAllFavorites(shopifyCustomerId: String): List<Product>
-
-
-
 }
 

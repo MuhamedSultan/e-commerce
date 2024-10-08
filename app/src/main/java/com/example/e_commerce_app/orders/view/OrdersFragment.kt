@@ -9,9 +9,11 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.e_commerce_app.R
 import com.example.e_commerce_app.databinding.FragmentOrdersBinding
+import com.example.e_commerce_app.db.SharedPrefsManager
 import com.example.e_commerce_app.model.orders.Order
 import com.example.e_commerce_app.model.repo.ShopifyRepoImpl
 import com.example.e_commerce_app.network.RemoteDataSourceImpl
@@ -46,13 +48,14 @@ class OrdersFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         val customerName =OrdersFragmentArgs.fromBundle(requireArguments()).customerName
         binding.customerName.text=customerName
-
-        ordersViewModel.getCustomerOrders(8936192246075)
+       val customerId= SharedPrefsManager.getInstance().getShopifyCustomerId()
+        if (customerId != null) {
+            ordersViewModel.getCustomerOrders(8936192246075)
+        }
         lifecycleScope.launch {
             viewLifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 ordersViewModel.ordersResult.collect { result ->
                     when (result) {
-
                         is ApiState.Loading -> {
                             showLoadingIndicator()
                         }
@@ -94,7 +97,10 @@ class OrdersFragment : Fragment() {
 
 
     private fun setupOrdersRecyclerview(orders: List<Order>) {
-         ordersAdapter = OrdersAdapter(orders)
+         ordersAdapter = OrdersAdapter(orders){selectedOrder->
+             val action=OrdersFragmentDirections.actionOrdersFragmentToOrderDetailsFragment(selectedOrder.id)
+             findNavController().navigate(action)
+         }
         val manger = LinearLayoutManager(requireContext())
         binding.orderRv.apply {
             adapter = ordersAdapter
