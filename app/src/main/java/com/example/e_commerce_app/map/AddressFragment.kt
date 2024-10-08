@@ -6,6 +6,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ViewModelProvider
@@ -15,14 +16,18 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.e_commerce_app.brand_products.viewmodel.BrandProductViewModel
 import com.example.e_commerce_app.brand_products.viewmodel.BrandProductViewModelFactory
+import com.example.e_commerce_app.cart.DraftOrderManager
 import com.example.e_commerce_app.databinding.FragmentAddressBinding
 import com.example.e_commerce_app.db.LocalDataSourceImpl
+import com.example.e_commerce_app.db.SharedPrefsManager
 import com.example.e_commerce_app.db.ShopifyDB
 import com.example.e_commerce_app.map.AddressAdapter
 import com.example.e_commerce_app.map.viewModel.AddressViewModel
 import com.example.e_commerce_app.map.viewModel.AddressViewModelFactory
 import com.example.e_commerce_app.model.address.Address
 import com.example.e_commerce_app.model.address.AddressResponseModel
+import com.example.e_commerce_app.model.address.testAdd
+import com.example.e_commerce_app.model.cart.DraftOrderRequest
 import com.example.e_commerce_app.model.repo.ShopifyRepoImpl
 import com.example.e_commerce_app.network.RemoteDataSourceImpl
 import com.example.e_commerce_app.util.ApiState
@@ -86,6 +91,26 @@ class AddressFragment : Fragment() {
                     Log.i("TAG", "AF: $page")
 //                    val action = AddressFragmentDirections.actionAddressFragmentToNextFragment(selectedAddress!!)
 //                    findNavController().navigate(action)
+                    var shp = SharedPrefsManager.getInstance()
+                    val draftOrderId = shp.getDraftedOrderId()
+                    viewModel.addAddressToDraftOrder(
+                        draftOrderRequest = DraftOrderRequest(
+                            DraftOrderManager.getInstance().addAddressToDraftOrder(
+                                testAdd(
+                                    address1 = selectedAddress!!.address1 ?: "Unknown Address",
+                                    address2 = selectedAddress!!.address2,
+                                    city = selectedAddress!!.city ?: "Unknown City",
+                                    country = "Canada",
+                                    phone = selectedAddress!!.phone,
+                                    province = "Quebec",
+                                    first_name = "moahmed",
+                                    last_name = "khedr"
+                                )
+                            )
+                        ),
+                        draftOrderId = draftOrderId ?: 0
+                    )
+                    observeAddingAddress()
                 }
             } else {
                 // Show error message if no address is selected
@@ -116,6 +141,33 @@ class AddressFragment : Fragment() {
                             hideLoadingIndicator()
                             showError(result.message.toString())
                         }
+                    }
+                }
+            }
+        }
+    }
+
+    private fun observeAddingAddress() {
+        lifecycleScope.launch {
+            viewModel.draftOrderState.collect{
+                    state ->
+                when(state){
+                    is ApiState.Success -> {
+                        Log.i("TAG", "observeViewModel: billing:  ${state.data?.draft_order?.billing_address}\n" +
+                                "shopping : ${state.data?.draft_order?.shipping_address}")
+                        Toast.makeText(requireContext(),"Address added to Order Sucessfully", Toast.LENGTH_SHORT).show()
+                        val action = AddressFragmentDirections.actionAddressFragmentToNextFragment()
+                        findNavController().navigate(action)
+                    }
+
+                    is ApiState.Error -> {
+                        val errorMessage = state.message ?: "An unknown error occurred"
+                        Log.e("TAG", "addind Address Error: ${errorMessage}")
+                        showError(errorMessage)
+                    }
+
+                    is ApiState.Loading -> {
+
                     }
                 }
             }

@@ -165,11 +165,7 @@ class ProductDetailsFragment : Fragment() {
                 viewModel.addProductToDraftOrder(
                     draftOrderRequest = DraftOrderRequest(
                         DraftOrderManager.getInstance().addProductToDraftOrder(lineItem,product.image.src)
-                        /*DraftOrder(
-                            lineItems = mutableListOf(lineItem),
-                            customer = CustomerId(customerId?.toLong() ?: 0)
-                        )*/
-                    ),
+                        ),
                     draftOrderId = draftOrderId ?: 0
                 )
                 observeViewModel()

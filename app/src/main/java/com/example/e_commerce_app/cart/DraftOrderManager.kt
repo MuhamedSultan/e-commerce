@@ -1,6 +1,7 @@
 package com.example.e_commerce_app.cart
 
 import android.util.Log
+import com.example.e_commerce_app.model.address.testAdd
 import com.example.e_commerce_app.model.cart.DraftOrder
 import com.example.e_commerce_app.model.cart.LineItems
 
@@ -38,6 +39,12 @@ class DraftOrderManager private constructor(var draftOrder: DraftOrder) {
         }
         Log.i("TAG", "addProductToDraftOrder: ${draftOrder}")
         return draftOrder // Return the updated draftOrder
+    }
+
+    fun addAddressToDraftOrder(testAdd: testAdd): DraftOrder {
+        draftOrder.billingAddress = testAdd
+        draftOrder.shippingAddress = testAdd
+        return draftOrder
     }
 
 
