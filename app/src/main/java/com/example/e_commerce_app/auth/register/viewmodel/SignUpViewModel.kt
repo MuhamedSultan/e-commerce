@@ -37,8 +37,7 @@ class SignUpViewModel(
 
             _signUpState.value = when (result) {
                 is ApiState.Success -> {
-                    // Assuming the success case may return additional data in the future
-                    ApiState.Success(Unit) // Adjust as needed to reflect success state
+                    ApiState.Success(Unit)
                 }
 
                 is ApiState.Error -> ApiState.Error(result.message ?: "Unknown error occurred")
