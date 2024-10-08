@@ -53,11 +53,22 @@ class HomeViewModel(private val shopifyRepo: ShopifyRepo) : ViewModel() {
     }
 
     fun getRandomProducts() = viewModelScope.launch(Dispatchers.IO) {
-        val result = shopifyRepo.getRandomProducts().data
-        _randProductsResult.value = ApiState.Success(result!!)
+        try {
 
-        originalProducts = result.products
-        _filteredProducts.value = emptyList()
+
+            val result = shopifyRepo.getRandomProducts().data
+            result?.let {
+                _randProductsResult.value = ApiState.Success(result)
+                originalProducts = result.products
+                _filteredProducts.value = emptyList()
+            } ?: run {
+                _randProductsResult.value = ApiState.Error("No Products data found")
+
+            }
+        } catch (e: Exception) {
+            _randProductsResult.value = ApiState.Error(e.message ?: "Unknown error")
+        }
+
 
         try {
             val result = shopifyRepo.getRandomProducts().data
@@ -84,8 +95,6 @@ class HomeViewModel(private val shopifyRepo: ShopifyRepo) : ViewModel() {
     }
 
 
-
-
     fun addProductToFavourite(product: Product, shopifyCustomerId: String) {
         viewModelScope.launch {
             val productWithShopifyId = product.copy(shopifyCustomerId = shopifyCustomerId)
@@ -94,30 +103,30 @@ class HomeViewModel(private val shopifyRepo: ShopifyRepo) : ViewModel() {
     }
 
 
-    fun getDraftOrderSaveInShP(context: Context)=viewModelScope.launch (Dispatchers.IO){
+    fun getDraftOrderSaveInShP(context: Context) = viewModelScope.launch(Dispatchers.IO) {
         Log.i("TAG", "getDraftOrderSaveInShP: Started")
         SharedPrefsManager.init(context)
         val customerId = SharedPrefsManager.getInstance().getShopifyCustomerId()
         Log.i("TAG", "customerId: $customerId")
-        if (customerId!=null) {
+        if (customerId != null) {
             /*try {*/
-                val result = shopifyRepo.createFavoriteDraft(
-                    DraftOrderRequest(
-                        DraftOrder(
-                            customer = CustomerId(customerId.toLong())
-                        )
+            val result = shopifyRepo.createFavoriteDraft(
+                DraftOrderRequest(
+                    DraftOrder(
+                        customer = CustomerId(customerId.toLong())
                     )
                 )
-            _creatingDraftOrder.value=result
-                /*result?.let {
-                    _creatingDraftOrder.value = ApiState.Success(it)
-                } ?: run {
-                    _creatingDraftOrder.value = ApiState.Error("No product data found")
-                }
-            } catch (e: Exception) {
-                Log.e("TAG", "getDraftOrderSaveInShP: ${e.message} ")
-                _creatingDraftOrder.value = ApiState.Error(e.message ?: "Unknown error")
-            }*/
+            )
+            _creatingDraftOrder.value = result
+            /*result?.let {
+                _creatingDraftOrder.value = ApiState.Success(it)
+            } ?: run {
+                _creatingDraftOrder.value = ApiState.Error("No product data found")
+            }
+        } catch (e: Exception) {
+            Log.e("TAG", "getDraftOrderSaveInShP: ${e.message} ")
+            _creatingDraftOrder.value = ApiState.Error(e.message ?: "Unknown error")
+        }*/
 
         }
     }
