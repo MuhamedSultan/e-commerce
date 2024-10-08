@@ -15,8 +15,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
 class ProductDetailsViewModel(
-    private val repository: ShopifyRepo,
-    private val sharedPreferences: SharedPreferences
+    private val repository: ShopifyRepo
 ) : ViewModel() {
     private val _productState = MutableStateFlow<ApiState<Product>>(ApiState.Loading())
     val productState: StateFlow<ApiState<Product>> = _productState

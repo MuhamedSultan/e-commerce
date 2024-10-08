@@ -10,7 +10,7 @@ class ProductDetailsViewModelFactory(
 ) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         if (modelClass.isAssignableFrom(ProductDetailsViewModel::class.java)) {
-            return ProductDetailsViewModel(shopifyRepo, ) as T
+            return ProductDetailsViewModel(shopifyRepo) as T
         }
         throw IllegalArgumentException("Unknown ViewModel class")
     }

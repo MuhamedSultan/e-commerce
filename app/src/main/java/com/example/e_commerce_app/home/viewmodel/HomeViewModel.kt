@@ -5,8 +5,8 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.e_commerce_app.db.SharedPrefsManager
-import com.example.e_commerce_app.model.cart.CustomerDraftRequest
-import com.example.e_commerce_app.model.cart.DraftOrderDetailsRequest
+import com.example.e_commerce_app.model.cart.CustomerId
+import com.example.e_commerce_app.model.cart.DraftOrder
 import com.example.e_commerce_app.model.cart.DraftOrderRequest
 import com.example.e_commerce_app.model.cart.DraftOrderResponse
 import com.example.e_commerce_app.model.cart.LineItems
@@ -103,8 +103,8 @@ class HomeViewModel(private val shopifyRepo: ShopifyRepo) : ViewModel() {
             /*try {*/
                 val result = shopifyRepo.createFavoriteDraft(
                     DraftOrderRequest(
-                        DraftOrderDetailsRequest(
-                            customer = CustomerDraftRequest(customerId.toLong())
+                        DraftOrder(
+                            customer = CustomerId(customerId.toLong())
                         )
                     )
                 )

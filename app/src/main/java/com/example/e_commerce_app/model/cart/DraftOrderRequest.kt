@@ -4,16 +4,16 @@ data class DraftOrderRequest(
 )
 
 data class DraftOrder(
-    val line_items: List<LineItems>,
+    val line_items: List<LineItems> = listOf(LineItems()),
     val applied_discount: AppliedDiscount?=null,
     val customer: CustomerId,
     val use_customer_default_address: Boolean = true
 )
 
 data class LineItems(
-    val title: String,
-    val price: String,
-    val quantity: Int
+    val title: String = "mn",
+    val price: String = "10.00",
+    val quantity: Int = 1
 )
 
 data class AppliedDiscount(

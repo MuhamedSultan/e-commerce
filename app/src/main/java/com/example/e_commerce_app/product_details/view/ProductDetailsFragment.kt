@@ -19,8 +19,8 @@ import com.example.e_commerce_app.R
 import com.example.e_commerce_app.db.LocalDataSourceImpl
 import com.example.e_commerce_app.db.SharedPrefsManager
 import com.example.e_commerce_app.db.ShopifyDB
-import com.example.e_commerce_app.model.cart.CustomerDraftRequest
-import com.example.e_commerce_app.model.cart.DraftOrderDetailsRequest
+import com.example.e_commerce_app.model.cart.CustomerId
+import com.example.e_commerce_app.model.cart.DraftOrder
 import com.example.e_commerce_app.model.cart.DraftOrderRequest
 import com.example.e_commerce_app.model.cart.LineItems
 import com.example.e_commerce_app.model.product.Product
@@ -145,19 +145,19 @@ class ProductDetailsFragment : Fragment() {
             if (variant != null) {
                 val lineItem = LineItems(
                     quantity = 1,
-                    price = variant.price.toDouble(),
+                    price = variant.price,
                     title = product.title,
-                    product_id = product.id.toString(),
-                    variant_id = variant.id
+                    /*product_id = product.id.toString(),
+                    variant_id = variant.id*/
                 )
                 var shp = SharedPrefsManager.getInstance()
                 val customerId = shp.getShopifyCustomerId()
                 val draftOrderId = shp.getDraftedOrderId()
                 viewModel.addProductToDraftOrder(
                     draftOrderRequest = DraftOrderRequest(
-                        DraftOrderDetailsRequest(
+                        DraftOrder(
                             line_items = listOf(lineItem),
-                            customer = CustomerDraftRequest(customerId?.toLong() ?: 0)
+                            customer = CustomerId(customerId?.toLong() ?: 0)
                         )
                     ),
                     draftOrderId = draftOrderId
