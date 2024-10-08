@@ -80,7 +80,7 @@ interface ShopifyService {
     @GET("draft_orders/{draftFavoriteId}.json")
     suspend fun getProductsIdForDraftFavorite(
         @Path("draftFavoriteId") draftFavoriteId: Long
-    ): Response<DraftOrderResponse>
+    ): DraftOrderResponse
 
     // Get a specific cart by its ID
     @GET("carts/{cartId}.json")

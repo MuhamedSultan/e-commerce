@@ -26,7 +26,8 @@ data class LineItem(
     val price: String,
     @SerializedName("total_price")
     val totalPrice: String,
-
+    @SerializedName("variant_id")
+    val variantId: String? = null,
     @SerializedName("image")
     val imageUrl: String
 

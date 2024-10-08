@@ -18,6 +18,7 @@ import androidx.navigation.fragment.findNavController
 
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.viewpager2.widget.ViewPager2
+import com.example.e_commerce_app.cart.DraftOrderManager
 import com.example.e_commerce_app.databinding.FragmentHomeBinding
 import com.example.e_commerce_app.db.LocalDataSourceImpl
 import com.example.e_commerce_app.db.SharedPrefsManager
@@ -27,6 +28,10 @@ import com.example.e_commerce_app.home.view.adapter.RandomProductsAdapter
 import com.example.e_commerce_app.home.view.adapter.SuggestionsAdapter
 import com.example.e_commerce_app.home.viewmodel.HomeViewModel
 import com.example.e_commerce_app.home.viewmodel.HomeViewModelFactory
+import com.example.e_commerce_app.model.address.testAdd
+import com.example.e_commerce_app.model.cart.CustomerId
+import com.example.e_commerce_app.model.cart.DraftOrder
+import com.example.e_commerce_app.model.cart.LineItems
 import com.example.e_commerce_app.model.coupon.Discount
 import com.example.e_commerce_app.model.product.Product
 import com.example.e_commerce_app.model.smart_collection.SmartCollection
@@ -65,10 +70,13 @@ class HomeFragment : Fragment() {
     ): View {
         SharedPrefsManager.init(requireContext())
         val draftOrderId = SharedPrefsManager.getInstance().getDraftedOrderId()
-        if(draftOrderId == 0L) {
+        if(draftOrderId == 0L || draftOrderId == null) {
+            observeDraftOrderId()
             homeViewModel.getDraftOrderSaveInShP(requireContext())
         }else{
             Log.i("TAG", "draftOrderId: $draftOrderId")
+            observeGetDraftOrderData()
+            homeViewModel.getProductsFromDraftOrder(draftOrderId)
         }
         binding = FragmentHomeBinding.inflate(layoutInflater)
         return binding.root
@@ -77,7 +85,6 @@ class HomeFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        observeDraftOrderId()
         searchSetUp()
 
 
@@ -189,6 +196,46 @@ class HomeFragment : Fragment() {
                             result.data?.let { collections ->
                                 SharedPrefsManager.getInstance().setDraftedOrderId(collections.draft_order.id)
                                 Log.i("TAG", "getDraftOrderSaveInShP: ${collections.draft_order.id}")
+                            }
+                        }
+
+                        is ApiState.Error -> {
+                            Log.e("TAG", "observeDraftOrderId: ${result.message}", )
+                            showError(result.message.toString())
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    private fun observeGetDraftOrderData() {
+        lifecycleScope.launch {
+            viewLifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                homeViewModel.draftOrderState.collect { result ->
+                    when (result) {
+                        is ApiState.Loading -> {
+                        }
+
+                        is ApiState.Success -> {
+                            result.data?.let { collections ->
+                                var lineItemsList = mutableListOf<LineItems>()
+                                for(lineItem in collections.draft_order.line_items){
+                                    lineItemsList.add(
+                                        LineItems(
+                                        title = lineItem.title ?: "null",
+                                        price = lineItem.price,
+                                        quantity = lineItem.quantity,
+                                        productId = lineItem.productId ?: "null",
+                                        variantId = lineItem.variantId
+                                    )
+                                    )
+                                }
+                                DraftOrderManager.init(DraftOrder(
+                                    lineItems = lineItemsList,
+                                    customer = CustomerId(collections.draft_order.customer.id)/*,
+                                    billingAddress = collections.draft_order.shipping_address as testAdd*/
+                                ))
                             }
                         }
 

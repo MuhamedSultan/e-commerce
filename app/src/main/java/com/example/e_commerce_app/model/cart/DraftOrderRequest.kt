@@ -24,7 +24,7 @@ data class DraftOrder(
 
 data class LineItems(
     val title: String = "mn",
-    val price: String = "10.00",
+    val price: String = "0.00",
     var quantity: Int = 1,
     @SerializedName("product_id")
     val productId: String = "12",

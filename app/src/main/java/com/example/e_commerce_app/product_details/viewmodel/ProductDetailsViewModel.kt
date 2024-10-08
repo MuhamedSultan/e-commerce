@@ -93,6 +93,20 @@ class ProductDetailsViewModel(
             _draftOrderState.value = ApiState.Loading()
             val result = repository.getProductsIdForDraftFavorite(draftFavoriteId)
             _draftOrderState.value = result
+            when (result) {
+                is ApiState.Success -> {
+                    Log.d("TAG", "get Draft Order data successfully")
+                    Log.i("TAG", "Add Response: ${result.data?.draft_order}")
+                }
+                is ApiState.Error -> {
+                    Log.e(
+                        "TAG",
+                        "Error getting draft order Data: ${result.message}"
+                    )
+                }
+                // Handle loading state if needed
+                is ApiState.Loading -> TODO()
+            }
         }
     }
 

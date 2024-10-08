@@ -132,11 +132,6 @@ class RemoteDataSourceImpl : RemoteDataSource {
             Log.i("TAG", "createFavoriteDraft: $draftOrderRequest")
             val response = Network.shopifyService.createFavoriteDraft(draftOrderRequest)
             ApiState.Success(response)
-            /*if (response.isSuccessful) {
-                ApiState.Success(response.body() ?: throw Exception("Draft order creation failed"))
-            } else {
-                ApiState.Error("Error: ${response.message()}")
-            }*/
         } catch (e: Exception) {
             ApiState.Error("Error creating draft order: ${e.message}")
         }
@@ -147,21 +142,10 @@ class RemoteDataSourceImpl : RemoteDataSource {
 
         return try {
             val response = Network.shopifyService.getProductsIdForDraftFavorite(draftFavoriteId)
-            if (response.isSuccessful) {
-                ApiState.Success(
-                    response.body() ?: throw Exception("No products found for the draft order")
-                )
-            } else {
-                when (response.code()) {
-                    404 -> ApiState.Error("Draft order not found.")
-                    else -> ApiState.Error("Error: ${response.message()}")
-                }
-            }
+            ApiState.Success(response)
         } catch (e: Exception) {
             ApiState.Error("Error fetching draft order: ${e.message}")
         }
-
-
     }
 
     override suspend fun backUpDraftFavorite(
