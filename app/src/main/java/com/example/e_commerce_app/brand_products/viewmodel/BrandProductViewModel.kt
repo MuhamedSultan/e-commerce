@@ -17,6 +17,14 @@ class BrandProductViewModel(private val shopifyRepo: ShopifyRepo) : ViewModel() 
         MutableStateFlow(ApiState.Loading())
     val brandProductResult: StateFlow<ApiState<ProductResponse>> = _brandProductResult
 
+    private val _filteredProducts: MutableStateFlow<List<Product>> = MutableStateFlow(emptyList())
+    val filteredProducts: StateFlow<List<Product>> = _filteredProducts
+
+    private var allProducts: List<Product> = emptyList()
+
+
+
+
     fun getBrandProducts(brandName: String) = viewModelScope.launch(Dispatchers.IO) {
         val result = shopifyRepo.getBrandProducts(brandName)
         _brandProductResult.value = result
@@ -35,4 +43,23 @@ class BrandProductViewModel(private val shopifyRepo: ShopifyRepo) : ViewModel() 
             shopifyRepo.removeFavorite(productWithShopifyId)
         }
     }
+
+
+    fun filterProducts(query: String) {
+        if (query.isEmpty()) {
+            _filteredProducts.value = allProducts
+            return
+        }
+
+        val filtered = allProducts.filter { product ->
+            product.title.contains(query, ignoreCase = true)
+        }
+
+        _filteredProducts.value = filtered
+    }
+    fun setAllProducts(products: List<Product>) {
+        allProducts = products
+        _filteredProducts.value = allProducts
+    }
+
 }

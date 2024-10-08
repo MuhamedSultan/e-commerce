@@ -74,7 +74,7 @@ interface ShopifyService {
     /// cart apis
 
     @POST("draft_orders.json")
-    suspend fun createFavoriteDraft(@Body draftOrderRequest: DraftOrderRequest): Response<DraftOrderResponse>
+    suspend fun createFavoriteDraft(@Body draftOrderRequest: DraftOrderRequest): DraftOrderResponse
 
 
     @GET("draft_orders/{draftFavoriteId}.json")

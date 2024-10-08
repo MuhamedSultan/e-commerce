@@ -1,5 +1,6 @@
 package com.example.e_commerce_app.network
 
+import android.util.Log
 import com.example.e_commerce_app.model.address.AddressRequest
 import com.example.e_commerce_app.model.address.AddressResponse
 import com.example.e_commerce_app.model.address.AddressesResponse
@@ -128,12 +129,14 @@ class RemoteDataSourceImpl : RemoteDataSource {
 
     override suspend fun createFavoriteDraft(draftOrderRequest: DraftOrderRequest): ApiState<DraftOrderResponse> {
         return try {
+            Log.i("TAG", "createFavoriteDraft: $draftOrderRequest")
             val response = Network.shopifyService.createFavoriteDraft(draftOrderRequest)
-            if (response.isSuccessful) {
+            ApiState.Success(response)
+            /*if (response.isSuccessful) {
                 ApiState.Success(response.body() ?: throw Exception("Draft order creation failed"))
             } else {
                 ApiState.Error("Error: ${response.message()}")
-            }
+            }*/
         } catch (e: Exception) {
             ApiState.Error("Error creating draft order: ${e.message}")
         }

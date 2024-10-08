@@ -2,6 +2,8 @@ package com.example.e_commerce_app.brand_products.view
 
 import android.content.SharedPreferences
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -14,11 +16,13 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.e_commerce_app.brand_products.viewmodel.BrandProductViewModel
 import com.example.e_commerce_app.brand_products.viewmodel.BrandProductViewModelFactory
 import com.example.e_commerce_app.databinding.FragmentBrandProductsBinding
 import com.example.e_commerce_app.db.LocalDataSourceImpl
 import com.example.e_commerce_app.db.ShopifyDB
+import com.example.e_commerce_app.home.view.adapter.SuggestionsAdapter
 import com.example.e_commerce_app.model.product.Product
 import com.example.e_commerce_app.model.repo.ShopifyRepoImpl
 import com.example.e_commerce_app.network.RemoteDataSourceImpl
@@ -33,6 +37,10 @@ class BrandProductsFragment : Fragment() {
     private var allProducts: List<Product> = emptyList()
     private var filteredProducts: List<Product> = emptyList()
     private lateinit var sharedPreferences: SharedPreferences
+    private lateinit var suggestionsAdapter: SuggestionsAdapter
+
+    //    private lateinit var gridLayoutManager: GridLayoutManager
+    private lateinit var linearLayoutManager: LinearLayoutManager
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -59,6 +67,21 @@ class BrandProductsFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        linearLayoutManager = LinearLayoutManager(requireContext())
+
+        suggestionsAdapter = SuggestionsAdapter(emptyList()) { selectedProduct ->
+            val action =
+                BrandProductsFragmentDirections.actionBrandProductsFragmentToProductDetailsFragment(
+                    selectedProduct.id
+                )
+            findNavController().navigate(action)
+        }
+
+        binding.suggestionsRv.adapter = suggestionsAdapter
+        binding.suggestionsRv.layoutManager = linearLayoutManager
+
+        searchSetUp()
+        
         binding.filterPrice.setOnClickListener {
             binding.seekBar.visibility = View.VISIBLE
             binding.priceTv.visibility = View.VISIBLE
@@ -86,6 +109,7 @@ class BrandProductsFragment : Fragment() {
                             hideLoadingIndicator()
                             result.data?.let { product ->
                                 allProducts = product.products
+                                brandProductViewModel.setAllProducts(allProducts)
                                 setupBrandProductsRecyclerview(allProducts)
                             }
                         }
@@ -99,6 +123,7 @@ class BrandProductsFragment : Fragment() {
             }
         }
     }
+
 
     private fun filterProductsByPrice(maxPrice: Int) {
         filteredProducts = allProducts.filter {
@@ -133,11 +158,14 @@ class BrandProductsFragment : Fragment() {
                 val shopifyCustomerId = sharedPreferences.getString("shopifyCustomerId", null)
 
                 if (isFavorite) {
-                    brandProductViewModel.addProductToFavourite(product,shopifyCustomerId?:"")
+                    brandProductViewModel.addProductToFavourite(product, shopifyCustomerId ?: "")
                     Toast.makeText(requireContext(), "Added to favorites", Toast.LENGTH_SHORT)
                         .show()
                 } else {
-                    brandProductViewModel.deleteProductFromFavourite(product,shopifyCustomerId?:"")
+                    brandProductViewModel.deleteProductFromFavourite(
+                        product,
+                        shopifyCustomerId ?: ""
+                    )
                     Toast.makeText(requireContext(), "Removed from favorites", Toast.LENGTH_SHORT)
                         .show()
                 }
@@ -154,5 +182,52 @@ class BrandProductsFragment : Fragment() {
             adapter = brandProductsAdapter
             layoutManager = manager
         }
+    }
+
+
+    private fun searchSetUp() {
+        binding.suggestionsRv.visibility = View.GONE
+
+        binding.edSearch.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                val searchText = s.toString()
+                filterProducts(searchText)
+            }
+
+            override fun afterTextChanged(s: Editable?) {}
+        })
+    }
+
+
+    private fun filterProducts(searchText: String) {
+        lifecycleScope.launch {
+            filteredProducts = if (searchText.isEmpty()) {
+                allProducts
+            } else {
+                allProducts.filter { product ->
+                    product.title.contains(searchText, ignoreCase = true)
+                }
+            }
+
+            suggestionsAdapter.updateProducts(filteredProducts)
+            setupBrandProductsRecyclerview(filteredProducts)
+            binding.suggestionsRv.visibility =
+                if (searchText.isNotEmpty() && filteredProducts.isNotEmpty()) View.VISIBLE else View.GONE
+        }
+    }
+
+
+    override fun onPause() {
+        super.onPause()
+        binding.suggestionsRv.visibility = View.GONE
+
+    }
+
+    override fun onResume() {
+        super.onResume()
+        binding.suggestionsRv.visibility = View.GONE
+        binding.edSearch.text?.clear()
     }
 }

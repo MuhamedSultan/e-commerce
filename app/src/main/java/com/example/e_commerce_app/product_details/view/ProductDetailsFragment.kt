@@ -17,9 +17,10 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
 import com.example.e_commerce_app.R
 import com.example.e_commerce_app.db.LocalDataSourceImpl
+import com.example.e_commerce_app.db.SharedPrefsManager
 import com.example.e_commerce_app.db.ShopifyDB
-import com.example.e_commerce_app.model.cart.CustomerDraftRequest
-import com.example.e_commerce_app.model.cart.DraftOrderDetailsRequest
+import com.example.e_commerce_app.model.cart.CustomerId
+import com.example.e_commerce_app.model.cart.DraftOrder
 import com.example.e_commerce_app.model.cart.DraftOrderRequest
 import com.example.e_commerce_app.model.cart.LineItems
 import com.example.e_commerce_app.model.product.Product
@@ -105,6 +106,27 @@ class ProductDetailsFragment : Fragment() {
                 }
             }
         }
+        lifecycleScope.launch {
+            viewModel.draftOrderState.collect{
+                state ->
+                when(state){
+                    is ApiState.Success -> {
+                        Log.i("TAG", "observeViewModel: ${state.data?.draft_order?.line_items}")
+                       Toast.makeText(requireContext(),"Product added to cart Sucessfully",Toast.LENGTH_SHORT).show()
+                    }
+
+                    is ApiState.Error -> {
+                        val errorMessage = state.message ?: "An unknown error occurred"
+                        Log.e("TAG", "draftOrder Error: ${errorMessage}")
+                        showError(errorMessage)
+                    }
+
+                    is ApiState.Loading -> {
+
+                    }
+                }
+            }
+        }
     }
 
     private fun updateUI(product: Product) {
@@ -123,13 +145,25 @@ class ProductDetailsFragment : Fragment() {
             if (variant != null) {
                 val lineItem = LineItems(
                     quantity = 1,
-                    price = variant.price.toDouble(),
+                    price = variant.price,
                     title = product.title,
-                    product_id = product.id.toString(),
-                    variant_id = variant.id
+                    /*product_id = product.id.toString(),
+                    variant_id = variant.id*/
                 )
-
-                val shopifyCustomerId = sharedPreferences.getString("shopifyCustomerId", null)
+                var shp = SharedPrefsManager.getInstance()
+                val customerId = shp.getShopifyCustomerId()
+                val draftOrderId = shp.getDraftedOrderId()
+                viewModel.addProductToDraftOrder(
+                    draftOrderRequest = DraftOrderRequest(
+                        DraftOrder(
+                            line_items = listOf(lineItem),
+                            customer = CustomerId(customerId?.toLong() ?: 0)
+                        )
+                    ),
+                    draftOrderId = draftOrderId
+                )
+                observeViewModel()
+                /*val shopifyCustomerId = sharedPreferences.getString("shopifyCustomerId", null)
                 val customerDraftRequest = if (shopifyCustomerId != null) {
                     CustomerDraftRequest(id = shopifyCustomerId.toLong())
                 } else {
@@ -145,10 +179,10 @@ class ProductDetailsFragment : Fragment() {
                     draft_order = draftOrderDetailsRequest
                 )
                 lifecycleScope.launch {
-                    viewModel.addToCart(draftOrderRequest)
+                    //viewModel.addToCart(draftOrderRequest)
                     Toast.makeText(context, "Product added to cart", Toast.LENGTH_SHORT).show()
                     Log.d("ProductDetailsFragment", "Product added to cart: ${product.title}")
-                }
+                }*/
             } else {
                 Toast.makeText(context, "No variant available for this product", Toast.LENGTH_SHORT)
                     .show()

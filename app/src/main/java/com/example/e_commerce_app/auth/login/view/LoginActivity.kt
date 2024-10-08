@@ -20,6 +20,7 @@ import com.example.e_commerce_app.databinding.ActivityLoginBinding
 import com.example.e_commerce_app.model.repo.ShopifyRepoImpl
 import com.example.e_commerce_app.model.user.UserData
 import com.example.e_commerce_app.network.RemoteDataSourceImpl
+import com.google.firebase.auth.FirebaseAuth
 
 class LoginActivity : AppCompatActivity() {
 
@@ -66,7 +67,10 @@ class LoginActivity : AppCompatActivity() {
 
     private fun checkUserLoggedIn() {
         val shopifyCustomerId = sharedPreferences.getString("shopifyCustomerId", null)
-        Log.d("LoginActivity", "Retrieved ShopifyCustomerId from SharedPreferences: $shopifyCustomerId")
+        Log.d(
+            "LoginActivity",
+            "Retrieved ShopifyCustomerId from SharedPreferences: $shopifyCustomerId"
+        )
         if (shopifyCustomerId != null) {
             val intent = Intent(this, MainActivity::class.java)
             startActivity(intent)
@@ -86,22 +90,49 @@ class LoginActivity : AppCompatActivity() {
                         binding.progressBar.visibility = View.GONE
                         state.data?.let { userData ->
                             if (userData.shopifyCustomerId != null) {
-                                saveUserData(userData)
-                                Toast.makeText(this@LoginActivity, "Login successful!", Toast.LENGTH_SHORT).show()
-                                val intent = Intent(this@LoginActivity, MainActivity::class.java)
-                                startActivity(intent)
-                                finish()
+                                val user = FirebaseAuth.getInstance().currentUser
+
+                                if (user != null && user.isEmailVerified) {
+                                    saveUserData(userData)
+                                    Toast.makeText(
+                                        this@LoginActivity,
+                                        "Login successful!",
+                                        Toast.LENGTH_SHORT
+                                    ).show()
+                                    val intent =
+                                        Intent(this@LoginActivity, MainActivity::class.java)
+                                    startActivity(intent)
+                                    finish()
+                                } else {
+                                    Toast.makeText(
+                                        this@LoginActivity,
+                                        "Please verify your email before logging in.",
+                                        Toast.LENGTH_SHORT
+                                    ).show()
+                                }
                             } else {
-                                Toast.makeText(this@LoginActivity, "Shopify Customer ID is missing!", Toast.LENGTH_SHORT).show()
+                                Toast.makeText(
+                                    this@LoginActivity,
+                                    "Shopify Customer ID is missing!",
+                                    Toast.LENGTH_SHORT
+                                ).show()
                             }
                         } ?: run {
-                            Toast.makeText(this@LoginActivity, "User data is null", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(
+                                this@LoginActivity,
+                                "User data is null",
+                                Toast.LENGTH_SHORT
+                            ).show()
                         }
                     }
 
                     is ApiState.Error -> {
                         binding.progressBar.visibility = View.GONE
-                        Toast.makeText(this@LoginActivity, "Error: ${state.message}", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(
+                            this@LoginActivity,
+                            "Error: ${state.message}",
+                            Toast.LENGTH_SHORT
+                        ).show()
                     }
                 }
             }
@@ -120,7 +151,10 @@ class LoginActivity : AppCompatActivity() {
         }
         // Log the saved value for verification
         val savedShopifyCustomerId = sharedPreferences.getString("shopifyCustomerId", null)
-        Log.d("LoginActivity", "Saved ShopifyCustomerId in SharedPreferences: $savedShopifyCustomerId")
+        Log.d(
+            "LoginActivity",
+            "Saved ShopifyCustomerId in SharedPreferences: $savedShopifyCustomerId"
+        )
 
     }
 }

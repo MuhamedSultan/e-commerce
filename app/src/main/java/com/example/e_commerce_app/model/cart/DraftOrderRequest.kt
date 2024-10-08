@@ -1,6 +1,35 @@
 package com.example.e_commerce_app.model.cart
+data class DraftOrderRequest(
+    val draft_order: DraftOrder
+)
+
+data class DraftOrder(
+    val line_items: List<LineItems> = listOf(LineItems()),
+    val applied_discount: AppliedDiscount?=null,
+    val customer: CustomerId,
+    val use_customer_default_address: Boolean = true
+)
+
+data class LineItems(
+    val title: String = "mn",
+    val price: String = "10.00",
+    val quantity: Int = 1
+)
+
+data class AppliedDiscount(
+    val description: String,
+    val value_type: String,
+    val value: String,
+    val amount: String,
+    val title: String
+)
+
+data class CustomerId(
+    val id: Long
+)
 
 
+/*
 data class DraftOrderRequest(
     val draft_order: DraftOrderDetailsRequest
 )
@@ -26,4 +55,6 @@ data class LineItems(
     val variant_id: Long? ,
 
     )
+
+ */
 

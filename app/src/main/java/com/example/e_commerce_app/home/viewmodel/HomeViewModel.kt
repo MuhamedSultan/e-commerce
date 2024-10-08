@@ -1,7 +1,15 @@
 package com.example.e_commerce_app.home.viewmodel
 
+import android.content.Context
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.e_commerce_app.db.SharedPrefsManager
+import com.example.e_commerce_app.model.cart.CustomerId
+import com.example.e_commerce_app.model.cart.DraftOrder
+import com.example.e_commerce_app.model.cart.DraftOrderRequest
+import com.example.e_commerce_app.model.cart.DraftOrderResponse
+import com.example.e_commerce_app.model.cart.LineItems
 import com.example.e_commerce_app.model.product.Product
 import com.example.e_commerce_app.model.product.ProductResponse
 import com.example.e_commerce_app.model.smart_collection.SmartCollectionResponse
@@ -24,6 +32,10 @@ class HomeViewModel(private val shopifyRepo: ShopifyRepo) : ViewModel() {
     private val _filteredProducts: MutableStateFlow<List<Product>> = MutableStateFlow(emptyList())
     val filteredProducts: StateFlow<List<Product>> = _filteredProducts
     var originalProducts: List<Product> = emptyList()
+
+    private val _creatingDraftOrder: MutableStateFlow<ApiState<DraftOrderResponse>> =
+        MutableStateFlow(ApiState.Loading())
+    val creatingDraftOrder: StateFlow<ApiState<DraftOrderResponse>> = _creatingDraftOrder
 
 
     fun getAllBrands() = viewModelScope.launch(Dispatchers.IO) {
@@ -81,6 +93,34 @@ class HomeViewModel(private val shopifyRepo: ShopifyRepo) : ViewModel() {
         }
     }
 
+
+    fun getDraftOrderSaveInShP(context: Context)=viewModelScope.launch (Dispatchers.IO){
+        Log.i("TAG", "getDraftOrderSaveInShP: Started")
+        SharedPrefsManager.init(context)
+        val customerId = SharedPrefsManager.getInstance().getShopifyCustomerId()
+        Log.i("TAG", "customerId: $customerId")
+        if (customerId!=null) {
+            /*try {*/
+                val result = shopifyRepo.createFavoriteDraft(
+                    DraftOrderRequest(
+                        DraftOrder(
+                            customer = CustomerId(customerId.toLong())
+                        )
+                    )
+                )
+            _creatingDraftOrder.value=result
+                /*result?.let {
+                    _creatingDraftOrder.value = ApiState.Success(it)
+                } ?: run {
+                    _creatingDraftOrder.value = ApiState.Error("No product data found")
+                }
+            } catch (e: Exception) {
+                Log.e("TAG", "getDraftOrderSaveInShP: ${e.message} ")
+                _creatingDraftOrder.value = ApiState.Error(e.message ?: "Unknown error")
+            }*/
+
+        }
+    }
 
 
     fun deleteProductFromFavourite(product: Product, shopifyCustomerId: String) {
