@@ -2,6 +2,7 @@ package com.example.e_commerce_app.map
 
 import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -21,6 +22,7 @@ import com.example.e_commerce_app.map.AddressAdapter
 import com.example.e_commerce_app.map.viewModel.AddressViewModel
 import com.example.e_commerce_app.map.viewModel.AddressViewModelFactory
 import com.example.e_commerce_app.model.address.Address
+import com.example.e_commerce_app.model.address.AddressResponseModel
 import com.example.e_commerce_app.model.repo.ShopifyRepoImpl
 import com.example.e_commerce_app.network.RemoteDataSourceImpl
 import com.example.e_commerce_app.util.ApiState
@@ -31,6 +33,9 @@ class AddressFragment : Fragment() {
     private lateinit var binding: FragmentAddressBinding
     private lateinit var viewModel: AddressViewModel
     private lateinit var adapter: AddressAdapter
+    private lateinit var page: String
+    private var selectedAddress: AddressResponseModel? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val dao = ShopifyDB.getInstance(requireContext()).shopifyDao()
@@ -38,36 +43,62 @@ class AddressFragment : Fragment() {
         val remoteDataSource = RemoteDataSourceImpl()
         val repo = ShopifyRepoImpl(remoteDataSource, localDataSource)
         val factory = AddressViewModelFactory(repo)
-        viewModel =ViewModelProvider(this, factory)[AddressViewModel::class.java]
-        var sharedPreferences = requireContext().getSharedPreferences("UserPrefs", Context.MODE_PRIVATE)
-        val customerId :String?= sharedPreferences.getString("shopifyCustomerId", null)
+        viewModel = ViewModelProvider(this, factory)[AddressViewModel::class.java]
+        val args = AddressFragmentArgs.fromBundle(requireArguments())
+        page = args.page
+        val sharedPreferences = requireContext().getSharedPreferences("UserPrefs", Context.MODE_PRIVATE)
+        val customerId: String? = sharedPreferences.getString("shopifyCustomerId", null)
+
         if (customerId != null) {
             viewModel.getAllAddresses(customerId)
         }
-        adapter = AddressAdapter()
+
+        adapter = AddressAdapter { selected ->
+            selectedAddress = selected
+        }
     }
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         binding = FragmentAddressBinding.inflate(inflater, container, false)
+        if (page=="setting"){
+            binding.btnSubmit.text = "Set Default"
+        }else if(page == "cart"){
+            binding.btnSubmit.text = "Submit Address"
+        }
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        /*val addressList = listOf(
-            Address(1, 30.0444, 31.2357, "Egypt", "123 Main St, Cairo", "201018870021"),
-            Address(2, 51.5074, -0.1278, "UK", "456 Elm St, London", "447911123456")
-        )*/
-
         binding.rvAddresses.layoutManager = LinearLayoutManager(requireContext())
         binding.rvAddresses.adapter = adapter
-        binding.btnAddLocation.setOnClickListener{
-            val action = AddressFragmentDirections.actionAddressFragment2ToMapFragment()
+
+        binding.btnSubmit.setOnClickListener {
+            if (selectedAddress != null) {
+                Log.i("TAG", "onViewCreated: $selectedAddress")
+                if (page == "setting"){
+                    Log.i("TAG", "AF: $page")
+                }else if(page == "cart"){
+                    Log.i("TAG", "AF: $page")
+//                    val action = AddressFragmentDirections.actionAddressFragmentToNextFragment(selectedAddress!!)
+//                    findNavController().navigate(action)
+                }
+            } else {
+                // Show error message if no address is selected
+                showError("Please select an address")
+            }
+        }
+
+        // Handle Add Location button click
+        binding.btnAddLocation.setOnClickListener {
+            val action = AddressFragmentDirections.actionAddressFragment2ToMapFragment(page)
             findNavController().navigate(action)
         }
+
         lifecycleScope.launch {
             viewLifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.addressesResult.collect { result ->
@@ -75,14 +106,12 @@ class AddressFragment : Fragment() {
                         is ApiState.Loading -> {
                             showLoadingIndicator()
                         }
-
                         is ApiState.Success -> {
                             hideLoadingIndicator()
                             result.data?.let { addresses ->
                                 adapter.submitList(addresses.addressResponses)
                             }
                         }
-
                         is ApiState.Error -> {
                             hideLoadingIndicator()
                             showError(result.message.toString())
@@ -91,8 +120,8 @@ class AddressFragment : Fragment() {
                 }
             }
         }
-
     }
+
     private fun showLoadingIndicator() {
         binding.loadingIndicator.visibility = View.VISIBLE
         binding.rvAddresses.visibility = View.GONE
@@ -109,3 +138,4 @@ class AddressFragment : Fragment() {
         Snackbar.make(requireView(), message, Snackbar.LENGTH_SHORT).show()
     }
 }
+
