@@ -12,6 +12,7 @@ import com.example.e_commerce_app.model.cart.DraftOrderRequest
 import com.example.e_commerce_app.model.cart.DraftOrderResponse
 import com.example.e_commerce_app.model.cart.LineItem
 import com.example.e_commerce_app.model.custom_collection.CustomCollectionResponse
+import com.example.e_commerce_app.model.order_details.OrderDetailsResponse
 import com.example.e_commerce_app.model.orders.CustomerOrders
 import com.example.e_commerce_app.model.product.Image
 import com.example.e_commerce_app.model.product.Product
@@ -283,5 +284,9 @@ class FakeRemoteDataSource : RemoteDataSource {
 
     override suspend fun getCustomerOrders(customerId: Long): ApiState<CustomerOrders> {
         return ApiState.Success(CustomerOrders(listOf()))
+    }
+
+    override suspend fun getOrderDetailsByID(orderId: Long): ApiState<OrderDetailsResponse> {
+        TODO("Not yet implemented")
     }
 }

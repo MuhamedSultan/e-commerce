@@ -17,6 +17,7 @@ import com.example.e_commerce_app.model.cart.CustomerId
 import com.example.e_commerce_app.model.cart.DraftOrder
 import com.example.e_commerce_app.model.cart.LineItems
 import com.example.e_commerce_app.model.custom_collection.CustomCollection
+import com.example.e_commerce_app.model.order_details.OrderDetailsResponse
 import com.example.e_commerce_app.model.orders.CustomerOrders
 
 import com.example.e_commerce_app.model.product.Image
@@ -573,5 +574,9 @@ class FakeShopifyRepository : ShopifyRepo {
 
     override suspend fun getCustomerOrders(customerId: Long): ApiState<CustomerOrders> {
         return ApiState.Error("An error occurred while fetching customer orders.") // Adjust the error message as needed
+    }
+
+    override suspend fun getOrderDetailsByID(orderId: Long): ApiState<OrderDetailsResponse> {
+        TODO("Not yet implemented")
     }
 }
