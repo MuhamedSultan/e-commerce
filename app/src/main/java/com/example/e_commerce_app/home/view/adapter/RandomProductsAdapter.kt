@@ -35,8 +35,8 @@ class RandomProductsAdapter(
         holder.productPrice.text = product.variants[0].price
         var isFavorite = LocalDataSourceImpl.isMealFavorite(context, product.id.toString())
         holder.favouriteIcon.setImageResource(
-            if (isFavorite) R.drawable.ic_favourite_fill
-            else R.drawable.ic_favourite_border
+            if (isFavorite) R.drawable.favfill
+            else R.drawable.favadd
         )
 
         holder.itemView.setOnClickListener { onProductClick(product) }
@@ -45,8 +45,8 @@ class RandomProductsAdapter(
             isFavorite = !isFavorite
             onFavouriteClick(product, isFavorite)
             holder.favouriteIcon.setImageResource(
-                if (isFavorite) R.drawable.ic_favourite_fill
-                else R.drawable.ic_favourite_border
+                if (isFavorite) R.drawable.favfill
+                else R.drawable.favadd
             )
         }
     }

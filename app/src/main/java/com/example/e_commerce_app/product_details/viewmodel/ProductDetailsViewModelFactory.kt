@@ -7,11 +7,10 @@ import com.example.e_commerce_app.model.repo.ShopifyRepo
 
 class ProductDetailsViewModelFactory(
     private val shopifyRepo: ShopifyRepo,
-    private val sharedPreferences: SharedPreferences
 ) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         if (modelClass.isAssignableFrom(ProductDetailsViewModel::class.java)) {
-            return ProductDetailsViewModel(shopifyRepo, sharedPreferences) as T
+            return ProductDetailsViewModel(shopifyRepo, ) as T
         }
         throw IllegalArgumentException("Unknown ViewModel class")
     }

@@ -3,6 +3,7 @@ package com.example.e_commerce_app.categories.view
 import android.animation.Animator
 import android.animation.AnimatorListenerAdapter
 import android.animation.ObjectAnimator
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -45,6 +46,8 @@ class CategoriesFragment : Fragment(), OnCategoryClick {
     private lateinit var menuItems: Array<ImageView>
     private var isOpen = false
     private var selectedProductType: String? = null
+    private lateinit var sharedPreferences: SharedPreferences
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -55,6 +58,7 @@ class CategoriesFragment : Fragment(), OnCategoryClick {
         val repo = ShopifyRepoImpl(remoteDataSource, localDataSource)
         val factory = CategoriesViewModelFactory(repo)
         categoriesViewModel = ViewModelProvider(this, factory)[CategoriesViewModel::class.java]
+        sharedPreferences = requireContext().getSharedPreferences("UserPrefs", 0)
     }
 
     override fun onCreateView(
@@ -252,12 +256,13 @@ class CategoriesFragment : Fragment(), OnCategoryClick {
                     )
                 findNavController().navigate(action)
             }, onFavouriteClick = { product, isFavorite ->
+                val shopifyCustomerId = sharedPreferences.getString("shopifyCustomerId", null)
                 if (isFavorite) {
-                    categoriesViewModel.addProductToFavourite(product)
+                    categoriesViewModel.addProductToFavourite(product,shopifyCustomerId?:"")
                     Toast.makeText(requireContext(), "Added to favorites", Toast.LENGTH_SHORT)
                         .show()
                 } else {
-                    categoriesViewModel.deleteProductToFavourite(product)
+                    categoriesViewModel.deleteProductFromFavourite(product,shopifyCustomerId?:"")
                     Toast.makeText(requireContext(), "Removed from favorites", Toast.LENGTH_SHORT)
                         .show()
                 }

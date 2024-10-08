@@ -6,10 +6,11 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.e_commerce_app.R
+import com.example.e_commerce_app.model.product.Product
 
 class SuggestionsAdapter(
-    private val suggestions: List<String>,
-    private val onClick: (String) -> Unit
+    private val suggestions: List<Product>,
+    private val onClick: (Product) -> Unit
 ) : RecyclerView.Adapter<SuggestionsAdapter.SuggestionViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SuggestionViewHolder {
@@ -28,8 +29,8 @@ class SuggestionsAdapter(
     class SuggestionViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         private val textView: TextView = view.findViewById(R.id.suggestionText)
 
-        fun bind(suggestion: String, onClick: (String) -> Unit) {
-            textView.text = suggestion
+        fun bind(suggestion: Product, onClick: (Product) -> Unit) {
+            textView.text = suggestion.title
             itemView.setOnClickListener { onClick(suggestion) }
         }
     }

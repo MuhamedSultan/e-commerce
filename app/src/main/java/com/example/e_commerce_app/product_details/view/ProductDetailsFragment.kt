@@ -57,7 +57,7 @@ class ProductDetailsFragment : Fragment() {
         val shopifyDao = ShopifyDB.getInstance(requireContext()).shopifyDao()
         val localDataSource = LocalDataSourceImpl(shopifyDao)
         val repo = ShopifyRepoImpl(RemoteDataSourceImpl(), localDataSource)
-        val factory = ProductDetailsViewModelFactory(repo, sharedPreferences)
+        val factory = ProductDetailsViewModelFactory(repo)
         viewModel = ViewModelProvider(this, factory)[ProductDetailsViewModel::class.java]
     }
 
@@ -190,15 +190,36 @@ class ProductDetailsFragment : Fragment() {
         }
 
 
+        lifecycleScope.launch {
+            val shopifyCustomerId = sharedPreferences.getString("shopifyCustomerId", null)
 
+            if (shopifyCustomerId != null) {
+                val isFavorite = viewModel.isProductFavorite(product.id, shopifyCustomerId)
+                favoriteButton?.setBackgroundResource(if (isFavorite) R.drawable.favfill else R.drawable.favadd)
+            }
 
-        favoriteButton?.setOnClickListener {
-            lifecycleScope.launch {
-                viewModel.addToFavorite(product)
-                Toast.makeText(context, "Product added to favorite", Toast.LENGTH_SHORT).show()
-                favoriteButton.setBackgroundResource(R.drawable.favfill)
+            favoriteButton?.setOnClickListener {
+                lifecycleScope.launch {
+                    val shopifyCustomerId = sharedPreferences.getString("shopifyCustomerId", null)
+                    if (shopifyCustomerId != null) {
+
+                        val isCurrentlyFavorite = viewModel.isProductFavorite(product.id, shopifyCustomerId)
+                        if (isCurrentlyFavorite) {
+                            viewModel.removeFavorite(product, shopifyCustomerId)
+                            favoriteButton.setBackgroundResource(R.drawable.favadd)
+                            Toast.makeText(context, "Removed from favorites", Toast.LENGTH_SHORT).show()
+                        } else {
+                            viewModel.addToFavorite(product, shopifyCustomerId)
+                            favoriteButton.setBackgroundResource(R.drawable.favfill)
+                            Toast.makeText(context, "Added to favorites", Toast.LENGTH_SHORT).show()
+                        }
+                    } else {
+                        Toast.makeText(context, "Please log in to add favorites", Toast.LENGTH_SHORT).show()
+                    }
+                }
             }
         }
+
 
         val colors = product.options.find { it.name == "Color" }?.values ?: emptyList()
         val sizes = product.options.find { it.name == "Size" }?.values ?: emptyList()
@@ -219,4 +240,10 @@ class ProductDetailsFragment : Fragment() {
     private fun showError(message: String) {
         Toast.makeText(context, message, Toast.LENGTH_LONG).show()
     }
+
+    private fun isProductFavorite(productId: Long, shopifyCustomerId: String): Boolean {
+        return false
+    }
 }
+
+

@@ -12,9 +12,11 @@ import com.example.e_commerce_app.model.product.ProductResponse
 import com.example.e_commerce_app.model.product.SingleProductResponse
 import com.example.e_commerce_app.model.cart.UpdateCartItemRequest
 import com.example.e_commerce_app.model.cart.UpdateCartItemResponse
+import com.example.e_commerce_app.model.orders.CustomerOrders
 import com.example.e_commerce_app.model.smart_collection.SmartCollectionResponse
 import com.example.e_commerce_app.model.user.CustomerRequest
 import com.example.e_commerce_app.model.user.CustomerResponse
+import com.example.e_commerce_app.util.ApiState
 import kotlinx.coroutines.flow.Flow
 import retrofit2.Response
 import retrofit2.http.Body
@@ -118,4 +120,6 @@ interface ShopifyService {
         @Body address: AddressRequest
     ): AddressResponse
 
+    @GET("orders.json")
+    suspend fun getCustomerOrders(@Query("customer_id") customerId: Long): CustomerOrders
 }

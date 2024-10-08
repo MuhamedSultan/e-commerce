@@ -83,13 +83,16 @@ class HomeViewModel(private val shopifyRepo: ShopifyRepo) : ViewModel() {
         }
     }
 
-     fun addProductToFavourite(product: Product)=viewModelScope.launch {
-        shopifyRepo.addToFavorite(product)
+
+
+
+    fun addProductToFavourite(product: Product, shopifyCustomerId: String) {
+        viewModelScope.launch {
+            val productWithShopifyId = product.copy(shopifyCustomerId = shopifyCustomerId)
+            shopifyRepo.addToFavorite(productWithShopifyId)
+        }
     }
 
-     fun deleteProductToFavourite(product: Product)=viewModelScope.launch {
-        shopifyRepo.removeFavorite(product)
-    }
 
     fun getDraftOrderSaveInShP(context: Context)=viewModelScope.launch (Dispatchers.IO){
         Log.i("TAG", "getDraftOrderSaveInShP: Started")
@@ -119,6 +122,13 @@ class HomeViewModel(private val shopifyRepo: ShopifyRepo) : ViewModel() {
         }
     }
 
+
+    fun deleteProductFromFavourite(product: Product, shopifyCustomerId: String) {
+        viewModelScope.launch {
+            val productWithShopifyId = product.copy(shopifyCustomerId = shopifyCustomerId)
+            shopifyRepo.removeFavorite(productWithShopifyId)
+        }
+    }
 
 }
 

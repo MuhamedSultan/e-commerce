@@ -59,7 +59,7 @@ class SettingFragment : Fragment() {
         }
 
         binding.ordersSettingLayout.setOnClickListener {
-            val action = SettingFragmentDirections.actionSettingFragmentToOrdersFragment()
+            val action = SettingFragmentDirections.actionSettingFragmentToOrdersFragment(binding.tvUserName.text.toString())
             findNavController().navigate(action)
         }
         binding.addressSettingLayout.setOnClickListener {
@@ -67,7 +67,7 @@ class SettingFragment : Fragment() {
             findNavController().navigate(action)
         }
         binding.favoritesSettingLayout.setOnClickListener {
-            val action = SettingFragmentDirections.actionSettingFragmentToOrdersFragment()
+            val action = SettingFragmentDirections.actionSettingFragmentToFavoriteFragment()
             findNavController().navigate(action)
         }
         binding.logoutSettingLayout.setOnClickListener {

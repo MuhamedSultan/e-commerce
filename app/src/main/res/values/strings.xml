@@ -62,5 +62,11 @@
     <string name="Coupon">Coupon Image</string>
     <string name="filter">Filter</string>
     <string name="price">Price :</string>
+    <string name="orderPrice">Price -</string>
+    <string name="order_number">order Number -</string>
+    <string name="created_at">Created at -</string>
+    <string name="currency">EGP</string>
+    <string name="orders">#Orders</string>
+    <string name="view_all">View all</string>
 
 </resources>

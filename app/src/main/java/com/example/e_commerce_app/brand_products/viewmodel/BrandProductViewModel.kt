@@ -18,15 +18,21 @@ class BrandProductViewModel(private val shopifyRepo: ShopifyRepo) : ViewModel() 
     val brandProductResult: StateFlow<ApiState<ProductResponse>> = _brandProductResult
 
     fun getBrandProducts(brandName: String) = viewModelScope.launch(Dispatchers.IO) {
-        val result=shopifyRepo.getBrandProducts(brandName)
-        _brandProductResult.value=result
+        val result = shopifyRepo.getBrandProducts(brandName)
+        _brandProductResult.value = result
     }
 
-    fun addProductToFavourite(product: Product)=viewModelScope.launch {
-        shopifyRepo.addToFavorite(product)
+    fun addProductToFavourite(product: Product, shopifyCustomerId: String) {
+        viewModelScope.launch {
+            val productWithShopifyId = product.copy(shopifyCustomerId = shopifyCustomerId)
+            shopifyRepo.addToFavorite(productWithShopifyId)
+        }
     }
 
-    fun deleteProductToFavourite(product: Product)=viewModelScope.launch {
-        shopifyRepo.removeFavorite(product)
+    fun deleteProductFromFavourite(product: Product, shopifyCustomerId: String) {
+        viewModelScope.launch {
+            val productWithShopifyId = product.copy(shopifyCustomerId = shopifyCustomerId)
+            shopifyRepo.removeFavorite(productWithShopifyId)
+        }
     }
 }

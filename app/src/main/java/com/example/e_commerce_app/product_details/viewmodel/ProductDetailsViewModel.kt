@@ -40,19 +40,27 @@ class ProductDetailsViewModel(
         }
     }
 
-    fun addToFavorite(product: Product) {
+
+    fun addToFavorite(product: Product, shopifyCustomerId: String) {
         viewModelScope.launch {
-            val shopifyCustomerId = sharedPreferences.getString("shopifyCustomerId", null)
-            if (shopifyCustomerId != null) {
-                val productWithShopifyId = product.copy(shopifyCustomerId = shopifyCustomerId)
-                repository.addToFavorite(productWithShopifyId)
-            } else {
-                Log.e("FavoriteViewModel", "Shopify Customer ID is null. Cannot add to favorites.")
-            }
+            val productWithShopifyId = product.copy(shopifyCustomerId = shopifyCustomerId)
+            repository.addToFavorite(productWithShopifyId)
         }
     }
 
 
+    fun removeFavorite(product: Product, shopifyCustomerId: String) {
+        viewModelScope.launch {
+            val productWithShopifyId = product.copy(shopifyCustomerId = shopifyCustomerId)
+            repository.removeFavorite(productWithShopifyId)
+        }
+    }
+
+
+    suspend fun isProductFavorite(productId: Long, shopifyCustomerId: String): Boolean {
+        val favorites = repository.getAllFavorites(shopifyCustomerId)
+        return favorites.any { it.id == productId }
+    }
 
 
     fun addProductToDraftOrder(draftOrderRequest: DraftOrderRequest , draftOrderId: Long?) {
@@ -66,7 +74,10 @@ class ProductDetailsViewModel(
                     Log.d("ProductDetailsViewModel", "Draft order created successfully")
                 }
                 is ApiState.Error -> {
-                    Log.e("ProductDetailsViewModel", "Error creating draft order: ${result.message}")
+                    Log.e(
+                        "ProductDetailsViewModel",
+                        "Error creating draft order: ${result.message}"
+                    )
                 }
                 // Handle loading state if needed
                 is ApiState.Loading -> TODO()

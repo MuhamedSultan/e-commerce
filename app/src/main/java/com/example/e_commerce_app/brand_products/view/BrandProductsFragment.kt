@@ -1,5 +1,6 @@
 package com.example.e_commerce_app.brand_products.view
 
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -13,14 +14,11 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
-import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.e_commerce_app.R
 import com.example.e_commerce_app.brand_products.viewmodel.BrandProductViewModel
 import com.example.e_commerce_app.brand_products.viewmodel.BrandProductViewModelFactory
 import com.example.e_commerce_app.databinding.FragmentBrandProductsBinding
 import com.example.e_commerce_app.db.LocalDataSourceImpl
 import com.example.e_commerce_app.db.ShopifyDB
-import com.example.e_commerce_app.home.view.adapter.RandomProductsAdapter
 import com.example.e_commerce_app.model.product.Product
 import com.example.e_commerce_app.model.repo.ShopifyRepoImpl
 import com.example.e_commerce_app.network.RemoteDataSourceImpl
@@ -34,6 +32,8 @@ class BrandProductsFragment : Fragment() {
     private lateinit var brandName: String
     private var allProducts: List<Product> = emptyList()
     private var filteredProducts: List<Product> = emptyList()
+    private lateinit var sharedPreferences: SharedPreferences
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -44,6 +44,8 @@ class BrandProductsFragment : Fragment() {
         val factory = BrandProductViewModelFactory(repo)
         brandProductViewModel = ViewModelProvider(this, factory)[BrandProductViewModel::class.java]
         brandName = BrandProductsFragmentArgs.fromBundle(requireArguments()).brandName
+        sharedPreferences = requireContext().getSharedPreferences("UserPrefs", 0)
+
     }
 
     override fun onCreateView(
@@ -128,12 +130,14 @@ class BrandProductsFragment : Fragment() {
                     )
                 findNavController().navigate(action)
             }, onFavouriteClick = { product, isFavorite ->
+                val shopifyCustomerId = sharedPreferences.getString("shopifyCustomerId", null)
+
                 if (isFavorite) {
-                    brandProductViewModel.addProductToFavourite(product)
+                    brandProductViewModel.addProductToFavourite(product,shopifyCustomerId?:"")
                     Toast.makeText(requireContext(), "Added to favorites", Toast.LENGTH_SHORT)
                         .show()
                 } else {
-                    brandProductViewModel.deleteProductToFavourite(product)
+                    brandProductViewModel.deleteProductFromFavourite(product,shopifyCustomerId?:"")
                     Toast.makeText(requireContext(), "Removed from favorites", Toast.LENGTH_SHORT)
                         .show()
                 }

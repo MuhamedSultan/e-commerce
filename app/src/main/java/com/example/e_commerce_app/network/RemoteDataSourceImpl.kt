@@ -8,6 +8,7 @@ import com.example.e_commerce_app.model.cart.CartResponse
 import com.example.e_commerce_app.model.cart.DraftOrderRequest
 import com.example.e_commerce_app.model.cart.DraftOrderResponse
 import com.example.e_commerce_app.model.custom_collection.CustomCollectionResponse
+import com.example.e_commerce_app.model.orders.CustomerOrders
 import com.example.e_commerce_app.model.product.Product
 import com.example.e_commerce_app.model.product.ProductResponse
 import com.example.e_commerce_app.model.smart_collection.SmartCollectionResponse
@@ -195,6 +196,15 @@ class RemoteDataSourceImpl : RemoteDataSource {
             }
         } catch (e: Exception) {
             ApiState.Error("Error fetching cart: ${e.message}")
+        }
+    }
+
+    override suspend fun getCustomerOrders(customerId: Long): ApiState<CustomerOrders> {
+        return try {
+            val response = Network.shopifyService.getCustomerOrders(customerId)
+            ApiState.Success(response)
+        } catch (e: Exception) {
+            ApiState.Error(e.message.toString())
         }
     }
 

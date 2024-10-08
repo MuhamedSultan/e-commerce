@@ -14,6 +14,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -31,20 +32,20 @@ class FavoriteFragment : Fragment() {
     private lateinit var imageView: ImageView
     private lateinit var textView: TextView
     private lateinit var sharedPreferences: SharedPreferences
+    private var shopifyCustomerId: String? = null
 
     private val favoriteViewModel: FavoriteViewModel by viewModels {
         FavoriteViewModelFactory(
             ShopifyRepoImpl(
                 RemoteDataSourceImpl(),
                 LocalDataSourceImpl(ShopifyDB.getInstance(requireContext()).shopifyDao())
-            ),
-            sharedPreferences
+            )
         )
     }
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         sharedPreferences = requireContext().getSharedPreferences("UserPrefs", Context.MODE_PRIVATE)
+        shopifyCustomerId = sharedPreferences.getString("shopifyCustomerId", null)
     }
 
     override fun onCreateView(
@@ -55,7 +56,11 @@ class FavoriteFragment : Fragment() {
 
         setupRecyclerView(view)
         observeFavorites()
-        favoriteViewModel.getAllFavorites()
+        // Retrieve shopifyCustomerId from SharedPreferences
+        val shopifyCustomerId = sharedPreferences.getString("shopifyCustomerId", null)
+        if (shopifyCustomerId != null) {
+            favoriteViewModel.getAllFavorites(shopifyCustomerId)
+        }
 
         imageView = view.findViewById(R.id.imageView4)
         textView = view.findViewById(R.id.textView)
@@ -83,12 +88,22 @@ class FavoriteFragment : Fragment() {
 
     private fun setupRecyclerView(view: View) {
         recyclerView = view.findViewById(R.id.recyclerView)
-        favoriteAdapter = FavoriteAdapter { product ->
-            favoriteViewModel.removeFavorite(product)
-        }
+        favoriteAdapter = FavoriteAdapter(
+            onDeleteClick = { product ->
+                // Pass shopifyCustomerId to removeFavorite only if it is not null
+                shopifyCustomerId?.let { id ->
+                    favoriteViewModel.removeFavorite(product, id)
+                }
+            },
+            onProductClick = { productId ->
+                val action = FavoriteFragmentDirections
+                    .actionFavoriteFragmentToProductDetailsFragment(productId)
+                findNavController().navigate(action)
+            }
+        )
+
         recyclerView.apply {
 
-            //layoutManager = GridLayoutManager(context, 2)
             layoutManager = LinearLayoutManager(context)
             adapter = favoriteAdapter
         }
