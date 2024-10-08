@@ -9,9 +9,15 @@ import com.example.e_commerce_app.R
 import com.example.e_commerce_app.model.product.Product
 
 class SuggestionsAdapter(
-    private val suggestions: List<Product>,
+    private var suggestions: List<Product>,
     private val onClick: (Product) -> Unit
 ) : RecyclerView.Adapter<SuggestionsAdapter.SuggestionViewHolder>() {
+
+
+    fun updateProducts(newProducts: List<Product>) {
+        suggestions = newProducts
+        notifyDataSetChanged()
+    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SuggestionViewHolder {
         val view = LayoutInflater.from(parent.context)

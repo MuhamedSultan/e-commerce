@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.e_commerce_app.model.repo.ShopifyRepo
 import com.example.e_commerce_app.model.user.UserData
 import com.example.e_commerce_app.util.ApiState
+import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -69,5 +70,19 @@ class SignUpViewModel(
             return false
         }
         return true
+    }
+
+
+
+    fun sendVerificationEmail() {
+        val user = FirebaseAuth.getInstance().currentUser
+        user?.sendEmailVerification()
+            ?.addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    // Verification email sent successfully
+                } else {
+                    // Handle error
+                }
+            }
     }
 }
