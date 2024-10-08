@@ -120,6 +120,9 @@
                 app:layout_constraintTop_toBottomOf="@id/productColorLabel"
                 tools:listitem="@layout/item_color" />
 
+
+
+
             <Button
                 android:drawableLeft="@drawable/ic_cart"
                 android:id="@+id/btn_add_to_cart"
@@ -147,6 +150,31 @@
                 app:layout_constraintStart_toEndOf="@+id/btn_add_to_cart"
                 app:layout_constraintTop_toTopOf="@+id/btn_add_to_cart"
                 app:layout_constraintVertical_bias="0.0" />
+
+            <TextView
+                android:id="@+id/seeRating"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="View feedback"
+                android:textColor="@color/basic_color"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toTopOf="@+id/productSizeRecyclerView"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.927"
+                app:layout_constraintStart_toEndOf="@+id/productPrice"
+                app:layout_constraintTop_toBottomOf="@+id/productDescription"
+                app:layout_constraintVertical_bias="0.341" />
+
+            <View
+                android:id="@+id/lineSeparator"
+                android:layout_width="90dp"
+                android:layout_height="2dp"
+                android:background="@color/basic_color"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.944"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/seeRating" />
+
         </androidx.constraintlayout.widget.ConstraintLayout>
 
     </ScrollView>

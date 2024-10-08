@@ -12,6 +12,7 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
@@ -135,10 +136,17 @@ class ProductDetailsFragment : Fragment() {
         view?.findViewById<TextView>(R.id.productPrice)?.text =
             product.variants.firstOrNull()?.price ?: "$0.00"
 
+        val seeRatingTextView = view?.findViewById<TextView>(R.id.seeRating)
 
         val addToCartButton = view?.findViewById<Button>(R.id.btn_add_to_cart)
 
         val favoriteButton = view?.findViewById<Button>(R.id.btn_add_to_favorite)
+
+        seeRatingTextView?.setOnClickListener {
+            val action = ProductDetailsFragmentDirections.actionProductDetailsFragmentToRatingFragment()
+            findNavController().navigate(action)
+        }
+
 
         addToCartButton?.setOnClickListener {
             val variant = product.variants.firstOrNull()
