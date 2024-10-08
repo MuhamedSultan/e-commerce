@@ -35,7 +35,11 @@ class FakeShopifyRepository : ShopifyRepo {
     var shouldReturnError = false // Control the outcome of registration
     private val favorites = mutableListOf<Product>()
 
+    private var signInUserResult: ApiState<UserData>? = null
 
+    fun setSignInUserResult(result: ApiState<UserData>) {
+        signInUserResult = result
+    }
 
 
     private val fakeProducts = listOf(
@@ -147,55 +151,17 @@ class FakeShopifyRepository : ShopifyRepo {
     }
 
     override suspend fun getAllBrands(): ApiState<SmartCollectionResponse> {
-        // Sample image data
-        val sampleImage = com.example.e_commerce_app.model.smart_collection.Image(
-            alt = "Sample Brand Image",
-            created_at = "2024-01-01T00:00:00Z",
-            height = 500,
-            src = "https://example.com/sample-image.png",
-            width = 500
-        )
-
-        val sampleRule = Rule(
-            column = "title",
-            relation = "equals",
-            condition = "Sample Brand"
-        )
-
-        val sampleSmartCollection = SmartCollection(
-            admin_graphql_api_id = "graphql_api_id_1",
-            body_html = "<p>Sample brand description</p>",
-            disjunctive = true,
-            handle = "sample-brand-handle",
-            id = 1L,
-            image = sampleImage,
-            published_at = "2024-01-01T00:00:00Z",
-            published_scope = "global",
-            rules = listOf(sampleRule),
-            sort_order = "manual",
-            template_suffix = "",
-            title = "Sample Brand",
-            updated_at = "2024-01-02T00:00:00Z"
-        )
-
-        return ApiState.Success(
-            SmartCollectionResponse(
-                smart_collections = listOf(sampleSmartCollection)
-            )
-        )
+        return ApiState.Error("Not implemented")
     }
-
 
     override suspend fun getRandomProducts(): ApiState<ProductResponse> {
-        return ApiState.Success(ProductResponse(products = fakeProducts))
+        return ApiState.Error("Not implemented")
     }
-
     override suspend fun getBrandProducts(brandName: String): ApiState<ProductResponse> {
-        return ApiState.Success(ProductResponse(products = fakeProducts))
+        return ApiState.Error("Not implemented")
     }
-
     override suspend fun signInUser(email: String, password: String): ApiState<UserData> {
-        return ApiState.Success(fakeUserData)
+        return signInUserResult ?: ApiState.Error("No result set")
     }
 
 
