@@ -236,7 +236,7 @@ class HomeFragment : Fragment() {
                                 DraftOrderManager.init(DraftOrder(
                                     lineItems = lineItemsList,
                                     customer = CustomerId(collections.draft_order.customer.id),
-                                    note = collections.draft_order.note as String
+                                    note = collections.draft_order.note.toString()
                                 ))
                             }
                         }
