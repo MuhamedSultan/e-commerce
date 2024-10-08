@@ -4,6 +4,7 @@ import android.content.Context
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.e_commerce_app.cart.DraftOrderManager
 import com.example.e_commerce_app.db.SharedPrefsManager
 import com.example.e_commerce_app.model.cart.CustomerId
 import com.example.e_commerce_app.model.cart.DraftOrder
@@ -100,10 +101,10 @@ class HomeViewModel(private val shopifyRepo: ShopifyRepo) : ViewModel() {
         val customerId = SharedPrefsManager.getInstance().getShopifyCustomerId()
         Log.i("TAG", "customerId: $customerId")
         if (customerId!=null) {
-            /*try {*/
+
             val draftOrderRequest = DraftOrderRequest(
                 draftOrder = DraftOrder(
-                    lineItems = listOf(
+                    lineItems = mutableListOf(
                         LineItems(
                             title = "m",
                             price = "10.00",
@@ -118,24 +119,8 @@ class HomeViewModel(private val shopifyRepo: ShopifyRepo) : ViewModel() {
                 )
             )
             val result = shopifyRepo.createFavoriteDraft(draftOrderRequest)
-                /*val result = shopifyRepo.createFavoriteDraft(
-                    DraftOrderRequest(
-                        DraftOrder(
-                            customer = CustomerId(customerId.toLong())
-                        )
-                    )
-                )*/
+            DraftOrderManager.init(draftOrderRequest.draftOrder)
             _creatingDraftOrder.value=result
-                /*result?.let {
-                    _creatingDraftOrder.value = ApiState.Success(it)
-                } ?: run {
-                    _creatingDraftOrder.value = ApiState.Error("No product data found")
-                }
-            } catch (e: Exception) {
-                Log.e("TAG", "getDraftOrderSaveInShP: ${e.message} ")
-                _creatingDraftOrder.value = ApiState.Error(e.message ?: "Unknown error")
-            }*/
-
         }
     }
 

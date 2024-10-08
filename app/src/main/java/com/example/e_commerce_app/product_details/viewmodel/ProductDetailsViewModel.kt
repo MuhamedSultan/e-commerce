@@ -62,19 +62,20 @@ class ProductDetailsViewModel(
     }
 
 
-    fun addProductToDraftOrder(draftOrderRequest: DraftOrderRequest , draftOrderId: Long?) {
+    fun addProductToDraftOrder(draftOrderRequest: DraftOrderRequest , draftOrderId: Long) {
         viewModelScope.launch {
             _draftOrderState.value = ApiState.Loading()
-            val result = repository.backUpDraftFavorite(draftOrderRequest,123)
+            val result = repository.backUpDraftFavorite(draftOrderRequest,draftOrderId)
             _draftOrderState.value = result
 
             when (result) {
                 is ApiState.Success -> {
-                    Log.d("ProductDetailsViewModel", "Draft order created successfully")
+                    Log.d("TAG", "Draft order created successfully")
+                    Log.i("TAG", "Add Response: ${result.data?.draft_order}")
                 }
                 is ApiState.Error -> {
                     Log.e(
-                        "ProductDetailsViewModel",
+                        "TAG",
                         "Error creating draft order: ${result.message}"
                     )
                 }

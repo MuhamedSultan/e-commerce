@@ -1,5 +1,6 @@
 package com.example.e_commerce_app.model.cart
 
+import com.example.e_commerce_app.model.address.testAdd
 import com.google.gson.annotations.SerializedName
 
 data class DraftOrderRequest(
@@ -9,10 +10,14 @@ data class DraftOrderRequest(
 
 data class DraftOrder(
     @SerializedName("line_items")
-    val lineItems: List<LineItems> = listOf(LineItems()),
+    val lineItems: MutableList<LineItems> = mutableListOf(LineItems()),
     @SerializedName("applied_discount")
     val appliedDiscount: AppliedDiscount?=null,
     val customer: CustomerId,
+    @SerializedName("shipping_address")
+    val shippingAddress : testAdd? = null,
+    @SerializedName("billing_address")
+    val billingAddress : testAdd? = null,
     @SerializedName("use_customer_default_address")
     val useCustomerDefaultAddress: Boolean = true
 )
@@ -20,7 +25,7 @@ data class DraftOrder(
 data class LineItems(
     val title: String = "mn",
     val price: String = "10.00",
-    val quantity: Int = 1,
+    var quantity: Int = 1,
     @SerializedName("product_id")
     val productId: String = "12",
     @SerializedName("variant_id")
