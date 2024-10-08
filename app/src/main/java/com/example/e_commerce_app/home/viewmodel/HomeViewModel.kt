@@ -101,13 +101,30 @@ class HomeViewModel(private val shopifyRepo: ShopifyRepo) : ViewModel() {
         Log.i("TAG", "customerId: $customerId")
         if (customerId!=null) {
             /*try {*/
-                val result = shopifyRepo.createFavoriteDraft(
+            val draftOrderRequest = DraftOrderRequest(
+                draftOrder = DraftOrder(
+                    lineItems = listOf(
+                        LineItems(
+                            title = "m",
+                            price = "10.00",
+                            quantity = 1,
+                            productId = "12",
+                            variantId = null
+                        )
+                    ),
+                    appliedDiscount = null,
+                    customer = CustomerId(id = 8936192246075),
+                    useCustomerDefaultAddress = true
+                )
+            )
+            val result = shopifyRepo.createFavoriteDraft(draftOrderRequest)
+                /*val result = shopifyRepo.createFavoriteDraft(
                     DraftOrderRequest(
                         DraftOrder(
                             customer = CustomerId(customerId.toLong())
                         )
                     )
-                )
+                )*/
             _creatingDraftOrder.value=result
                 /*result?.let {
                     _creatingDraftOrder.value = ApiState.Success(it)

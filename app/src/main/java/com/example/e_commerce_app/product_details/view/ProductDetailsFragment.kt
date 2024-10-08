@@ -156,7 +156,7 @@ class ProductDetailsFragment : Fragment() {
                 viewModel.addProductToDraftOrder(
                     draftOrderRequest = DraftOrderRequest(
                         DraftOrder(
-                            line_items = listOf(lineItem),
+                            lineItems = listOf(lineItem),
                             customer = CustomerId(customerId?.toLong() ?: 0)
                         )
                     ),
