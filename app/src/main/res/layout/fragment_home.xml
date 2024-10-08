@@ -19,7 +19,7 @@
             android:layout_width="0dp"
             android:layout_height="50dp"
             android:layout_marginStart="8dp"
-            android:layout_marginTop="16dp"
+            android:layout_marginTop="8dp"
             android:layout_marginEnd="16dp"
             android:background="@drawable/ed_search_bg"
             android:drawableEnd="@drawable/ic_search"
@@ -29,7 +29,7 @@
             android:paddingHorizontal="12dp"
             app:layout_constraintEnd_toStartOf="@+id/cardView"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toBottomOf="@+id/textView8" />
 
 
         <androidx.recyclerview.widget.RecyclerView
@@ -50,12 +50,11 @@
             android:id="@+id/cardView"
             android:layout_width="50dp"
             android:layout_height="50dp"
-            android:layout_marginTop="16dp"
             android:layout_marginEnd="16dp"
             android:elevation="16dp"
             app:cardCornerRadius="12dp"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
+            app:layout_constraintTop_toTopOf="@+id/edSearch">
 
             <ImageView
                 android:id="@+id/imageView"
@@ -160,6 +159,22 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/textView2" />
+
+        <TextView
+            android:id="@+id/textView8"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="8dp"
+            android:text="@string/st_store"
+            android:gravity="center"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            android:textColor="@color/black"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.core.widget.NestedScrollView>
