@@ -37,9 +37,9 @@ class CartAdapter(
                 .load(lineItem.imageUrl)
                 .into(productImage)*/
             Glide.with(itemView.context)
-                .load(lineItem.imageUrl)
+                .load(lineItem.xImageUrl)
                 .placeholder(R.drawable.discount_place_holder) // Optional placeholder
-                .error(R.drawable.discount_place_holder) // Optional error image
+                .error(R.drawable.ic_launcher_foreground) // Optional error image
                 .into(productImage)
 
             deleteButton.setOnClickListener {

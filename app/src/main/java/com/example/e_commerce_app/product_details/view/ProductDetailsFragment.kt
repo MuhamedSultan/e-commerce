@@ -147,9 +147,10 @@ class ProductDetailsFragment : Fragment() {
                 val lineItem = LineItems(
                     quantity = 1,
                     price = variant.price,
-                    title = product.title,
+                    title = product.title+"XXXFekry",
                     productId = product.id.toString(),
-                    variantId = variant.id.toString()
+                    variantId = variant.id.toString(),
+                    imageUrl = product.image.src
                 )
                 var shp = SharedPrefsManager.getInstance()
                 val customerId = shp.getShopifyCustomerId()
