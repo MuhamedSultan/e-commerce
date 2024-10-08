@@ -9,7 +9,9 @@ data class testAdd(
     val address1: String,
     val address2: String?,
     val city: String,
+    @SerializedName("first_name")
     val first_name: String,
+    @SerializedName("last_name")
     val last_name: String,
     val phone: String?,
     val province: String,

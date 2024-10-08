@@ -12,7 +12,7 @@
         android:id="@+id/emptyCart"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:visibility="visible">
+        android:visibility="gone">
 
         <ImageView
             android:id="@+id/emptyCartImg"
@@ -47,12 +47,12 @@
             android:id="@+id/cartLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:visibility="gone">
+            android:visibility="visible">
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/cart_products_rv"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="550sp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
@@ -63,17 +63,18 @@
                 android:id="@+id/view"
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
-                android:layout_marginBottom="16dp"
+                android:layout_marginTop="8dp"
                 android:background="#000000"
-                app:layout_constraintBottom_toTopOf="@+id/textView"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent" />
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/cart_products_rv" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/checkoutBtn"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="24dp"
+                android:layout_marginTop="32dp"
                 android:layout_marginEnd="24dp"
                 android:layout_marginBottom="16dp"
                 android:background="@drawable/rect_button_background"
@@ -82,18 +83,19 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.0"
-                app:layout_constraintStart_toStartOf="parent" />
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/textView" />
 
             <TextView
                 android:id="@+id/textView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="32dp"
+                android:layout_marginTop="16dp"
                 android:text="@string/total"
                 android:textSize="16dp"
                 android:textStyle="bold"
-                app:layout_constraintBottom_toTopOf="@+id/checkoutBtn"
-                app:layout_constraintStart_toStartOf="@+id/checkoutBtn" />
+                app:layout_constraintStart_toStartOf="@+id/checkoutBtn"
+                app:layout_constraintTop_toBottomOf="@+id/view" />
 
             <TextView
                 android:id="@+id/totalPrice"

@@ -82,7 +82,7 @@ interface ShopifyService {
     @GET("draft_orders/{draftFavoriteId}.json")
     suspend fun getProductsIdForDraftFavorite(
         @Path("draftFavoriteId") draftFavoriteId: Long
-    ): Response<DraftOrderResponse>
+    ): DraftOrderResponse
 
     // Get a specific cart by its ID
     @GET("carts/{cartId}.json")
@@ -103,6 +103,10 @@ interface ShopifyService {
         @Path("customerId") customerId: Long
     ): AddressesResponse
 
+    @PUT("draft_orders/{draftFavoriteId}/complete.json")
+    suspend fun addOrderFromDraftOrder(
+        @Path("draftFavoriteId") draftFavoriteId: Long
+    ): DraftOrderResponse
 
     @PUT("customers/{customerId}/addresses/{addressId}")
     suspend fun updateAddressOfCustomer(
