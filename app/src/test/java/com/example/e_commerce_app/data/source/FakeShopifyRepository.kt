@@ -33,6 +33,9 @@ import com.example.e_commerce_app.util.ApiState
 
 class FakeShopifyRepository : ShopifyRepo {
     var shouldReturnError = false // Control the outcome of registration
+    private val favorites = mutableListOf<Product>()
+
+
 
 
     private val fakeProducts = listOf(
@@ -254,13 +257,17 @@ class FakeShopifyRepository : ShopifyRepo {
     }
 
     override suspend fun addToFavorite(product: Product) {
+        // Simulate adding a product to favorites
+        favorites.add(product)
     }
-
     override suspend fun removeFavorite(product: Product) {
+        // Simulate removing a product from favorites
+        favorites.remove(product)
     }
 
     override suspend fun getAllFavorites(shopifyCustomerId: String): List<Product> {
-        return listOf()
+        // Simulate returning the list of favorite products
+        return favorites.toList() // Return a copy of the list
     }
 
     override suspend fun searchProductsByTitle(title: String): ApiState<ProductResponse> {
