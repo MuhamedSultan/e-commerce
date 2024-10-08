@@ -147,17 +147,16 @@ class ProductDetailsFragment : Fragment() {
                 val lineItem = LineItems(
                     quantity = 1,
                     price = variant.price,
-                    title = product.title+"XXXFekry",
+                    title = product.title,
                     productId = product.id.toString(),
                     variantId = variant.id.toString(),
-                    imageUrl = product.image.src
                 )
                 var shp = SharedPrefsManager.getInstance()
                 val customerId = shp.getShopifyCustomerId()
                 val draftOrderId = shp.getDraftedOrderId()
                 viewModel.addProductToDraftOrder(
                     draftOrderRequest = DraftOrderRequest(
-                        DraftOrderManager.getInstance().addProductToDraftOrder(lineItem)
+                        DraftOrderManager.getInstance().addProductToDraftOrder(lineItem,product.image.src)
                         /*DraftOrder(
                             lineItems = mutableListOf(lineItem),
                             customer = CustomerId(customerId?.toLong() ?: 0)

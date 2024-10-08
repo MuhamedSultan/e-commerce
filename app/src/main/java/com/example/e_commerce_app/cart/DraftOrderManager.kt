@@ -23,10 +23,7 @@ class DraftOrderManager private constructor(var draftOrder: DraftOrder) {
         }
     }
 
-    fun addProductToDraftOrder(lineItem: LineItems): DraftOrder {
-        /*lineItem.quantity
-        draftOrder.lineItems.stream().filter(item -> )add(lineItem)
-        return sharedPreferences.getString("shopifyCustomerId", null)*/
+    fun addProductToDraftOrder(lineItem: LineItems,imageUrl : String): DraftOrder {
 
         // Check if a line item with the same variantId already exists in the draftOrder's lineItems list
         val existingItem = draftOrder.lineItems.find { it.variantId == lineItem.variantId }
@@ -37,6 +34,7 @@ class DraftOrderManager private constructor(var draftOrder: DraftOrder) {
         } else {
             // If not found, add the new line item to the list
             draftOrder.lineItems.add(lineItem)
+            draftOrder.note = draftOrder.note+"|##|"+imageUrl
         }
         Log.i("TAG", "addProductToDraftOrder: ${draftOrder}")
         return draftOrder // Return the updated draftOrder

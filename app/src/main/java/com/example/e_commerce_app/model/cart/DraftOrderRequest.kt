@@ -19,7 +19,8 @@ data class DraftOrder(
     @SerializedName("billing_address")
     val billingAddress : testAdd? = null,
     @SerializedName("use_customer_default_address")
-    val useCustomerDefaultAddress: Boolean = true
+    val useCustomerDefaultAddress: Boolean = true,
+    var note : String = ""
 )
 
 data class LineItems(
@@ -30,8 +31,6 @@ data class LineItems(
     val productId: String = "12",
     @SerializedName("variant_id")
     val variantId: String? = null,
-    @SerializedName("sku")
-    val imageUrl : String? = null
 )
 
 data class AppliedDiscount(

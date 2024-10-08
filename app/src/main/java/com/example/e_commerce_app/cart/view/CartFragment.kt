@@ -70,8 +70,10 @@ class CartFragment : Fragment() {
 
         // Set up checkout button click listener
         binding.checkoutBtn.setOnClickListener {
-            val action = CartFragmentDirections.actionCartFragmentToPaymentFragment()
-            findNavController().navigate(action)
+//            val action = CartFragmentDirections.actionCartFragmentToPaymentFragment()
+//            findNavController().navigate(action)
+            viewModel.completeOrderForSultan()
+            //observeCompleteOrder()
         }
 
         // Fetch products based on customer ID
@@ -191,6 +193,13 @@ class CartFragment : Fragment() {
 
     private fun updateCartUI(draftOrderResponse: DraftOrderResponse) {
         val lineItems = draftOrderResponse.draft_order.line_items
+        val imageUrls = DraftOrderManager.getInstance().draftOrder.note
+        val result = imageUrls.split("|##|").filter { it.isNotEmpty() }
+        for ((index, item) in lineItems.drop(1).withIndex()) {
+            if (index < result.size) {
+                item.imageUrl = result[index] // Assign corresponding imageUrl
+            }
+        }
         cartAdapter.updateData(lineItems.drop(1))
         binding.totalPrice.text = draftOrderResponse.draft_order.subtotal_price
         /*if (cartResponse.carts.isNotEmpty()) {

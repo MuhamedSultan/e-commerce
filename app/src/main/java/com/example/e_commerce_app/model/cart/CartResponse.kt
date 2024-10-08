@@ -29,10 +29,7 @@ data class LineItem(
     @SerializedName("variant_id")
     val variantId: String? = null,
     @SerializedName("image")
-    val imageUrl: String,
-    @SerializedName("sku")
-    val xImageUrl : String? = null
-
+    var imageUrl: String,
 )
 
 data class DeleteProductResponse(
