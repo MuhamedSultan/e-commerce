@@ -1,4 +1,4 @@
-package com.example.e_commerce_app.product_details.adapter
+package com.example.e_commerce_app.rating
 
 import android.view.LayoutInflater
 import android.view.View

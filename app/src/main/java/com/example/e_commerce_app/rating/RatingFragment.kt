@@ -9,7 +9,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.e_commerce_app.R
 import com.example.e_commerce_app.model.rateing.RatingItem
-import com.example.e_commerce_app.product_details.adapter.RatingAdapter
 
 
 class RatingFragment : Fragment() {
