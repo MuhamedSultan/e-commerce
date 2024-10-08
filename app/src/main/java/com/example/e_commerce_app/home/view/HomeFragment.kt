@@ -233,8 +233,7 @@ class HomeFragment : Fragment() {
                                 }
                                 DraftOrderManager.init(DraftOrder(
                                     lineItems = lineItemsList,
-                                    customer = CustomerId(collections.draft_order.customer.id)/*,
-                                    billingAddress = collections.draft_order.shipping_address as testAdd*/
+                                    customer = CustomerId(collections.draft_order.customer.id)
                                 ))
                             }
                         }

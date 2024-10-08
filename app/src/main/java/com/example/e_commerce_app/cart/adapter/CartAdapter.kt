@@ -33,8 +33,13 @@ class CartAdapter(
             amountTxt.text = lineItem.quantity.toString()
 
             // Load image using Glide
+            /*Glide.with(itemView.context)
+                .load(lineItem.imageUrl)
+                .into(productImage)*/
             Glide.with(itemView.context)
                 .load(lineItem.imageUrl)
+                .placeholder(R.drawable.discount_place_holder) // Optional placeholder
+                .error(R.drawable.discount_place_holder) // Optional error image
                 .into(productImage)
 
             deleteButton.setOnClickListener {

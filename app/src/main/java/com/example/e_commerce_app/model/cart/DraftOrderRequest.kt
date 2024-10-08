@@ -29,7 +29,9 @@ data class LineItems(
     @SerializedName("product_id")
     val productId: String = "12",
     @SerializedName("variant_id")
-    val variantId: String? = null
+    val variantId: String? = null,
+    @SerializedName("sku")
+    val imageUrl : String? = null
 )
 
 data class AppliedDiscount(
