@@ -17,6 +17,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
 import com.example.e_commerce_app.R
+import com.example.e_commerce_app.cart.DraftOrderManager
 import com.example.e_commerce_app.db.LocalDataSourceImpl
 import com.example.e_commerce_app.db.SharedPrefsManager
 import com.example.e_commerce_app.db.ShopifyDB
@@ -155,20 +156,21 @@ class ProductDetailsFragment : Fragment() {
                     quantity = 1,
                     price = variant.price,
                     title = product.title,
-                    /*product_id = product.id.toString(),
-                    variant_id = variant.id*/
+                    productId = product.id.toString(),
+                    variantId = variant.id.toString(),
                 )
                 var shp = SharedPrefsManager.getInstance()
                 val customerId = shp.getShopifyCustomerId()
                 val draftOrderId = shp.getDraftedOrderId()
                 viewModel.addProductToDraftOrder(
                     draftOrderRequest = DraftOrderRequest(
-                        DraftOrder(
-                            line_items = listOf(lineItem),
+                        DraftOrderManager.getInstance().addProductToDraftOrder(lineItem,product.image.src)
+                        /*DraftOrder(
+                            lineItems = mutableListOf(lineItem),
                             customer = CustomerId(customerId?.toLong() ?: 0)
-                        )
+                        )*/
                     ),
-                    draftOrderId = draftOrderId
+                    draftOrderId = draftOrderId ?: 0
                 )
                 observeViewModel()
                 /*val shopifyCustomerId = sharedPreferences.getString("shopifyCustomerId", null)
