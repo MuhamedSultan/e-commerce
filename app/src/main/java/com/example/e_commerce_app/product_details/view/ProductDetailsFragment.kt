@@ -169,18 +169,34 @@ class ProductDetailsFragment : Fragment() {
                     val shopifyCustomerId = sharedPreferences.getString("shopifyCustomerId", null)
                     if (shopifyCustomerId != null) {
 
-                        val isCurrentlyFavorite = viewModel.isProductFavorite(product.id, shopifyCustomerId)
+                        val isCurrentlyFavorite =
+                            viewModel.isProductFavorite(product.id, shopifyCustomerId)
                         if (isCurrentlyFavorite) {
                             viewModel.removeFavorite(product, shopifyCustomerId)
                             favoriteButton.setBackgroundResource(R.drawable.favadd)
-                            Toast.makeText(context, "Removed from favorites", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(context, "Removed from favorites", Toast.LENGTH_SHORT)
+                                .show()
+                            LocalDataSourceImpl.setMealFavoriteStatus(
+                                requireContext(),
+                                product.id.toString(),
+                                false
+                            )
                         } else {
                             viewModel.addToFavorite(product, shopifyCustomerId)
                             favoriteButton.setBackgroundResource(R.drawable.favfill)
                             Toast.makeText(context, "Added to favorites", Toast.LENGTH_SHORT).show()
+                            LocalDataSourceImpl.setMealFavoriteStatus(
+                                requireContext(),
+                                product.id.toString(),
+                                true
+                            )
                         }
                     } else {
-                        Toast.makeText(context, "Please log in to add favorites", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(
+                            context,
+                            "Please log in to add favorites",
+                            Toast.LENGTH_SHORT
+                        ).show()
                     }
                 }
             }

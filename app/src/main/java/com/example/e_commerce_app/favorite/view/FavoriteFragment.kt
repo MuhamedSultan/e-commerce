@@ -6,19 +6,19 @@ import FavoriteViewModelFactory
 import android.content.Context
 import android.content.SharedPreferences
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
-import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.e_commerce_app.R
+import com.example.e_commerce_app.db.LocalDataSource
 import com.example.e_commerce_app.db.LocalDataSourceImpl
 import com.example.e_commerce_app.db.ShopifyDB
 import com.example.e_commerce_app.favorite.adapter.FavoriteAdapter
@@ -42,6 +42,7 @@ class FavoriteFragment : Fragment() {
             )
         )
     }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         sharedPreferences = requireContext().getSharedPreferences("UserPrefs", Context.MODE_PRIVATE)
@@ -93,6 +94,12 @@ class FavoriteFragment : Fragment() {
                 // Pass shopifyCustomerId to removeFavorite only if it is not null
                 shopifyCustomerId?.let { id ->
                     favoriteViewModel.removeFavorite(product, id)
+                    LocalDataSourceImpl.setMealFavoriteStatus(
+                        requireContext(),
+                        product.id.toString(),
+                        false
+                    )
+
                 }
             },
             onProductClick = { productId ->
