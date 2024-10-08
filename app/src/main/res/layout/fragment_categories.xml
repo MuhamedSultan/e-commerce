@@ -22,16 +22,15 @@
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/suggestionsRv"
         android:layout_width="0dp"
-        android:background="@drawable/gradient_background"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginEnd="16dp"
+        android:background="@drawable/gradient_background"
         android:elevation="16dp"
         android:visibility="gone"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/edSearch" />
-
 
 
     <EditText
@@ -141,56 +140,66 @@
         android:layout_height="wrap_content"
         android:layout_marginEnd="24dp"
         android:layout_marginBottom="16dp"
-        android:backgroundTint="@color/yellow"
+        android:backgroundTint="@color/gray_dark_color"
         android:clickable="true"
         android:src="@drawable/ic_filter"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:rippleColor="@color/basic_color" />
 
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/shirtsType"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:backgroundTint="@color/yellow"
+        android:backgroundTint="@color/gray_dark_color"
         android:padding="8dp"
+
         android:src="@drawable/shirt"
         android:visibility="gone"
         app:layout_constraintBottom_toTopOf="@id/filteringOptions"
-        app:layout_constraintEnd_toEndOf="@id/filteringOptions" />
+
+        app:layout_constraintEnd_toEndOf="@id/filteringOptions"
+        app:rippleColor="@color/basic_color" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/shoesType"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:backgroundTint="@color/yellow"
+        android:backgroundTint="@color/gray_dark_color"
         android:padding="8dp"
         android:src="@drawable/shoes"
+
         android:visibility="gone"
         app:layout_constraintBottom_toTopOf="@id/shirtsType"
-        app:layout_constraintEnd_toEndOf="@id/filteringOptions" />
+        app:layout_constraintEnd_toEndOf="@id/filteringOptions"
+        app:rippleColor="@color/basic_color" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/accessoriesType"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:backgroundTint="@color/yellow"
+        android:backgroundTint="@color/gray_dark_color"
         android:padding="8dp"
+
         android:src="@drawable/accessories"
         android:visibility="gone"
         app:layout_constraintBottom_toTopOf="@id/shoesType"
-        app:layout_constraintEnd_toEndOf="@id/filteringOptions" />
+
+        app:layout_constraintEnd_toEndOf="@id/filteringOptions"
+        app:rippleColor="@color/basic_color" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/allProducts"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:backgroundTint="@color/gray_dark_color"
         android:padding="8dp"
-        android:visibility="gone"
-        android:backgroundTint="@color/yellow"
-        android:src="@drawable/all_product"
-        app:layout_constraintBottom_toTopOf="@id/accessoriesType"
 
-        app:layout_constraintEnd_toEndOf="@id/filteringOptions" />
+        android:src="@drawable/shopping"
+        android:visibility="gone"
+        app:layout_constraintBottom_toTopOf="@id/accessoriesType"
+        app:layout_constraintEnd_toEndOf="@id/filteringOptions"
+        app:rippleColor="@color/basic_color" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

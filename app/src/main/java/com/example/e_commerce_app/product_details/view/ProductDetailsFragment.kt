@@ -16,6 +16,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
+import com.example.e_commerce_app.MainActivity
 import com.example.e_commerce_app.R
 import com.example.e_commerce_app.db.LocalDataSourceImpl
 import com.example.e_commerce_app.db.SharedPrefsManager
@@ -34,6 +35,7 @@ import com.example.e_commerce_app.product_details.viewmodel.ProductDetailsViewMo
 import com.example.e_commerce_app.product_details.viewmodel.ProductDetailsViewModelFactory
 import com.example.e_commerce_app.util.ApiState
 import com.example.e_commerce_app.util.ZoomOutPageTransformer
+import com.google.android.material.bottomnavigation.BottomNavigationView
 import kotlinx.coroutines.launch
 
 class ProductDetailsFragment : Fragment() {
@@ -67,6 +69,7 @@ class ProductDetailsFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         val view = inflater.inflate(R.layout.fragment_product_details, container, false)
+        (activity as MainActivity).findViewById<BottomNavigationView>(R.id.bottomNavigationView).visibility = View.GONE
 
         colorRecyclerView = view.findViewById(R.id.productColorRecyclerView)
         sizeRecyclerView = view.findViewById(R.id.productSizeRecyclerView)
@@ -267,6 +270,11 @@ class ProductDetailsFragment : Fragment() {
 
     private fun isProductFavorite(productId: Long, shopifyCustomerId: String): Boolean {
         return false
+    }
+    override fun onDestroy() {
+        super.onDestroy()
+        (activity as MainActivity).findViewById<BottomNavigationView>(R.id.bottomNavigationView).visibility = View.VISIBLE
+
     }
 }
 

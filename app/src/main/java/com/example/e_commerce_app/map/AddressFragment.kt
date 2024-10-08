@@ -12,6 +12,8 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.e_commerce_app.MainActivity
+import com.example.e_commerce_app.R
 import com.example.e_commerce_app.brand_products.viewmodel.BrandProductViewModel
 import com.example.e_commerce_app.brand_products.viewmodel.BrandProductViewModelFactory
 import com.example.e_commerce_app.databinding.FragmentAddressBinding
@@ -24,6 +26,7 @@ import com.example.e_commerce_app.model.address.Address
 import com.example.e_commerce_app.model.repo.ShopifyRepoImpl
 import com.example.e_commerce_app.network.RemoteDataSourceImpl
 import com.example.e_commerce_app.util.ApiState
+import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.launch
 
@@ -56,6 +59,8 @@ class AddressFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        (activity as MainActivity).findViewById<BottomNavigationView>(R.id.bottomNavigationView).visibility = View.GONE
+
 
         /*val addressList = listOf(
             Address(1, 30.0444, 31.2357, "Egypt", "123 Main St, Cairo", "201018870021"),
@@ -107,5 +112,10 @@ class AddressFragment : Fragment() {
 
     private fun showError(message: String) {
         Snackbar.make(requireView(), message, Snackbar.LENGTH_SHORT).show()
+    }
+    override fun onDestroy() {
+        super.onDestroy()
+        (activity as MainActivity).findViewById<BottomNavigationView>(R.id.bottomNavigationView).visibility = View.VISIBLE
+
     }
 }

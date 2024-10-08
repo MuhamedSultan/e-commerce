@@ -61,7 +61,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:src="@drawable/ic_favorite" />
+                android:src="@drawable/ic_favourite_fill" />
         </androidx.cardview.widget.CardView>
 
         <androidx.constraintlayout.widget.Group
@@ -69,7 +69,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:visibility="invisible"
-            app:constraint_referenced_ids="edSearch,cardView, textView, brandRv, textView2, recommendedProductsRv,couponPager,dots_indicator"
+            app:constraint_referenced_ids="edSearch,cardView, textView, brandRv, textView2, recommendedProductsRv,couponPager,dots_indicator,textView8"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"

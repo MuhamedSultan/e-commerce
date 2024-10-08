@@ -28,10 +28,11 @@
 
         <TextView
             android:id="@+id/productName"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:layout_marginTop="24dp"
+            android:layout_marginEnd="16dp"
             android:gravity="center"
             android:text="Product Name"
             android:textSize="16sp"
@@ -46,10 +47,10 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="36dp"
-            android:layout_marginTop="4dp"
+            android:layout_marginTop="8dp"
             android:gravity="center"
-            android:text="$99.99"
-            android:textSize="14sp"
+            android:text="99.99"
+            android:textSize="18sp"
             app:layout_constraintStart_toEndOf="@+id/productImage"
             app:layout_constraintTop_toBottomOf="@+id/productName" />
 
@@ -60,7 +61,7 @@
             android:layout_gravity="end"
             android:layout_marginTop="68dp"
             android:contentDescription="Delete Product"
-            android:src="@drawable/deleteicon"
+            android:src="@drawable/delete_svg"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 

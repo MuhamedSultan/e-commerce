@@ -14,6 +14,8 @@ class CategoriesAdapter(
     private val onCategoryClick: OnCategoryClick
 ) : RecyclerView.Adapter<CategoriesAdapter.CategoriesViewHolder>() {
 
+    private var selectedPosition: Int = 0
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CategoriesViewHolder {
         val view = ItemChipBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         return CategoriesViewHolder(view)
@@ -23,9 +25,29 @@ class CategoriesAdapter(
         val collection = collectionsList[position]
         holder.categoryItem.text = collection.title
 
+        if (position == selectedPosition ) {
+            holder.categoryItem.chipBackgroundColor = ContextCompat.getColorStateList(
+                holder.itemView.context,
+                R.color.basic_color
+            )
+            holder.categoryItem.setTextColor(ContextCompat.getColor(holder.itemView.context, R.color.white))
+
+        } else {
+            holder.categoryItem.chipBackgroundColor = ContextCompat.getColorStateList(
+                holder.itemView.context,
+                R.color.white
+            )
+            holder.categoryItem.setTextColor(ContextCompat.getColor(holder.itemView.context, R.color.black))
+
+        }
+
         holder.categoryItem.setOnClickListener {
+            val previousPosition = selectedPosition
+            selectedPosition = position
+
+            notifyItemChanged(previousPosition)
+            notifyItemChanged(selectedPosition)
             onCategoryClick.onCategoryClick(collection.id)
-            holder.categoryItem.setBackgroundResource(R.color.yellow)
         }
     }
 

@@ -13,6 +13,8 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.e_commerce_app.MainActivity
+import com.example.e_commerce_app.R
 import com.example.e_commerce_app.cart.adapter.CartAdapter
 import com.example.e_commerce_app.cart.viewmodel.CartViewModel
 import com.example.e_commerce_app.cart.viewmodel.CartViewModelFactory
@@ -26,6 +28,7 @@ import com.example.e_commerce_app.model.cart.LineItem
 import com.example.e_commerce_app.model.repo.ShopifyRepoImpl
 import com.example.e_commerce_app.network.RemoteDataSourceImpl
 import com.example.e_commerce_app.util.ApiState
+import com.google.android.material.bottomnavigation.BottomNavigationView
 import kotlinx.coroutines.launch
 
 class CartFragment : Fragment() {

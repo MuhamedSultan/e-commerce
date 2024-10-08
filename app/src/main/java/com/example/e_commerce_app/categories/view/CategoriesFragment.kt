@@ -19,6 +19,8 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.e_commerce_app.MainActivity
+import com.example.e_commerce_app.R
 import com.example.e_commerce_app.categories.view.adapter.CategoriesAdapter
 import com.example.e_commerce_app.categories.view.adapter.CategoriesProductsAdapter
 import com.example.e_commerce_app.categories.view.adapter.OnCategoryClick
@@ -33,6 +35,7 @@ import com.example.e_commerce_app.model.repo.ShopifyRepoImpl
 import com.example.e_commerce_app.network.RemoteDataSourceImpl
 import com.example.e_commerce_app.util.ApiState
 import com.example.e_commerce_app.util.GuestUtil
+import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.launch
 

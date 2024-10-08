@@ -55,9 +55,9 @@
     <string name="brand">Brands</string>
     <string name="recommended_for_you">Recommended For You</string>
     <string name="home_address">Home Address</string>
-    <string name="sub_total">Sub Total :</string>
-    <string name="total_tax">Total Tax :</string>
-    <string name="total_cost">Total Cost :</string>
+    <string name="sub_total">Sub Total -</string>
+    <string name="total_tax">Total Tax -</string>
+    <string name="total_cost">Total Cost -</string>
     <string name="search_here">Search here</string>
     <string name="Coupon">Coupon Image</string>
     <string name="filter">Filter</string>

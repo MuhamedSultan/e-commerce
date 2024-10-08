@@ -9,6 +9,6 @@
 
 
     <style name="Bottom.Nav.Bar.Custom.Item.Indicator" parent="Widget.Material3.BottomNavigationView.ActiveIndicator">
-        <item name="android:color">@color/yellow</item>
+        <item name="android:color">@color/gray_dark_color</item>
     </style>
 </resources>

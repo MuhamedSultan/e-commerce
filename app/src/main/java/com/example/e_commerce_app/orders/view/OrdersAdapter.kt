@@ -34,7 +34,7 @@ class OrdersAdapter(
 
     override fun getItemCount(): Int {
         if (!isExpanded && ordersList.isNotEmpty()) {
-            return 1
+            return 2
         }
             return ordersList.size
     }

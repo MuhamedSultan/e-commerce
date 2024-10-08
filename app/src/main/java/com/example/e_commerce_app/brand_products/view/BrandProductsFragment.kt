@@ -17,6 +17,8 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.e_commerce_app.MainActivity
+import com.example.e_commerce_app.R
 import com.example.e_commerce_app.brand_products.viewmodel.BrandProductViewModel
 import com.example.e_commerce_app.brand_products.viewmodel.BrandProductViewModelFactory
 import com.example.e_commerce_app.databinding.FragmentBrandProductsBinding
@@ -28,6 +30,7 @@ import com.example.e_commerce_app.model.repo.ShopifyRepoImpl
 import com.example.e_commerce_app.network.RemoteDataSourceImpl
 import com.example.e_commerce_app.util.ApiState
 import com.example.e_commerce_app.util.GuestUtil
+import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.launch
 
@@ -67,6 +70,8 @@ class BrandProductsFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        (activity as MainActivity).findViewById<BottomNavigationView>(R.id.bottomNavigationView).visibility = View.GONE
+
 
         linearLayoutManager = LinearLayoutManager(requireContext())
 
@@ -239,5 +244,11 @@ class BrandProductsFragment : Fragment() {
         super.onResume()
         binding.suggestionsRv.visibility = View.GONE
         binding.edSearch.text?.clear()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        (activity as MainActivity).findViewById<BottomNavigationView>(R.id.bottomNavigationView).visibility = View.VISIBLE
+
     }
 }

@@ -16,11 +16,13 @@ import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
+import com.example.e_commerce_app.MainActivity
 import com.example.e_commerce_app.R
 import com.example.e_commerce_app.auth.login.view.LoginActivity
 import com.example.e_commerce_app.databinding.FragmentSettingBinding
 import com.example.e_commerce_app.db.LocalDataSourceImpl
 import com.example.e_commerce_app.model.user.UserData
+import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.firestore

@@ -3,14 +3,15 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
 
-    <color name="yellow">#C6AB59</color>
+    <color name="yellow">#0d433a</color>
     <color name="light_gray">#F3F6F8</color>
     <color name="trans">#00F3F6F8</color>
+    <color name="botto">#00F3F6F8</color>
 
-    <color name="basic_color">#C6AB59</color>
-    <color name="gray_dark_color">#3D3D3D</color>
+    <color name="basic_color">#0d433a</color>
+    <color name="gray_dark_color">#D0D5D4</color>
 
-    <color name="main_gold">#FF9800</color>
-    <color name="figma_main_color">#C5AA59</color>
+    <color name="main_gold">#0d433a</color>
+    <color name="figma_main_color">#D0D5D4</color>
 
 </resources>

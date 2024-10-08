@@ -12,6 +12,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.e_commerce_app.MainActivity
 import com.example.e_commerce_app.R
 import com.example.e_commerce_app.databinding.FragmentOrdersBinding
 import com.example.e_commerce_app.db.SharedPrefsManager
@@ -21,6 +22,7 @@ import com.example.e_commerce_app.network.RemoteDataSourceImpl
 import com.example.e_commerce_app.orders.viewmodel.OrdersViewModel
 import com.example.e_commerce_app.orders.viewmodel.OrdersViewModelFactory
 import com.example.e_commerce_app.util.ApiState
+import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.launch
 
@@ -47,10 +49,12 @@ class OrdersFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+            (activity as MainActivity).findViewById<BottomNavigationView>(R.id.bottomNavigationView).visibility = View.GONE
         val customerName =OrdersFragmentArgs.fromBundle(requireArguments()).customerName
         binding.customerName.text=customerName
        val customerId= SharedPrefsManager.getInstance().getShopifyCustomerId()
         if (customerId != null) {
+            //8939518099771
             ordersViewModel.getCustomerOrders(8936192246075)
         }
         lifecycleScope.launch {
@@ -110,5 +114,11 @@ class OrdersFragment : Fragment() {
         if (orders.isEmpty()){
             binding.groupLayout.visibility=View.INVISIBLE
         }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        (activity as MainActivity).findViewById<BottomNavigationView>(R.id.bottomNavigationView).visibility = View.VISIBLE
+
     }
 }

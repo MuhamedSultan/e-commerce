@@ -51,8 +51,8 @@ class RandomProductsAdapter(
                 isFavorite = !isFavorite
                 onFavouriteClick(product, isFavorite)
                 holder.favouriteIcon.setImageResource(
-                    if (isFavorite) R.drawable.favfill
-                    else R.drawable.favadd
+                    if (isFavorite) R.drawable.ic_favourite_fill
+                    else R.drawable.ic_favourite_border
                 )
             } else {
                 Toast.makeText(
