@@ -100,6 +100,10 @@ interface ShopifyService {
         @Path("customerId") customerId: Long
     ): AddressesResponse
 
+    @PUT("draft_orders/{draftFavoriteId}/complete.json")
+    suspend fun addOrderFromDraftOrder(
+        @Path("draftFavoriteId") draftFavoriteId: Long
+    ): DraftOrderResponse
 
     @PUT("customers/{customerId}/addresses/{addressId}")
     suspend fun updateAddressOfCustomer(

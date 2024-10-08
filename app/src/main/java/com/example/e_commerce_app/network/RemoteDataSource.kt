@@ -47,6 +47,7 @@ interface RemoteDataSource {
 
     suspend fun createFavoriteDraft(draftOrderRequest: DraftOrderRequest): ApiState<DraftOrderResponse>
     suspend fun getProductsIdForDraftFavorite(draftFavoriteId: Long): ApiState<DraftOrderResponse>
+    suspend fun addOrderFromDraftOrder(draftFavoriteId: Long): ApiState<DraftOrderResponse>
     suspend fun backUpDraftFavorite(
         draftOrderRequest: DraftOrderRequest,
         draftFavoriteId: Long

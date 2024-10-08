@@ -148,6 +148,16 @@ class RemoteDataSourceImpl : RemoteDataSource {
         }
     }
 
+    override suspend fun addOrderFromDraftOrder(draftFavoriteId: Long): ApiState<DraftOrderResponse> {
+
+        return try {
+            val response = Network.shopifyService.addOrderFromDraftOrder(draftFavoriteId)
+            ApiState.Success(response)
+        } catch (e: Exception) {
+            ApiState.Error("Error fetching draft order: ${e.message}")
+        }
+    }
+
     override suspend fun backUpDraftFavorite(
         draftOrderRequest: DraftOrderRequest,
         draftFavoriteId: Long
