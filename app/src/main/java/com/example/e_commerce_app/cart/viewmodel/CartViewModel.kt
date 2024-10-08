@@ -1,8 +1,10 @@
     package com.example.e_commerce_app.cart.viewmodel
 
     import android.util.Log
+    import android.widget.Toast
     import androidx.lifecycle.ViewModel
     import androidx.lifecycle.viewModelScope
+    import com.example.e_commerce_app.db.SharedPrefsManager
     import com.example.e_commerce_app.model.cart.CartResponse
     import com.example.e_commerce_app.model.cart.DraftOrderResponse
     import com.example.e_commerce_app.model.repo.ShopifyRepo
@@ -42,6 +44,26 @@
 
         }
 
+        fun completeOrderForSultan() =viewModelScope.launch (Dispatchers.IO){
+            val shp = SharedPrefsManager.getInstance()
+            var draftFavoriteId =shp.getDraftedOrderId() ?:0
+            val result = repo.addOrderFromDraftOrder(draftFavoriteId)
+            when (result) {
+                is ApiState.Success -> {
+                    shp.setDraftedOrderId(0L)
+                    Log.d("TAG", "Order Added successfully")
+                    Log.i("TAG", "Add Response: ${result.data?.draft_order}")
+                }
+                is ApiState.Error -> {
+                    Log.e(
+                        "TAG",
+                        "Error getting draft order Data: ${result.message}"
+                    )
+                }
+                // Handle loading state if needed
+                is ApiState.Loading -> TODO()
+            }
+        }
 
 
     }
