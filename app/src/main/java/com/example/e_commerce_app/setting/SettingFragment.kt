@@ -19,6 +19,7 @@ import com.bumptech.glide.Glide
 import com.example.e_commerce_app.R
 import com.example.e_commerce_app.auth.login.view.LoginActivity
 import com.example.e_commerce_app.databinding.FragmentSettingBinding
+import com.example.e_commerce_app.db.LocalDataSourceImpl
 import com.example.e_commerce_app.model.user.UserData
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
@@ -177,6 +178,8 @@ class SettingFragment : Fragment() {
         FirebaseAuth.getInstance().signOut()
 
         val sharedPreferences = requireActivity().getSharedPreferences("UserPrefs", Context.MODE_PRIVATE)
+       val favouriteSharedPrefs=requireActivity().getSharedPreferences("ShopifyPrefs",Context.MODE_PRIVATE)
+      favouriteSharedPrefs.edit().clear().apply()
         with(sharedPreferences.edit()) {
             clear()
             apply()

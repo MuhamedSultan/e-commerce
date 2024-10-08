@@ -1,8 +1,11 @@
 package com.example.e_commerce_app.home.view.adapter
 
 import android.content.Context
+import android.content.SharedPreferences
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import android.widget.Toast
+import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.recyclerview.widget.RecyclerView.Adapter
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import com.bumptech.glide.Glide
@@ -15,7 +18,9 @@ class RandomProductsAdapter(
     private val productList: List<Product>,
     private val context: Context,
     private val onProductClick: (Product) -> Unit,
-    private val onFavouriteClick: (Product, Boolean) -> Unit
+    private val onFavouriteClick: (Product, Boolean) -> Unit,
+    private val sharedPreferences: SharedPreferences
+
 ) :
     Adapter<RandomProductsAdapter.RandomProductsViewHolder>() {
 
@@ -32,22 +37,31 @@ class RandomProductsAdapter(
         val product = productList[position]
         Glide.with(context).load(product.image.src).into(holder.productImage)
         holder.productName.text = product.title.split('|').getOrNull(1)?.trim()
-        holder.productPrice.text = product.variants[0].price
+        holder.productPrice.text = "${product.variants[0].price} EGP"
         var isFavorite = LocalDataSourceImpl.isProductFavorite(context, product.id.toString())
         holder.favouriteIcon.setImageResource(
-            if (isFavorite) R.drawable.favfill
-            else R.drawable.favadd
+            if (isFavorite) R.drawable.ic_favourite_fill
+            else R.drawable.ic_favourite_border
         )
-
         holder.itemView.setOnClickListener { onProductClick(product) }
 
         holder.favouriteIcon.setOnClickListener {
-            isFavorite = !isFavorite
-            onFavouriteClick(product, isFavorite)
-            holder.favouriteIcon.setImageResource(
-                if (isFavorite) R.drawable.favfill
-                else R.drawable.favadd
-            )
+            val shopifyCustomerId = sharedPreferences.getString("shopifyCustomerId", null)
+            if (shopifyCustomerId != null) {
+                isFavorite = !isFavorite
+                onFavouriteClick(product, isFavorite)
+                holder.favouriteIcon.setImageResource(
+                    if (isFavorite) R.drawable.favfill
+                    else R.drawable.favadd
+                )
+            } else {
+                Toast.makeText(
+                    it.context,
+                    "Please log in to add favorites",
+                    Toast.LENGTH_SHORT
+                ).show()
+
+            }
         }
     }
 

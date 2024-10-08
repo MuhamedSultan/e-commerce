@@ -262,21 +262,27 @@ class CategoriesFragment : Fragment(), OnCategoryClick {
             }, onFavouriteClick = { product, isFavorite ->
                 GuestUtil.handleFavoriteClick(requireContext(), sharedPreferences, product)
                 val shopifyCustomerId = sharedPreferences.getString("shopifyCustomerId", null)
-                if (isFavorite) {
-                    categoriesViewModel.addProductToFavourite(product, shopifyCustomerId ?: "")
-                    Toast.makeText(requireContext(), "Added to favorites", Toast.LENGTH_SHORT)
-                        .show()
-                } else {
-                    categoriesViewModel.deleteProductFromFavourite(product, shopifyCustomerId ?: "")
-                    Toast.makeText(requireContext(), "Removed from favorites", Toast.LENGTH_SHORT)
-                        .show()
+                if (shopifyCustomerId!=null) {
+                    if (isFavorite) {
+                        categoriesViewModel.addProductToFavourite(product, shopifyCustomerId)
+                        Toast.makeText(requireContext(), "Added to favorites", Toast.LENGTH_SHORT)
+                            .show()
+                    } else {
+                        categoriesViewModel.deleteProductFromFavourite(product, shopifyCustomerId)
+                        Toast.makeText(
+                            requireContext(),
+                            "Removed from favorites",
+                            Toast.LENGTH_SHORT
+                        )
+                            .show()
+                    }
+                    LocalDataSourceImpl.setProductFavoriteStatus(
+                        requireContext(),
+                        product.id.toString(),
+                        isFavorite
+                    )
                 }
-                LocalDataSourceImpl.setProductFavoriteStatus(
-                    requireContext(),
-                    product.id.toString(),
-                    isFavorite
-                )
-            })
+            },sharedPreferences)
         val manager = GridLayoutManager(requireContext(), 2)
 
         binding.productsRv.apply {

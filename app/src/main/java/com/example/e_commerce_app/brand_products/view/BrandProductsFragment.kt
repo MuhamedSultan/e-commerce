@@ -158,25 +158,33 @@ class BrandProductsFragment : Fragment() {
             }, onFavouriteClick = { product, isFavorite ->
                 GuestUtil.handleFavoriteClick(requireContext(),sharedPreferences,product)
                 val shopifyCustomerId = sharedPreferences.getString("shopifyCustomerId", null)
-
-                if (isFavorite) {
-                    brandProductViewModel.addProductToFavourite(product, shopifyCustomerId ?: "")
-                    Toast.makeText(requireContext(), "Added to favorites", Toast.LENGTH_SHORT)
-                        .show()
-                } else {
-                    brandProductViewModel.deleteProductFromFavourite(
-                        product,
-                        shopifyCustomerId ?: ""
+                if (shopifyCustomerId!=null) {
+                    if (isFavorite) {
+                        brandProductViewModel.addProductToFavourite(
+                            product,
+                            shopifyCustomerId
+                        )
+                        Toast.makeText(requireContext(), "Added to favorites", Toast.LENGTH_SHORT)
+                            .show()
+                    } else {
+                        brandProductViewModel.deleteProductFromFavourite(
+                            product,
+                            shopifyCustomerId
+                        )
+                        Toast.makeText(
+                            requireContext(),
+                            "Removed from favorites",
+                            Toast.LENGTH_SHORT
+                        )
+                            .show()
+                    }
+                    LocalDataSourceImpl.setProductFavoriteStatus(
+                        requireContext(),
+                        product.id.toString(),
+                        isFavorite
                     )
-                    Toast.makeText(requireContext(), "Removed from favorites", Toast.LENGTH_SHORT)
-                        .show()
                 }
-                LocalDataSourceImpl.setProductFavoriteStatus(
-                    requireContext(),
-                    product.id.toString(),
-                    isFavorite
-                )
-            })
+            },sharedPreferences)
 
         val manager = GridLayoutManager(requireContext(), 2)
 

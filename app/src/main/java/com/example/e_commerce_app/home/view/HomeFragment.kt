@@ -298,11 +298,11 @@ class HomeFragment : Fragment() {
                 findNavController().navigate(action)
             },
             onFavouriteClick = { product, isFavorite ->
-                val shopifyCustomerId = sharedPreferences.getString("shopifyCustomerId", null)
                 GuestUtil.handleFavoriteClick(requireContext(), sharedPreferences, product)
 
-                if (shopifyCustomerId != null) {
-                    lifecycleScope.launch {
+                val shopifyCustomerId = sharedPreferences.getString("shopifyCustomerId", null)
+                lifecycleScope.launch {
+                    if (shopifyCustomerId != null) {
                         if (isFavorite) {
                             homeViewModel.addProductToFavourite(product, shopifyCustomerId)
                             Toast.makeText(
@@ -324,14 +324,9 @@ class HomeFragment : Fragment() {
                             isFavorite
                         )
                     }
-                } else {
-                    Toast.makeText(
-                        requireContext(),
-                        "Please log in to add favorites",
-                        Toast.LENGTH_SHORT
-                    ).show()
+
                 }
-            }
+            }, sharedPreferences
         )
 
         val manager = LinearLayoutManager(requireContext())

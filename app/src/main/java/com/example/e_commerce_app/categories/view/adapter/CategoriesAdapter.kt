@@ -25,6 +25,7 @@ class CategoriesAdapter(
 
         holder.categoryItem.setOnClickListener {
             onCategoryClick.onCategoryClick(collection.id)
+            holder.categoryItem.setBackgroundResource(R.color.yellow)
         }
     }
 

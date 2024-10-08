@@ -1,6 +1,7 @@
 package com.example.e_commerce_app.orders.view
 
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -105,6 +106,9 @@ class OrdersFragment : Fragment() {
         binding.orderRv.apply {
             adapter = ordersAdapter
             layoutManager = manger
+        }
+        if (orders.isEmpty()){
+            binding.groupLayout.visibility=View.INVISIBLE
         }
     }
 }
