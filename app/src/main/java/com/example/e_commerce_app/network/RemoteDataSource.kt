@@ -7,6 +7,7 @@ import com.example.e_commerce_app.model.cart.CartResponse
 import com.example.e_commerce_app.model.cart.DeleteProductResponse
 import com.example.e_commerce_app.model.cart.DraftOrderRequest
 import com.example.e_commerce_app.model.cart.DraftOrderResponse
+import com.example.e_commerce_app.model.cart.PriceRuleResponse
 import com.example.e_commerce_app.model.cart.UpdateCartItemRequest
 import com.example.e_commerce_app.model.cart.UpdateCartItemResponse
 import com.example.e_commerce_app.model.custom_collection.CustomCollectionResponse
@@ -59,6 +60,9 @@ interface RemoteDataSource {
     suspend fun getCustomerOrders(customerId: Long): ApiState<CustomerOrders>
 
     suspend fun getOrderDetailsByID(orderId: Long): ApiState<OrderDetailsResponse>
+
+    //coupons
+    suspend fun getAllCoupons() :ApiState<PriceRuleResponse>
 
 
 }

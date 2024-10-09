@@ -7,6 +7,7 @@ import com.example.e_commerce_app.model.cart.CartResponse
 import com.example.e_commerce_app.model.cart.DeleteProductResponse
 import com.example.e_commerce_app.model.cart.DraftOrderRequest
 import com.example.e_commerce_app.model.cart.DraftOrderResponse
+import com.example.e_commerce_app.model.cart.PriceRuleResponse
 import com.example.e_commerce_app.model.custom_collection.CustomCollectionResponse
 import com.example.e_commerce_app.model.product.ProductResponse
 import com.example.e_commerce_app.model.product.SingleProductResponse
@@ -132,5 +133,9 @@ interface ShopifyService {
 
     @GET("orders.json")
     suspend fun getOrderDetailsByID(@Query("id") orderId: Long): OrderDetailsResponse
+
+    //coupons
+    @GET("price_rules.json")
+    suspend fun getAllCoupons() : PriceRuleResponse
 
 }
