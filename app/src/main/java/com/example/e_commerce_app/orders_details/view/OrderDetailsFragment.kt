@@ -11,10 +11,15 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.e_commerce_app.R
 import com.example.e_commerce_app.databinding.FragmentOrderDetailsBinding
+import com.example.e_commerce_app.model.order_details.LineItem
 import com.example.e_commerce_app.model.repo.ShopifyRepoImpl
 import com.example.e_commerce_app.network.RemoteDataSourceImpl
+import com.example.e_commerce_app.orders.view.OrdersFragmentDirections
+import com.example.e_commerce_app.orders.view.OrdersFragmentDirections.ActionOrdersFragmentToOrderDetailsFragment
 import com.example.e_commerce_app.orders_details.viewmodel.OrderDetailsViewModel
 import com.example.e_commerce_app.orders_details.viewmodel.OrderDetailsViewModelFactory
 import com.example.e_commerce_app.util.ApiState
@@ -64,6 +69,7 @@ class OrderDetailsFragment : Fragment() {
                             binding.subTotal.text = order?.subtotal_price + " " + order?.currency
                             binding.totalTax.text = order?.total_tax + " " + order?.currency
                             binding.totalCost.text = order?.total_price + " " + order?.currency
+                            setupProductRecyclerView(order?.line_items?: emptyList())
                         }
                         is ApiState.Error->{
                             hideLoadingIndicator()
@@ -90,5 +96,17 @@ class OrderDetailsFragment : Fragment() {
         binding.loadingIndicator.visibility = View.GONE
         binding.groupLayout.visibility = View.VISIBLE
     }
+    private fun setupProductRecyclerView(item:List<LineItem>){
+        val orderProductsAdapter =OrderProductsAdapter(item){onProductClick->
+            val action=OrderDetailsFragmentDirections.actionOrderDetailsFragmentToProductDetailsFragment(onProductClick.product_id)
+            findNavController().navigate(action)
+        }
+        val manager = LinearLayoutManager(requireContext())
+        manager.orientation = LinearLayoutManager.HORIZONTAL
 
+        binding.productItemsRv.apply {
+            adapter = orderProductsAdapter
+            layoutManager = manager
+        }
+    }
 }

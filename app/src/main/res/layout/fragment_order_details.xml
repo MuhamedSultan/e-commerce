@@ -5,7 +5,7 @@
     android:id="@+id/frameLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/white"
+    android:background="@color/light_gray"
     tools:context=".orders_details.view.OrderDetailsFragment">
 
     <androidx.constraintlayout.widget.Group
@@ -31,12 +31,11 @@
         app:layout_constraintStart_toEndOf="@+id/orderId"
         app:layout_constraintTop_toTopOf="@+id/orderId" />
 
-    <ImageView
-        android:id="@+id/productImage"
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/productItemsRv"
         android:layout_width="0dp"
         android:layout_height="250dp"
         android:layout_marginTop="32dp"
-        android:src="@drawable/box"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
@@ -47,13 +46,13 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="32dp"
-        android:layout_marginTop="32dp"
+        android:layout_marginTop="8dp"
         android:layout_marginEnd="32dp"
         android:elevation="24dp"
         app:cardCornerRadius="16dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/productImage">
+        app:layout_constraintTop_toBottomOf="@+id/productItemsRv">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/constraintLayout"

@@ -19,9 +19,9 @@ class OrdersAdapter(
     }
 
     override fun onBindViewHolder(holder: OrdersViewHolder, position: Int) {
-        if (ordersList.isEmpty()) {
-            return
-        }
+//        if (ordersList.isEmpty()) {
+//            return
+//        }
         val order = ordersList[position]
         holder.orderNumber.text = ("#${position + 1}").toString()
         holder.orderPrice.text = order.total_price
@@ -33,16 +33,16 @@ class OrdersAdapter(
     }
 
     override fun getItemCount(): Int {
-        if (!isExpanded && ordersList.isNotEmpty()) {
-            return 2
-        }
+   //     if (!isExpanded && ordersList.isNotEmpty()&&ordersList.size==2) {
+//            return 2
+//        }
             return ordersList.size
     }
 
-    fun viewMore() {
-        isExpanded = !isExpanded
-        notifyDataSetChanged()
-    }
+//    fun viewMore() {
+//        isExpanded = !isExpanded
+//        notifyDataSetChanged()
+//    }
 
     class OrdersViewHolder(binding: ItemOrdersBinding) :
         RecyclerView.ViewHolder(binding.root) {

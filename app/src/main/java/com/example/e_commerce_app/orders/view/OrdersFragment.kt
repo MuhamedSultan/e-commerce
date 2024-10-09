@@ -54,8 +54,7 @@ class OrdersFragment : Fragment() {
         binding.customerName.text=customerName
        val customerId= SharedPrefsManager.getInstance().getShopifyCustomerId()
         if (customerId != null) {
-            //8939518099771
-            ordersViewModel.getCustomerOrders(8936192246075)
+            ordersViewModel.getCustomerOrders(customerId.toLong())
         }
         lifecycleScope.launch {
             viewLifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
@@ -81,9 +80,9 @@ class OrdersFragment : Fragment() {
                 }
             }
         }
-        binding.viewAllTv.setOnClickListener{
-            ordersAdapter.viewMore()
-        }
+//        binding.viewAllTv.setOnClickListener{
+//            ordersAdapter.viewMore()
+//        }
     }
 
     private fun showError(message: String) {
