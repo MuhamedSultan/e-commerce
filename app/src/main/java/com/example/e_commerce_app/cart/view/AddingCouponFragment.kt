@@ -13,11 +13,15 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.example.e_commerce_app.R
+import com.example.e_commerce_app.cart.DraftOrderManager
 import com.example.e_commerce_app.cart.viewmodel.CartViewModel
 import com.example.e_commerce_app.cart.viewmodel.CartViewModelFactory
 import com.example.e_commerce_app.databinding.FragmentAddingCouponBinding
 import com.example.e_commerce_app.databinding.FragmentHomeBinding
 import com.example.e_commerce_app.db.SharedPrefsManager
+import com.example.e_commerce_app.model.cart.AppliedDiscount
+import com.example.e_commerce_app.model.cart.DraftOrder
+import com.example.e_commerce_app.model.cart.DraftOrderRequest
 import com.example.e_commerce_app.model.cart.PriceRule
 import com.example.e_commerce_app.model.cart.PriceRuleResponse
 import com.example.e_commerce_app.model.repo.ShopifyRepoImpl
@@ -56,20 +60,31 @@ class AddingCouponFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         binding.btnApply.setOnClickListener{
             val CouponeTitle = binding.etCouponCode.text.toString()
-            binding.btnApply.isEnabled = false
-            binding.btnSubmit.isEnabled = false
-            binding.btnApply.setBackgroundTintList(ColorStateList.valueOf(ContextCompat.getColor(requireContext(), R.color.gray_not_very_dark_color)))
-            binding.btnSubmit.setBackgroundTintList(ColorStateList.valueOf(ContextCompat.getColor(requireContext(), R.color.gray_not_very_dark_color)))
-
+            disableUi()
             for(coupon in CouponsList){
                 if(coupon.title==CouponeTitle){
                     binding.couponStatus.setTextColor(ContextCompat.getColor(requireContext(), R.color.green))
                     binding.couponStatus.text = "Coupon applied!"
-                    
+                    viewModel.addCouponToDraftOrder(
+                        DraftOrderRequest(
+                            DraftOrderManager.getInstance().addCouponToDraftOrder(
+                                AppliedDiscount(
+                                    id = coupon.id,
+                                    title = coupon.title,
+                                    valueType = coupon.value_type,
+                                    value = coupon.value,
+                                    description = "Custom Discount",
+                                    amount =""
+                                )
+                            )
+                        ),
+                        SharedPrefsManager.getInstance().getDraftedOrderId()?:0
+                    )
                     break
                 }else{
                     binding.couponStatus.setTextColor(ContextCompat.getColor(requireContext(), R.color.red))
                     binding.couponStatus.text = "Invalid coupon!"
+                    enableUi()
                 }
             }
         }
@@ -131,6 +146,19 @@ class AddingCouponFragment : Fragment() {
     private fun showError(message: String) {
         Snackbar.make(requireView(), message, Snackbar.LENGTH_SHORT).show()
     }
+    private fun disableUi() {
+        binding.btnApply.isEnabled = false
+        binding.btnSubmit.isEnabled = false
+        binding.btnApply.setBackgroundTintList(ColorStateList.valueOf(ContextCompat.getColor(requireContext(), R.color.gray_not_very_dark_color)))
+        binding.btnSubmit.setBackgroundTintList(ColorStateList.valueOf(ContextCompat.getColor(requireContext(), R.color.gray_not_very_dark_color)))
+    }
+    private fun enableUi() {
+        binding.btnApply.isEnabled = true
+        binding.btnSubmit.isEnabled = true
+        binding.btnApply.setBackgroundTintList(ColorStateList.valueOf(ContextCompat.getColor(requireContext(), R.color.basic_color)))
+        binding.btnSubmit.setBackgroundTintList(ColorStateList.valueOf(ContextCompat.getColor(requireContext(), R.color.basic_color)))
+    }
+
 
 //    private fun showLoadingIndicator() {
 //        binding.loadingIndicator.visibility = View.VISIBLE
