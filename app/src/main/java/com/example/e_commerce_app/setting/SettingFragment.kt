@@ -1,5 +1,6 @@
 package com.example.e_commerce_app.setting
 
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.AlertDialog
 import android.content.Context
@@ -21,6 +22,7 @@ import com.example.e_commerce_app.R
 import com.example.e_commerce_app.auth.login.view.LoginActivity
 import com.example.e_commerce_app.databinding.FragmentSettingBinding
 import com.example.e_commerce_app.db.LocalDataSourceImpl
+import com.example.e_commerce_app.db.SharedPrefsManager
 import com.example.e_commerce_app.model.user.UserData
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.firebase.auth.FirebaseAuth
@@ -37,6 +39,7 @@ class SettingFragment : Fragment() {
 
     private val firestore: FirebaseFirestore = Firebase.firestore
     private lateinit var storageReference: StorageReference
+    private  var  customerId :String?=null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -50,8 +53,32 @@ class SettingFragment : Fragment() {
         return binding.root
     }
 
+    @SuppressLint("SetTextI18n")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+         customerId= SharedPrefsManager.getInstance().getShopifyCustomerId()
+        if (customerId != null) {
+            binding.ordersSettingLayout.visibility=View.VISIBLE
+            binding.favoritesSettingLayout.visibility=View.VISIBLE
+            binding.addressSettingLayout.visibility=View.VISIBLE
+            binding.ivProfilePicture.visibility=View.VISIBLE
+            binding.view.visibility=View.VISIBLE
+            binding.view2.visibility=View.VISIBLE
+            binding.view3.visibility=View.VISIBLE
+            binding.textViewLogout.text="Logout"
+            binding.textViewClickLogout.text="click her to logout"
+        }else{
+            binding.ordersSettingLayout.visibility=View.GONE
+            binding.favoritesSettingLayout.visibility=View.GONE
+            binding.addressSettingLayout.visibility=View.GONE
+            binding.ivProfilePicture.visibility=View.INVISIBLE
+            binding.view.visibility=View.GONE
+            binding.view2.visibility=View.GONE
+            binding.view3.visibility=View.GONE
+            binding.textViewLogout.text="Login"
+            binding.textViewClickLogout.text="click her to login"
+        }
+
 
         storageReference = FirebaseStorage.getInstance().reference
 
@@ -193,19 +220,25 @@ class SettingFragment : Fragment() {
     }
 
     private fun showLogoutConfirmationDialog() {
-        val builder = AlertDialog.Builder(requireContext())
-        builder.setTitle("Logout")
-            .setMessage("Are you sure you want to log out?")
-            .setPositiveButton("Yes") { dialog, _ ->
-                logout()
-                dialog.dismiss()
-            }
-            .setNegativeButton("No") { dialog, _ ->
-                dialog.cancel()
-            }
-            .show()
-    }
+        if (customerId != null) {
+            val builder = AlertDialog.Builder(requireContext())
+            builder.setTitle("Logout")
+                .setMessage("Are you sure you want to log out?")
+                .setPositiveButton("Yes") { dialog, _ ->
 
+                    logout()
+                    dialog.dismiss()
+
+                }
+                .setNegativeButton("No") { dialog, _ ->
+                    dialog.cancel()
+                }
+                .show()
+        }else{
+           val intent = Intent(requireActivity(),LoginActivity::class.java)
+            startActivity(intent)
+        }
+    }
     private fun fetchUserData() {
         val userId = FirebaseAuth.getInstance().currentUser?.uid
         if (userId != null) {

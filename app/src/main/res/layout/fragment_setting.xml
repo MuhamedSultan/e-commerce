@@ -140,6 +140,7 @@
 
             <!-- Divider -->
             <View
+                android:id="@+id/view"
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
                 android:layout_marginStart="24dp"
@@ -206,6 +207,7 @@
 
             <!-- Divider -->
             <View
+                android:id="@id/view2"
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
                 android:layout_marginStart="24dp"
@@ -271,12 +273,12 @@
 
             <!-- Separator Line -->
             <View
+                android:id="@+id/view3"
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
-                android:layout_marginStart="24dp"
-                android:layout_marginEnd="24dp"
                 android:background="@android:color/darker_gray"
-                app:layout_constraintTop_toBottomOf="@id/address_setting_layout" />
+                app:layout_constraintTop_toBottomOf="@id/address_setting_layout"
+                tools:layout_editor_absoluteX="24dp" />
             <!-- Logout Section -->
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/logout_setting_layout"
