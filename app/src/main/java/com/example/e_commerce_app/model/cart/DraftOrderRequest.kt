@@ -39,7 +39,6 @@ data class AppliedDiscount(
     @SerializedName("value_type")
     val valueType: String,
     val value: String,
-    var amount: String,
     val title: String
 )
 

@@ -52,11 +52,6 @@ class DraftOrderManager private constructor(var draftOrder: DraftOrder) {
     }
 
     fun addCouponToDraftOrder(appliedDiscount: AppliedDiscount): DraftOrder {
-        var floorAmount = 0.0
-        for(item in draftOrder.lineItems){
-            floorAmount*=(item.quantity * item.price.toDouble())
-        }
-        appliedDiscount.amount= floor(abs(appliedDiscount.value.toDouble())*floorAmount).toString()
         draftOrder.appliedDiscount = appliedDiscount
         return draftOrder
     }

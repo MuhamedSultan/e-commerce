@@ -29,6 +29,7 @@ import com.example.e_commerce_app.network.RemoteDataSourceImpl
 import com.example.e_commerce_app.util.ApiState
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.launch
+import kotlin.math.abs
 
 class AddingCouponFragment : Fragment() {
     private lateinit var binding:FragmentAddingCouponBinding
@@ -65,19 +66,17 @@ class AddingCouponFragment : Fragment() {
                 if(coupon.title==CouponeTitle){
                     binding.couponStatus.setTextColor(ContextCompat.getColor(requireContext(), R.color.green))
                     binding.couponStatus.text = "Coupon applied!"
+                    val appliedDiscount =AppliedDiscount(
+                        id = coupon.id,
+                        title = coupon.title,
+                        valueType = coupon.value_type,
+                        value = abs(coupon.value.toDouble()).toString(),
+                        description = "Custom Discount"
+                    )
+                    Log.i("TAG", "The applied Discount: $appliedDiscount")
                     viewModel.addCouponToDraftOrder(
                         DraftOrderRequest(
-                            DraftOrderManager.getInstance().addCouponToDraftOrder(
-                                AppliedDiscount(
-                                    id = coupon.id,
-                                    title = coupon.title,
-                                    valueType = coupon.value_type,
-                                    value = coupon.value,
-                                    description = "Custom Discount",
-                                    amount =""
-                                )
-                            )
-                        ),
+                            DraftOrderManager.getInstance().addCouponToDraftOrder(appliedDiscount = appliedDiscount)),
                         SharedPrefsManager.getInstance().getDraftedOrderId()?:0
                     )
                     break
