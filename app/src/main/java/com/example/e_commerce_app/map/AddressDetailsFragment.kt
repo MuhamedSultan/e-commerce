@@ -34,6 +34,8 @@ class AddressDetailsFragment : Fragment() {
     private lateinit var binding: FragmentAddressDetailsBinding
     private lateinit var viewModel: AddressViewModel
     private lateinit var customerId : String
+    private lateinit var page : String
+
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
@@ -57,6 +59,7 @@ class AddressDetailsFragment : Fragment() {
         val args = AddressDetailsFragmentArgs.fromBundle(requireArguments())
         val latitude = args.latitude
         val longitude = args.longitude
+        page = args.page
         val geocoder = Geocoder(requireContext(), Locale.getDefault())
         val addresses = geocoder.getFromLocation(latitude.toDouble(), longitude.toDouble(), 1)
 
@@ -121,7 +124,7 @@ class AddressDetailsFragment : Fragment() {
                             hideLoadingIndicator()
                             viewModel.getAllAddresses(customerId)
                             Toast.makeText(requireContext(), "Location details submitted!", Toast.LENGTH_SHORT).show()
-                            val action = AddressDetailsFragmentDirections.actionAddressDetailsFragmentToAddressFragment2()
+                            val action = AddressDetailsFragmentDirections.actionAddressDetailsFragmentToAddressFragment2(page)
                             findNavController().navigate(action)
                         }
 

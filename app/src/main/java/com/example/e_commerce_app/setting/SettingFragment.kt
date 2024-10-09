@@ -66,7 +66,7 @@ class SettingFragment : Fragment() {
             findNavController().navigate(action)
         }
         binding.addressSettingLayout.setOnClickListener {
-            val action = SettingFragmentDirections.actionSettingFragmentToAddressFragment2()
+            val action = SettingFragmentDirections.actionSettingFragmentToAddressFragment2("setting")
             findNavController().navigate(action)
         }
         binding.favoritesSettingLayout.setOnClickListener {

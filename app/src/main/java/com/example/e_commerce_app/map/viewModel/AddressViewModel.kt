@@ -1,10 +1,13 @@
 package com.example.e_commerce_app.map.viewModel
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.e_commerce_app.model.address.AddressRequest
 import com.example.e_commerce_app.model.address.AddressResponse
 import com.example.e_commerce_app.model.address.AddressesResponse
+import com.example.e_commerce_app.model.cart.DraftOrderRequest
+import com.example.e_commerce_app.model.cart.DraftOrderResponse
 import com.example.e_commerce_app.model.repo.ShopifyRepo
 import com.example.e_commerce_app.util.ApiState
 import kotlinx.coroutines.Dispatchers
@@ -21,8 +24,8 @@ class AddressViewModel(val repo: ShopifyRepo) : ViewModel() {
         MutableStateFlow(ApiState.Loading())
     val insertAddressesResult: StateFlow<ApiState<AddressResponse>> = _insertAddressesResult
 
-
-
+    private val _draftOrderState = MutableStateFlow<ApiState<DraftOrderResponse>>(ApiState.Loading())
+    val draftOrderState: StateFlow<ApiState<DraftOrderResponse>> = _draftOrderState
 
 
     fun getAllAddresses(customerId:String) = viewModelScope.launch(Dispatchers.IO) {
@@ -33,5 +36,28 @@ class AddressViewModel(val repo: ShopifyRepo) : ViewModel() {
     fun insertAddress(customerId: String, addressRequest: AddressRequest) = viewModelScope.launch(Dispatchers.IO) {
         val result=repo.insertAddress(customerId.toLong(),addressRequest)
         _insertAddressesResult.value=result
+    }
+
+    fun addAddressToDraftOrder(draftOrderRequest: DraftOrderRequest, draftOrderId: Long)
+    = viewModelScope.launch(Dispatchers.IO) {
+        _draftOrderState.value = ApiState.Loading()
+        val result = repo.backUpDraftFavorite(draftOrderRequest,draftOrderId)
+        _draftOrderState.value = result
+
+        when (result) {
+            is ApiState.Success -> {
+                Log.d("TAG", "Address Added successfully")
+                Log.i("TAG", "Add Response: ${result.data?.draft_order}")
+            }
+            is ApiState.Error -> {
+                Log.e(
+                    "TAG",
+                    "Error Adding Address to draft order: ${result.message}"
+                )
+            }
+            // Handle loading state if needed
+            is ApiState.Loading -> TODO()
+        }
+
     }
 }

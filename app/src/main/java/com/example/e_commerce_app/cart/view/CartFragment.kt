@@ -63,9 +63,9 @@ class CartFragment : Fragment() {
 
         // Set up checkout button click listener
         binding.checkoutBtn.setOnClickListener {
-//            val action = CartFragmentDirections.actionCartFragmentToPaymentFragment()
-//            findNavController().navigate(action)
-            viewModel.completeOrderForSultan()
+            val action = CartFragmentDirections.actionCartFragmentToAddressFragment("cart")
+            findNavController().navigate(action)
+            //viewModel.completeOrderForSultan()
             //observeCompleteOrder()
         }
 

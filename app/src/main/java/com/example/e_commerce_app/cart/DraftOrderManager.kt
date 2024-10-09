@@ -1,8 +1,13 @@
 package com.example.e_commerce_app.cart
 
 import android.util.Log
+import com.example.e_commerce_app.model.address.testAdd
+import com.example.e_commerce_app.model.cart.AppliedDiscount
 import com.example.e_commerce_app.model.cart.DraftOrder
+import com.example.e_commerce_app.model.cart.DraftOrderRequest
 import com.example.e_commerce_app.model.cart.LineItems
+import kotlin.math.abs
+import kotlin.math.floor
 
 class DraftOrderManager private constructor(var draftOrder: DraftOrder) {
 
@@ -38,6 +43,22 @@ class DraftOrderManager private constructor(var draftOrder: DraftOrder) {
         }
         Log.i("TAG", "addProductToDraftOrder: ${draftOrder}")
         return draftOrder // Return the updated draftOrder
+    }
+
+    fun addAddressToDraftOrder(testAdd: testAdd): DraftOrder {
+        draftOrder.billingAddress = testAdd
+        draftOrder.shippingAddress = testAdd
+        return draftOrder
+    }
+
+    fun addCouponToDraftOrder(appliedDiscount: AppliedDiscount): DraftOrder {
+        var floorAmount = 0.0
+        for(item in draftOrder.lineItems){
+            floorAmount*=(item.quantity * item.price.toDouble())
+        }
+        appliedDiscount.amount= floor(abs(appliedDiscount.value.toDouble())*floorAmount).toString()
+        draftOrder.appliedDiscount = appliedDiscount
+        return draftOrder
     }
 
 

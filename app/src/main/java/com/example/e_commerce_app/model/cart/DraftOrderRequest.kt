@@ -12,12 +12,12 @@ data class DraftOrder(
     @SerializedName("line_items")
     val lineItems: MutableList<LineItems> = mutableListOf(LineItems()),
     @SerializedName("applied_discount")
-    val appliedDiscount: AppliedDiscount?=null,
+    var appliedDiscount: AppliedDiscount?=null,
     val customer: CustomerId,
     @SerializedName("shipping_address")
-    val shippingAddress : testAdd? = null,
+    var shippingAddress : testAdd? = null,
     @SerializedName("billing_address")
-    val billingAddress : testAdd? = null,
+    var billingAddress : testAdd? = null,
     @SerializedName("use_customer_default_address")
     val useCustomerDefaultAddress: Boolean = true,
     var note : String = ""
@@ -35,9 +35,11 @@ data class LineItems(
 
 data class AppliedDiscount(
     val description: String,
-    val value_type: String,
+    val id: Long,
+    @SerializedName("value_type")
+    val valueType: String,
     val value: String,
-    val amount: String,
+    var amount: String,
     val title: String
 )
 

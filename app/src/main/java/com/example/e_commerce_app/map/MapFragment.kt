@@ -27,6 +27,7 @@ class MapFragment : Fragment(), OnMapReadyCallback {
     private lateinit var map: GoogleMap
     private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
     private var selectedLatLng: LatLng? = null
+    private lateinit var page: String
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
@@ -36,7 +37,8 @@ class MapFragment : Fragment(), OnMapReadyCallback {
         mapFragment.getMapAsync(this)
 
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(requireActivity())
-
+        val args = MapFragmentArgs.fromBundle(requireArguments())
+        page = args.page
         view.findViewById<Button>(R.id.btn_confirm).setOnClickListener {
             confirmLocation()
         }
@@ -88,7 +90,8 @@ class MapFragment : Fragment(), OnMapReadyCallback {
             // Pass the selected location to another fragment
             val action = MapFragmentDirections.actionMapFragmentToAddressDetailsFragment(
                 selectedLatLng!!.latitude.toFloat(),
-                selectedLatLng!!.longitude.toFloat()
+                selectedLatLng!!.longitude.toFloat(),
+                page
             )
             findNavController().navigate(action)
         } else {

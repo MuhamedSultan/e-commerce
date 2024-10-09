@@ -16,7 +16,57 @@ import com.example.e_commerce_app.model.address.AddressResponseModel
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.*
-class AddressAdapter() :
+class AddressAdapter(private val onAddressSelected: (AddressResponseModel) -> Unit) :
+    ListAdapter<AddressResponseModel, AddressAdapter.AddressHolder>(AddressDiffUtilItem()) {
+
+    private var selectedPosition = RecyclerView.NO_POSITION
+
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): AddressHolder {
+        val inflater: LayoutInflater =
+            parent.context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
+        val binding = ItemAddressBinding.inflate(inflater, parent, false)
+        return AddressHolder(binding)
+    }
+
+    override fun onBindViewHolder(holder: AddressHolder, position: Int) {
+        val address = getItem(position)
+        holder.bind(address)
+
+        // Highlight the selected address
+        holder.binding.root.isSelected = selectedPosition == position
+
+        // Set click listener
+        holder.binding.root.setOnClickListener {
+            val previousPosition = selectedPosition
+            selectedPosition = holder.adapterPosition
+            notifyItemChanged(previousPosition)  // Unhighlight the previous selection
+            notifyItemChanged(selectedPosition)  // Highlight the new selection
+
+            // Trigger the selection callback
+            onAddressSelected(address)
+        }
+    }
+
+    class AddressHolder(val binding: ItemAddressBinding) : RecyclerView.ViewHolder(binding.root) {
+        fun bind(address: AddressResponseModel) {
+            binding.tvAddressCountryName.text = address.address2
+            binding.tvAddressDetails.text = address.address1
+            binding.tvAddressPhone.text = address.phone
+        }
+    }
+
+    class AddressDiffUtilItem : DiffUtil.ItemCallback<AddressResponseModel>() {
+        override fun areItemsTheSame(oldItem: AddressResponseModel, newItem: AddressResponseModel): Boolean {
+            return oldItem.id == newItem.id
+        }
+
+        override fun areContentsTheSame(oldItem: AddressResponseModel, newItem: AddressResponseModel): Boolean {
+            return oldItem == newItem
+        }
+    }
+}
+
+/*class AddressAdapter() :
     ListAdapter<AddressResponseModel, AddressAdapter.AddressHolder>(AddressDiffUtilItem()) {
     lateinit var binding : ItemAddressBinding
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): AddressHolder {
@@ -50,7 +100,7 @@ class AddressAdapter() :
 
     }
 
-}
+}*/
 /*
 class AddressAdapter(private val addressList: List<Address>) :
     RecyclerView.Adapter<AddressAdapter.AddressViewHolder>() {
