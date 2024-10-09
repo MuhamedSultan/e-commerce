@@ -106,6 +106,9 @@
         <argument
             android:name="orderId"
             app:argType="long" />
+        <action
+            android:id="@+id/action_orderDetailsFragment_to_productDetailsFragment"
+            app:destination="@id/productDetailsFragment" />
     </fragment>
     <fragment
         android:id="@+id/paymentFragment"
