@@ -9,8 +9,11 @@
 
     <color name="basic_color">#C6AB59</color>
     <color name="gray_dark_color">#3D3D3D</color>
+    <color name="gray_not_very_dark_color">#8A8787</color>
 
     <color name="main_gold">#FF9800</color>
     <color name="figma_main_color">#C5AA59</color>
+    <color name="green">#00FF00</color>
+    <color name="red">#FF0000</color>
 
 </resources>
