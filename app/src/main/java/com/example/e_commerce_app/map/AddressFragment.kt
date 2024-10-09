@@ -153,21 +153,23 @@ class AddressFragment : Fragment() {
                     state ->
                 when(state){
                     is ApiState.Success -> {
+                        hideLoadingIndicator()
                         Log.i("TAG", "observeViewModel: billing:  ${state.data?.draft_order?.billing_address}\n" +
                                 "shopping : ${state.data?.draft_order?.shipping_address}")
                         Toast.makeText(requireContext(),"Address added to Order Sucessfully", Toast.LENGTH_SHORT).show()
-                        val action = AddressFragmentDirections.actionAddressFragmentToNextFragment()
+                        val action = AddressFragmentDirections.actionAddressFragmentToAddingCouponFragment()
                         findNavController().navigate(action)
                     }
 
                     is ApiState.Error -> {
+                        hideLoadingIndicator()
                         val errorMessage = state.message ?: "An unknown error occurred"
                         Log.e("TAG", "addind Address Error: ${errorMessage}")
                         showError(errorMessage)
                     }
 
                     is ApiState.Loading -> {
-
+                        showLoadingIndicator()
                     }
                 }
             }

@@ -160,6 +160,9 @@
         <argument
             android:name="page"
             app:argType="string" />
+        <action
+            android:id="@+id/action_addressFragment_to_addingCouponFragment"
+            app:destination="@id/addingCouponFragment" />
     </fragment>
     <fragment
         android:id="@+id/addressDetailsFragment"
@@ -184,6 +187,11 @@
         android:name="com.example.e_commerce_app.rating.RatingFragment"
         android:label="fragment_rating"
         tools:layout="@layout/fragment_rating" />
+    <fragment
+        android:id="@+id/addingCouponFragment"
+        android:name="com.example.e_commerce_app.cart.view.AddingCouponFragment"
+        android:label="fragment_adding_coupon"
+        tools:layout="@layout/fragment_adding_coupon" />
 
 
 </navigation>
