@@ -120,7 +120,7 @@ class CartFragment : Fragment() {
 
     private fun updateCartUI(draftOrderResponse: DraftOrderResponse) {
         val lineItems = draftOrderResponse.draft_order.line_items
-        val imageUrls = DraftOrderManager.getInstance().draftOrder.note
+        val imageUrls = DraftOrderManager.getInstance().draftOrderRequest.draftOrder.note
         val result = imageUrls.split("|##|").filter { it.isNotEmpty() }
         for ((index, item) in lineItems.drop(1).withIndex()) {
             if (index < result.size) {
@@ -152,7 +152,7 @@ class CartFragment : Fragment() {
         builder.setPositiveButton("Yes") { dialogInterface, _ ->
             Log.d("CartFragment", "Deleted item: ${lineItem.title}")
             SharedPrefsManager.getInstance().getDraftedOrderId()?.let {
-                viewModel.UpdateDraftOrderProducts(DraftOrderRequest(DraftOrderManager.getInstance().delete(lineItem)),
+                viewModel.UpdateDraftOrderProducts(DraftOrderManager.getInstance().delete(lineItem),
                     it
                 )
             }
@@ -171,9 +171,9 @@ class CartFragment : Fragment() {
     }
 
     private fun handleIncreaseQuantity(lineItem: LineItem) {
-        viewModel.UpdateDraftOrderProducts(DraftOrderRequest(
+        viewModel.UpdateDraftOrderProducts(
             DraftOrderManager.getInstance().IncreaseQuantity(lineItem)
-        ),
+        ,
             SharedPrefsManager.getInstance().getDraftedOrderId() ?: 0
         )
     }
@@ -182,9 +182,9 @@ class CartFragment : Fragment() {
         if (lineItem.quantity == 1){
             handleDeleteClick(lineItem)
         }else{
-            viewModel.UpdateDraftOrderProducts(DraftOrderRequest(
+            viewModel.UpdateDraftOrderProducts(
                 DraftOrderManager.getInstance().DecreaseQuantity(lineItem)
-            ),
+            ,
                 SharedPrefsManager.getInstance().getDraftedOrderId() ?: 0
             )
         }

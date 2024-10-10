@@ -166,9 +166,9 @@ class ProductDetailsFragment : Fragment() {
                 val customerId = shp.getShopifyCustomerId()
                 val draftOrderId = shp.getDraftedOrderId()
                 viewModel.addProductToDraftOrder(
-                    draftOrderRequest = DraftOrderRequest(
+                    draftOrderRequest =
                         DraftOrderManager.getInstance().addProductToDraftOrder(lineItem,product.image.src)
-                        ),
+                        ,
                     draftOrderId = draftOrderId ?: 0
                 )
                 observeViewModel()

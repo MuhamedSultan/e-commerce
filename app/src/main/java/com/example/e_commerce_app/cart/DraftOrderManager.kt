@@ -10,14 +10,15 @@ import com.example.e_commerce_app.model.cart.LineItems
 import kotlin.math.abs
 import kotlin.math.floor
 
-class DraftOrderManager private constructor(var draftOrder: DraftOrder) {
+class DraftOrderManager private constructor(var draftOrderRequest: DraftOrderRequest) {
 
     companion object {
         private var INSTANCE: DraftOrderManager? = null
 
-        fun init(draftOrder: DraftOrder) {
+        fun init(draftOrderRequest: DraftOrderRequest) {
             if (INSTANCE == null) {
-                INSTANCE = DraftOrderManager(draftOrder)
+                Log.i("TAG", "init: $draftOrderRequest")
+                INSTANCE = DraftOrderManager(draftOrderRequest)
             }
         }
 
@@ -26,8 +27,8 @@ class DraftOrderManager private constructor(var draftOrder: DraftOrder) {
         }
     }
 
-    fun addProductToDraftOrder(lineItem: LineItems,imageUrl : String): DraftOrder {
-
+    fun addProductToDraftOrder(lineItem: LineItems,imageUrl : String): DraftOrderRequest {
+        var draftOrder = draftOrderRequest.draftOrder
         // Check if a line item with the same variantId already exists in the draftOrder's lineItems list
         val existingItem = draftOrder.lineItems.find { it.variantId == lineItem.variantId }
 
@@ -40,21 +41,24 @@ class DraftOrderManager private constructor(var draftOrder: DraftOrder) {
             draftOrder.note = draftOrder.note+"|##|"+imageUrl
         }
         Log.i("TAG", "addProductToDraftOrder: ${draftOrder}")
-        return draftOrder // Return the updated draftOrder
+        return draftOrderRequest // Return the updated draftOrder
     }
 
-    fun addAddressToDraftOrder(testAdd: testAdd): DraftOrder {
+    fun addAddressToDraftOrder(testAdd: testAdd): DraftOrderRequest {
+        var draftOrder = draftOrderRequest.draftOrder
         draftOrder.billingAddress = testAdd
         draftOrder.shippingAddress = testAdd
-        return draftOrder
+        return draftOrderRequest
     }
 
-    fun addCouponToDraftOrder(appliedDiscount: AppliedDiscount): DraftOrder {
+    fun addCouponToDraftOrder(appliedDiscount: AppliedDiscount): DraftOrderRequest {
+        var draftOrder = draftOrderRequest.draftOrder
         draftOrder.appliedDiscount = appliedDiscount
-        return draftOrder
+        return draftOrderRequest
     }
 
-    fun delete(lineItem: LineItem): DraftOrder {
+    fun delete(lineItem: LineItem): DraftOrderRequest {
+        var draftOrder = draftOrderRequest.draftOrder
         val result = draftOrder.note.split("|##|").filter { it.isNotEmpty() }
         var deletedIndex :Int= 0
         for ((index, item) in draftOrder.lineItems.drop(1).withIndex()) {
@@ -73,27 +77,29 @@ class DraftOrderManager private constructor(var draftOrder: DraftOrder) {
         }
         draftOrder.note = tempNote
 
-        return draftOrder
+        return draftOrderRequest
     }
 
-    fun IncreaseQuantity(lineItem: LineItem): DraftOrder {
+    fun IncreaseQuantity(lineItem: LineItem): DraftOrderRequest {
+        var draftOrder = draftOrderRequest.draftOrder
         for (item in draftOrder.lineItems){
             if (lineItem.variantId == item.variantId){
                 item.quantity++
                 break
             }
         }
-        return draftOrder
+        return draftOrderRequest
     }
 
-    fun DecreaseQuantity(lineItem: LineItem): DraftOrder {
+    fun DecreaseQuantity(lineItem: LineItem): DraftOrderRequest {
+        var draftOrder = draftOrderRequest.draftOrder
         for (item in draftOrder.lineItems){
             if (lineItem.variantId == item.variantId){
                 item.quantity--
                 break
             }
         }
-        return draftOrder
+        return draftOrderRequest
     }
 
 

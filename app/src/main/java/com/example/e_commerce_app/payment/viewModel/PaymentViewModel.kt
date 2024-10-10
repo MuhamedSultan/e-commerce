@@ -65,12 +65,12 @@ class PaymentViewModel(private val repo: ShopifyRepo) :ViewModel() {
                         )
                     ),
                     appliedDiscount = null,
-                    customer = CustomerId(id = 8936192246075),
+                    customer = CustomerId(id = customerId.toLong()),
                     useCustomerDefaultAddress = true
                 )
             )
             val result = repo.createFavoriteDraft(draftOrderRequest)
-            DraftOrderManager.init(draftOrderRequest.draftOrder)
+            DraftOrderManager.init(draftOrderRequest)
             _creatingDraftOrder.value=result
         }
     }

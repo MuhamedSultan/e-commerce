@@ -16,6 +16,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import com.example.e_commerce_app.R
+import com.example.e_commerce_app.cart.DraftOrderManager
 import com.example.e_commerce_app.cart.viewmodel.CartViewModel
 import com.example.e_commerce_app.cart.viewmodel.CartViewModelFactory
 import com.example.e_commerce_app.databinding.FragmentCartBinding
@@ -23,6 +24,10 @@ import com.example.e_commerce_app.databinding.FragmentPaymentBinding
 import com.example.e_commerce_app.db.SharedPrefsManager
 import com.example.e_commerce_app.db.ShopifyDB
 import com.example.e_commerce_app.map.AddressDetailsFragmentArgs
+import com.example.e_commerce_app.model.cart.CustomerId
+import com.example.e_commerce_app.model.cart.DraftOrder
+import com.example.e_commerce_app.model.cart.DraftOrderRequest
+import com.example.e_commerce_app.model.cart.LineItems
 import com.example.e_commerce_app.model.repo.ShopifyRepoImpl
 import com.example.e_commerce_app.network.RemoteDataSourceImpl
 import com.example.e_commerce_app.payment.viewModel.PaymentViewModel
@@ -143,7 +148,27 @@ class PaymentFragment : Fragment() {
                             hideLoadingIndicator()
                             result.data?.let { collections ->
                                 SharedPrefsManager.getInstance().setDraftedOrderId(collections.draft_order.id)
-                                val action = PaymentFragmentDirections.actionPaymentFragmentToCreditCardFragment()
+                                DraftOrderManager.init(
+                                    DraftOrderRequest(
+                                    draftOrder = DraftOrder(
+                                        lineItems = mutableListOf(
+                                            LineItems(
+                                                title = "m",
+                                                price = "0.00",
+                                                quantity = 1,
+                                                productId = "12",
+                                                variantId = null
+                                            )
+                                        ),
+                                        appliedDiscount = null,
+                                        customer = CustomerId(id = collections.draft_order.customer.id),
+                                        useCustomerDefaultAddress = true
+                                    )
+                                )
+                                )
+                                val action = PaymentFragmentDirections.actionPaymentFragmentToOrdersFragment(
+                                    SharedPrefsManager.getInstance().getUserName()?:"Unknown User"
+                                )
                                 findNavController().navigate(action)
                                 Log.i("TAG", "getDraftOrderSaveInShP: ${collections.draft_order.id}")
                             }

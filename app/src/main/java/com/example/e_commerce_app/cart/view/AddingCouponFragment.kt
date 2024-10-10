@@ -81,8 +81,7 @@ class AddingCouponFragment : Fragment() {
                     )
                     Log.i("TAG", "The applied Discount: $appliedDiscount")
                     viewModel.addCouponToDraftOrder(
-                        DraftOrderRequest(
-                            DraftOrderManager.getInstance().addCouponToDraftOrder(appliedDiscount = appliedDiscount)),
+                            DraftOrderManager.getInstance().addCouponToDraftOrder(appliedDiscount = appliedDiscount),
                         SharedPrefsManager.getInstance().getDraftedOrderId()?:0
                     )
                     break
