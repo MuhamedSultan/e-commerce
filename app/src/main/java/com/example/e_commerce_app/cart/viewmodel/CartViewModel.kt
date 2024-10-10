@@ -24,6 +24,11 @@
         private val _draftOrderState = MutableStateFlow<ApiState<DraftOrderResponse>>(ApiState.Loading())
         val draftOrderState: StateFlow<ApiState<DraftOrderResponse>> = _draftOrderState
 
+        fun UpdateDraftOrderProducts(draftOrderRequest: DraftOrderRequest , draftOrderId: Long)  =viewModelScope.launch (Dispatchers.IO){
+                _draftOrderState.value = ApiState.Loading()
+                val result = repo.backUpDraftFavorite(draftOrderRequest,draftOrderId)
+                _draftOrderState.value = result
+        }
 
         fun getProductsFromDraftOrder(draftFavoriteId: Long) =viewModelScope.launch (Dispatchers.IO){
 
@@ -73,7 +78,7 @@
         fun completeOrderForSultan() =viewModelScope.launch (Dispatchers.IO){
             val shp = SharedPrefsManager.getInstance()
             var draftFavoriteId =shp.getDraftedOrderId() ?:0
-            val result = repo.addOrderFromDraftOrder(draftFavoriteId)
+            val result = repo.addOrderFromDraftOrder(draftFavoriteId , true)
             when (result) {
                 is ApiState.Success -> {
                     shp.setDraftedOrderId(0L)

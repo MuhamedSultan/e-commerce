@@ -66,6 +66,7 @@ class OrdersFragment : Fragment() {
 
                         is ApiState.Success -> {
                             hideLoadingIndicator()
+                            Log.i("TAG", "Orders Sucess: $customerId \n${result.data?.orders}")
                             setupOrdersRecyclerview(result.data?.orders ?: emptyList())
                         }
 
@@ -111,6 +112,7 @@ class OrdersFragment : Fragment() {
             layoutManager = manger
         }
         if (orders.isEmpty()){
+            Log.e("TAG", "setupOrdersRecyclerview: Orders Empty")
             binding.groupLayout.visibility=View.INVISIBLE
         }
     }

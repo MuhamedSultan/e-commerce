@@ -36,6 +36,10 @@ class SharedPrefsManager private constructor(context: Context) {
         return sharedPreferences.getLong("draftId", 0)
     }
 
+    fun getUserName(): String? {
+            return sharedPreferences.getString("userName", "Unknown User")
+    }
+
 
 }
 

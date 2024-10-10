@@ -106,7 +106,8 @@ interface ShopifyService {
 
     @PUT("draft_orders/{draftFavoriteId}/complete.json")
     suspend fun addOrderFromDraftOrder(
-        @Path("draftFavoriteId") draftFavoriteId: Long
+        @Path("draftFavoriteId") draftFavoriteId: Long,
+        @Query("payment_pending") paymentPending: Boolean
     ): DraftOrderResponse
 
     @PUT("customers/{customerId}/addresses/{addressId}")

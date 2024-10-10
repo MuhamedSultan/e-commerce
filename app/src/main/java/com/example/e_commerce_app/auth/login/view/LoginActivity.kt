@@ -165,6 +165,7 @@ class LoginActivity : AppCompatActivity() {
         with(sharedPreferences.edit()) {
             putString("userId", userData.id.toString())
             putString("userEmail", userData.email)
+            putString("userName", userData.userName)
             putString("shopifyCustomerId", userData.shopifyCustomerId)
             putBoolean("isGuest", false)
 

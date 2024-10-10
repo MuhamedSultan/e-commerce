@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ViewModelProvider
@@ -22,6 +23,7 @@ import com.example.e_commerce_app.db.SharedPrefsManager
 import com.example.e_commerce_app.db.ShopifyDB
 import com.example.e_commerce_app.model.cart.Cart
 import com.example.e_commerce_app.model.cart.CartResponse
+import com.example.e_commerce_app.model.cart.DraftOrderRequest
 import com.example.e_commerce_app.model.cart.DraftOrderResponse
 import com.example.e_commerce_app.model.cart.LineItem
 import com.example.e_commerce_app.model.repo.ShopifyRepoImpl
@@ -66,12 +68,8 @@ class CartFragment : Fragment() {
         binding.checkoutBtn.setOnClickListener {
             val action = CartFragmentDirections.actionCartFragmentToAddressFragment("cart")
             findNavController().navigate(action)
-            //viewModel.completeOrderForSultan()
-            //observeCompleteOrder()
         }
 
-        // Fetch products based on customer ID
-        //fetchProductsFromDraftOrder()
     }
 
     private fun observeGetDraftOrderData() {
@@ -85,24 +83,6 @@ class CartFragment : Fragment() {
                         is ApiState.Success -> {
                             result.data?.let { collections ->
                                 updateCartUI(collections)
-                                /*var lineItemsList = mutableListOf<LineItems>()
-                                for(lineItem in collections.draft_order.line_items){
-                                    lineItemsList.add(
-                                        LineItems(
-                                            title = lineItem.title,
-                                            price = lineItem.price,
-                                            quantity = lineItem.quantity,
-                                            productId = lineItem.productId ?: "null",
-                                            variantId = lineItem.variantId
-                                        )
-                                    )
-                                }
-                                DraftOrderManager.init(
-                                    DraftOrder(
-                                    lineItems = lineItemsList,
-                                    customer = CustomerId(collections.draft_order.customer.id)
-                                )
-                                )*/
                             }
                         }
 
@@ -129,53 +109,6 @@ class CartFragment : Fragment() {
             adapter = cartAdapter
         }
     }
-/*
-    private fun fetchProductsFromDraftOrder() {
-        //val shopifyCustomerId = sharedPreferences.getString("shopifyCustomerId", null)
-
-        Log.d("CartFragment", "shopifyCustomerId: $shopifyCustomerId")
-
-        // Check if shopifyCustomerId is null
-        if (shopifyCustomerId == null) {
-            Log.e("TAG", "No Shopify customer ID found in SharedPreferences.")
-            showError("No Shopify customer ID found in SharedPreferences.")
-            return
-        }
-
-        // Get the draft order ID associated with the customer
-        val draftFavoriteId = getDraftOrderIdForCustomer(shopifyCustomerId)
-
-        // Check if draftFavoriteId is null
-        if (draftFavoriteId == null) {
-            Log.e("CartFragment", "No draft order ID found for the customer.")
-            showNoDraftOrderMessage()
-            return
-        }
-
-        // Fetch products from the draft order
-        viewModel.getProductsFromDraftOrder(draftFavoriteId)
-
-        lifecycleScope.launch {
-            viewModel.draftOrderState.collect { state ->
-                when (state) {
-                    is ApiState.Loading -> {
-                        // Optionally show loading indicator
-                        Log.d("CartFragment", "Loading draft order products...")
-                    }
-                    is ApiState.Success -> {
-                        val draftOrderResponse = state.data as DraftOrderResponse
-                        val cartResponse = createCartResponseFromDraftOrder(draftOrderResponse)
-                        updateCartUI(cartResponse)
-                    }
-                    is ApiState.Error -> {
-                        Log.e("CartFragment", "Error fetching products: ${state.message}")
-                        showError(state.message)
-                    }
-                }
-            }
-        }
-    }
-    */
 
     private fun showError(message: String?) {
         Toast.makeText(requireContext(), "Error fetching products: ${message ?: "Unknown error occurred."}", Toast.LENGTH_LONG).show()
@@ -187,7 +120,7 @@ class CartFragment : Fragment() {
 
     private fun updateCartUI(draftOrderResponse: DraftOrderResponse) {
         val lineItems = draftOrderResponse.draft_order.line_items
-        val imageUrls = DraftOrderManager.getInstance().draftOrder.note
+        val imageUrls = DraftOrderManager.getInstance().draftOrderRequest.draftOrder.note
         val result = imageUrls.split("|##|").filter { it.isNotEmpty() }
         for ((index, item) in lineItems.drop(1).withIndex()) {
             if (index < result.size) {
@@ -210,14 +143,52 @@ class CartFragment : Fragment() {
 
     private fun handleDeleteClick(lineItem: LineItem) {
         Log.d("CartFragment", "Delete item: ${lineItem.title}")
+        // Show delete confirmation dialog
+        val builder = AlertDialog.Builder(requireContext())
+        builder.setTitle("Delete Item")
+        builder.setMessage("Are you sure you want to delete ${lineItem.title}?")
+
+        // Set the positive button (Yes)
+        builder.setPositiveButton("Yes") { dialogInterface, _ ->
+            Log.d("CartFragment", "Deleted item: ${lineItem.title}")
+            SharedPrefsManager.getInstance().getDraftedOrderId()?.let {
+                viewModel.UpdateDraftOrderProducts(DraftOrderManager.getInstance().delete(lineItem),
+                    it
+                )
+            }
+            dialogInterface.dismiss()  // Close the dialog
+        }
+
+        // Set the negative button (No)
+        builder.setNegativeButton("No") { dialogInterface, _ ->
+            // Just dismiss the dialog if "No" is clicked
+            dialogInterface.dismiss()
+        }
+
+        // Create and show the dialog
+        val alertDialog = builder.create()
+        alertDialog.show()
     }
 
     private fun handleIncreaseQuantity(lineItem: LineItem) {
-        Log.d("CartFragment", "Increase quantity for: ${lineItem.title}")
+        viewModel.UpdateDraftOrderProducts(
+            DraftOrderManager.getInstance().IncreaseQuantity(lineItem)
+        ,
+            SharedPrefsManager.getInstance().getDraftedOrderId() ?: 0
+        )
     }
 
     private fun handleDecreaseQuantity(lineItem: LineItem) {
-        Log.d("CartFragment", "Decrease quantity for: ${lineItem.title}")
+        if (lineItem.quantity == 1){
+            handleDeleteClick(lineItem)
+        }else{
+            viewModel.UpdateDraftOrderProducts(
+                DraftOrderManager.getInstance().DecreaseQuantity(lineItem)
+            ,
+                SharedPrefsManager.getInstance().getDraftedOrderId() ?: 0
+            )
+        }
+
     }
 
     private fun createCartResponseFromDraftOrder(draftOrderResponse: DraftOrderResponse): CartResponse {

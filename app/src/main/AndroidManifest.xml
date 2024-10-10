@@ -19,6 +19,12 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Ecommerce_app"
         tools:targetApi="31">
+        <service android:name="com.paypal.android.sdk.payments.PayPalService" />
+
+        <activity
+            android:name="com.paypal.android.sdk.payments.PaymentActivity"
+            android:configChanges="orientation|keyboardHidden|keyboard|screenSize"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar"/>
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"

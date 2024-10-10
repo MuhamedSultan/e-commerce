@@ -99,7 +99,7 @@ class AddressFragment : Fragment() {
                     var shp = SharedPrefsManager.getInstance()
                     val draftOrderId = shp.getDraftedOrderId()
                     viewModel.addAddressToDraftOrder(
-                        draftOrderRequest = DraftOrderRequest(
+                        draftOrderRequest =
                             DraftOrderManager.getInstance().addAddressToDraftOrder(
                                 testAdd(
                                     address1 = selectedAddress!!.address1 ?: "Unknown Address",
@@ -112,7 +112,7 @@ class AddressFragment : Fragment() {
                                     last_name = "khedr"
                                 )
                             )
-                        ),
+                        ,
                         draftOrderId = draftOrderId ?: 0
                     )
                     observeAddingAddress()
@@ -184,12 +184,14 @@ class AddressFragment : Fragment() {
     private fun showLoadingIndicator() {
         binding.loadingIndicator.visibility = View.VISIBLE
         binding.rvAddresses.visibility = View.GONE
+        binding.btnSubmit.visibility = View.GONE
         binding.btnAddLocation.visibility = View.GONE
     }
 
     private fun hideLoadingIndicator() {
         binding.loadingIndicator.visibility = View.GONE
         binding.rvAddresses.visibility = View.VISIBLE
+        binding.btnSubmit.visibility = View.VISIBLE
         binding.btnAddLocation.visibility = View.VISIBLE
     }
 

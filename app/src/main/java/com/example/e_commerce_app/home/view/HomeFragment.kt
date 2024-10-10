@@ -31,6 +31,7 @@ import com.example.e_commerce_app.home.viewmodel.HomeViewModelFactory
 import com.example.e_commerce_app.model.address.testAdd
 import com.example.e_commerce_app.model.cart.CustomerId
 import com.example.e_commerce_app.model.cart.DraftOrder
+import com.example.e_commerce_app.model.cart.DraftOrderRequest
 import com.example.e_commerce_app.model.cart.LineItems
 import com.example.e_commerce_app.model.coupon.Discount
 import com.example.e_commerce_app.model.product.Product
@@ -233,11 +234,13 @@ class HomeFragment : Fragment() {
                                     )
                                     )
                                 }
-                                DraftOrderManager.init(DraftOrder(
+                                DraftOrderManager.init(
+                                    DraftOrderRequest( DraftOrder(
                                     lineItems = lineItemsList,
                                     customer = CustomerId(collections.draft_order.customer.id),
                                     note = collections.draft_order.note.toString()
-                                ))
+                                )
+                                    ))
                             }
                         }
 
