@@ -65,21 +65,26 @@ class DraftOrderManager private constructor(var draftOrderRequest: DraftOrderReq
         var draftOrder = draftOrderRequest.draftOrder
         val result = draftOrder.note.split("|##|").filter { it.isNotEmpty() }
         var deletedIndex :Int= 0
-        for ((index, item) in draftOrder.lineItems.drop(1).withIndex()) {
-            if (index < result.size) {
-                if (lineItem.variantId == item.variantId){
-                    deletedIndex = index
-                    draftOrder.lineItems.removeAt(index)
+        if (draftOrder.lineItems.size!=2) {
+            for ((index, item) in draftOrder.lineItems.drop(1).withIndex()) {
+                if (index < result.size) {
+                    if (lineItem.variantId == item.variantId) {
+                        deletedIndex = index
+                        draftOrder.lineItems.removeAt(index)
+                    }
                 }
             }
-        }
-        var tempNote:String = ""
-        for ((index,item) in result.withIndex()){
-            if(index!=deletedIndex){
-                tempNote = tempNote +"|##|"+item
+            var tempNote: String = ""
+            for ((index, item) in result.withIndex()) {
+                if (index != deletedIndex) {
+                    tempNote = tempNote + "|##|" + item
+                }
             }
+            draftOrder.note = tempNote
+        }else{
+            draftOrder.lineItems.removeAt(1)
+            draftOrder.note = ""
         }
-        draftOrder.note = tempNote
 
         return draftOrderRequest
     }
