@@ -16,6 +16,7 @@ import com.example.e_commerce_app.model.cart.Customer
 import com.example.e_commerce_app.model.cart.CustomerId
 import com.example.e_commerce_app.model.cart.DraftOrder
 import com.example.e_commerce_app.model.cart.LineItems
+import com.example.e_commerce_app.model.cart.PriceRuleResponse
 import com.example.e_commerce_app.model.custom_collection.CustomCollection
 import com.example.e_commerce_app.model.order_details.OrderDetailsResponse
 import com.example.e_commerce_app.model.orders.CustomerOrders
@@ -288,108 +289,9 @@ class FakeShopifyRepository : ShopifyRepo {
     }
 
     override suspend fun createFavoriteDraft(draftOrderRequest: DraftOrderRequest): ApiState<DraftOrderResponse> {
-        // Create a sample customer
-        val testCustomer = Customer(
-            accepts_marketing = true,
-            accepts_marketing_updated_at = "2024-01-01T00:00:00Z",
-            admin_graphql_api_id = "customer_api_id",
-            created_at = "2024-01-01T00:00:00Z",
-            currency = "USD",
-            default_address = null,
-            email = "test@example.com",
-            first_name = "Test",
-            id = 1L,
-            last_name = "User",
-            last_order_id = null,
-            last_order_name = null,
-            marketing_opt_in_level = null,
-            multipass_identifier = null,
-            note = null,
-            orders_count = 5,
-            phone = "123-456-7890",
-            state = "NY",
-            tags = "test_tag",
-            tax_exempt = false,
-            tax_exemptions = emptyList(),
-            total_spent = "100.00",
-            updated_at = "2024-01-01T00:00:00Z",
-            verified_email = true
-        )
-
-        // Create sample line items based on DraftOrder structure
-        val testLineItems = listOf(
-            LineItems(
-                title = "Test Product",
-                price = "20.00",
-                quantity = 2
-            )
-        )
-
-        // Assuming testLineItems has the necessary data to derive the required fields
-        val mappedLineItems = testLineItems.mapIndexed { index, lineItem ->
-            LineItem(
-                id = "line_item_id_$index", // Generate a unique ID for each line item, adjust as necessary
-                productId = "product_id_$index", // Use a real product ID or generate one based on your context
-                quantity = lineItem.quantity,
-                title = lineItem.title,
-                price = lineItem.price,
-                totalPrice = (lineItem.price.toDouble() * lineItem.quantity).toString(), // Calculate total price
-                imageUrl = "http://example.com/image_$index.jpg" // Use a real image URL or generate one
-            )
-        }
-
-
-        // Create sample applied discount
-        val testDiscount = AppliedDiscount(
-            description = "Test discount description",
-            value_type = "fixed_amount",
-            value = "5.00",
-            amount = "5.00",
-            title = "Test Discount"
-        )
-
-        // Create DraftOrder
-        val testDraftOrder = DraftOrder(
-            line_items = testLineItems,
-            applied_discount = testDiscount,
-            customer = CustomerId(id = testCustomer.id),
-            use_customer_default_address = true
-        )
-
-        // Create the DraftOrderDetailsResponse
-        val testDraftOrderDetails = DraftOrderDetailsResponse(
-            admin_graphql_api_id = "draft_order_api_id",
-            applied_discount = testDiscount,
-            billing_address = null,
-            completed_at = null,
-            created_at = "2024-01-01T00:00:00Z",
-            currency = "USD",
-            customer = testCustomer,
-            email = "test@example.com",
-            id = 1L, // Use a test ID
-            invoice_sent_at = null,
-            invoice_url = null,
-            line_items = mappedLineItems, // Use the mapped list here
-            name = "Draft Order #1",
-            note = null,
-            note_attributes = emptyList(),
-            order_id = null,
-            payment_terms = null,
-            shipping_address = null,
-            status = "open",
-            subtotal_price = "40.00", // Total of line items
-            tags = "test_tag",
-            tax_exempt = false,
-            tax_lines = emptyList(),
-            taxes_included = true,
-            total_price = "40.00",
-            total_tax = "0.00",
-            updated_at = "2024-01-01T00:00:00Z"
-        )
-
-        // Return the success state with initialized test data
-        return ApiState.Success(DraftOrderResponse(draft_order = testDraftOrderDetails))
+        TODO("Not yet implemented")
     }
+
 
     override suspend fun getProductsIdForDraftFavorite(draftFavoriteId: Long): ApiState<DraftOrderResponse> {
         val testCustomer = Customer(
@@ -462,6 +364,10 @@ class FakeShopifyRepository : ShopifyRepo {
         )
 
         return ApiState.Success(DraftOrderResponse(draft_order = testDraftOrderDetails))
+    }
+
+    override suspend fun addOrderFromDraftOrder(draftFavoriteId: Long): ApiState<DraftOrderResponse> {
+        TODO("Not yet implemented")
     }
 
     override suspend fun backUpDraftFavorite(
@@ -550,6 +456,10 @@ class FakeShopifyRepository : ShopifyRepo {
     }
 
     override suspend fun getOrderDetailsByID(orderId: Long): ApiState<OrderDetailsResponse> {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun getAllCoupons(): ApiState<PriceRuleResponse> {
         TODO("Not yet implemented")
     }
 }

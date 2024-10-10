@@ -62,8 +62,7 @@ class CategoriesViewModel(private val shopifyRepo: ShopifyRepo) : ViewModel() {
         val cleanedQuery = query.trim().lowercase()
         val filtered = originalProducts.filter { product ->
             val productTitle = product.title.lowercase()
-            // Check if the product title starts with or contains the cleaned query
-            productTitle.startsWith(cleanedQuery) || productTitle.contains(cleanedQuery)
+            product.title.lowercase().contains(cleanedQuery)
         }
         _filteredProducts.value = filtered
     }
