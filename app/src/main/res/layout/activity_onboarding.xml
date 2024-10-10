@@ -8,6 +8,8 @@
     tools:context=".onboarding.OnboardingActivity">
 
     <com.airbnb.lottie.LottieAnimationView
+        android:layout_margin="6dp"
+        android:padding="8dp"
         android:id="@+id/lottieAnimationView"
         android:layout_width="0dp"
         android:layout_height="400dp"
