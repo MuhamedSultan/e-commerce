@@ -78,7 +78,7 @@
         fun completeOrderForSultan() =viewModelScope.launch (Dispatchers.IO){
             val shp = SharedPrefsManager.getInstance()
             var draftFavoriteId =shp.getDraftedOrderId() ?:0
-            val result = repo.addOrderFromDraftOrder(draftFavoriteId)
+            val result = repo.addOrderFromDraftOrder(draftFavoriteId , true)
             when (result) {
                 is ApiState.Success -> {
                     shp.setDraftedOrderId(0L)

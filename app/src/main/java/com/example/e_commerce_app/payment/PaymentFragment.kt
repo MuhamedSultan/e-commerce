@@ -10,21 +10,38 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.RadioButton
 import android.widget.Toast
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import com.example.e_commerce_app.R
+import com.example.e_commerce_app.cart.viewmodel.CartViewModel
+import com.example.e_commerce_app.cart.viewmodel.CartViewModelFactory
 import com.example.e_commerce_app.databinding.FragmentCartBinding
 import com.example.e_commerce_app.databinding.FragmentPaymentBinding
+import com.example.e_commerce_app.db.SharedPrefsManager
+import com.example.e_commerce_app.db.ShopifyDB
 import com.example.e_commerce_app.map.AddressDetailsFragmentArgs
+import com.example.e_commerce_app.model.repo.ShopifyRepoImpl
+import com.example.e_commerce_app.network.RemoteDataSourceImpl
+import com.example.e_commerce_app.payment.viewModel.PaymentViewModel
+import com.example.e_commerce_app.payment.viewModel.PaymentViewModelFactory
+import com.example.e_commerce_app.setting.SettingFragmentDirections
+import com.example.e_commerce_app.util.ApiState
+import com.google.android.material.snackbar.Snackbar
 import com.paypal.android.sdk.payments.PayPalConfiguration
 import com.paypal.android.sdk.payments.PayPalPayment
 import com.paypal.android.sdk.payments.PayPalService
 import com.paypal.android.sdk.payments.PaymentActivity
 import com.paypal.android.sdk.payments.PaymentConfirmation
+import kotlinx.coroutines.launch
 import java.math.BigDecimal
 
 
 class PaymentFragment : Fragment() {
     lateinit var binding : FragmentPaymentBinding
+    private lateinit var viewModel: PaymentViewModel
     lateinit var totalPrice : String
     private val PAYPAL_REQUEST_CODE = 123
 
@@ -38,6 +55,11 @@ class PaymentFragment : Fragment() {
         super.onCreate(savedInstanceState)
         val args = PaymentFragmentArgs.fromBundle(requireArguments())
         totalPrice = args.price
+
+        val shopifyDao = ShopifyDB.getInstance(requireContext()).shopifyDao()
+        val repo = ShopifyRepoImpl(RemoteDataSourceImpl())
+        val factory = PaymentViewModelFactory(repo)
+        viewModel = ViewModelProvider(this, factory)[PaymentViewModel::class.java]
         // Start the PayPal Service
         val intent = Intent(context, PayPalService::class.java)
         intent.putExtra(PayPalService.EXTRA_PAYPAL_CONFIGURATION, config)
@@ -65,10 +87,8 @@ class PaymentFragment : Fragment() {
 
             when (selectedPaymentMethod.text.toString()) {
                 "Cash on Delivery" -> {
-                    //todo update draft order status payment false
-                    //todo complete draft order
-                    //todo delete draft order and get new one
-
+                    viewModel.CreateOrder(paymentPending = true)
+                    observeDraftOrderId()
                     Log.i("TAG", "onViewCreated: ")
                 }
                 "PayPal" -> {
@@ -98,7 +118,8 @@ class PaymentFragment : Fragment() {
                 val confirm = data?.getParcelableExtra<PaymentConfirmation>(PaymentActivity.EXTRA_RESULT_CONFIRMATION)
                 confirm?.let {
                     Toast.makeText(requireContext(), "Payment Success", Toast.LENGTH_SHORT).show()
-                    // Handle successful payment
+                    viewModel.CreateOrder(paymentPending = false)
+                    observeDraftOrderId()
                 }
             } else if (resultCode == Activity.RESULT_CANCELED) {
                 Toast.makeText(requireContext(), "Payment canceled", Toast.LENGTH_SHORT).show()
@@ -108,6 +129,48 @@ class PaymentFragment : Fragment() {
                 // Handle invalid payment
             }
         }
+    }
+    private fun observeDraftOrderId() {
+        lifecycleScope.launch {
+            viewLifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.creatingDraftOrder.collect { result ->
+                    when (result) {
+                        is ApiState.Loading -> {
+                            showLoadingIndicator()
+                        }
+
+                        is ApiState.Success -> {
+                            hideLoadingIndicator()
+                            result.data?.let { collections ->
+                                SharedPrefsManager.getInstance().setDraftedOrderId(collections.draft_order.id)
+                                val action = PaymentFragmentDirections.actionPaymentFragmentToCreditCardFragment()
+                                findNavController().navigate(action)
+                                Log.i("TAG", "getDraftOrderSaveInShP: ${collections.draft_order.id}")
+                            }
+                        }
+
+                        is ApiState.Error -> {
+                            hideLoadingIndicator()
+                            Log.e("TAG", "observeDraftOrderId: ${result.message}", )
+                            showError(result.message.toString())
+                        }
+                    }
+                }
+            }
+        }
+    }
+    private fun showError(message: String) {
+        Snackbar.make(requireView(), message, Snackbar.LENGTH_SHORT).show()
+    }
+
+    private fun showLoadingIndicator() {
+        binding.loadingIndicator.visibility = View.VISIBLE
+        binding.paymentPage.visibility = View.GONE
+    }
+
+    private fun hideLoadingIndicator() {
+        binding.loadingIndicator.visibility = View.GONE
+        binding.paymentPage.visibility = View.VISIBLE
     }
 
     override fun onDestroy() {
