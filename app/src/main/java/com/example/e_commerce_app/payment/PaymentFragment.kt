@@ -166,9 +166,7 @@ class PaymentFragment : Fragment() {
                                     )
                                 )
                                 )
-                                val action = PaymentFragmentDirections.actionPaymentFragmentToOrdersFragment(
-                                    SharedPrefsManager.getInstance().getUserName()?:"Unknown User"
-                                )
+                                val action = PaymentFragmentDirections.actionPaymentFragmentToHomeFragment()
                                 findNavController().navigate(action)
                                 Log.i("TAG", "getDraftOrderSaveInShP: ${collections.draft_order.id}")
                             }

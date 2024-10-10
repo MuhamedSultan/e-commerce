@@ -22,6 +22,10 @@ class DraftOrderManager private constructor(var draftOrderRequest: DraftOrderReq
             }
         }
 
+        fun destroy(){
+            INSTANCE = null
+        }
+
         fun getInstance(): DraftOrderManager {
             return INSTANCE ?: throw IllegalStateException("DraftOrderManager is not initialized")
         }
