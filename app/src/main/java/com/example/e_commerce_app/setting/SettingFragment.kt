@@ -16,6 +16,7 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import com.example.e_commerce_app.MainActivity
 import com.example.e_commerce_app.R
@@ -39,7 +40,8 @@ class SettingFragment : Fragment() {
 
     private val firestore: FirebaseFirestore = Firebase.firestore
     private lateinit var storageReference: StorageReference
-    private  var  customerId :String?=null
+    private var customerId: String? = null
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -56,30 +58,29 @@ class SettingFragment : Fragment() {
     @SuppressLint("SetTextI18n")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-         customerId= SharedPrefsManager.getInstance().getShopifyCustomerId()
+        customerId = SharedPrefsManager.getInstance().getShopifyCustomerId()
         if (customerId != null) {
-            binding.ordersSettingLayout.visibility=View.VISIBLE
-            binding.favoritesSettingLayout.visibility=View.VISIBLE
-            binding.addressSettingLayout.visibility=View.VISIBLE
-            binding.ivProfilePicture.visibility=View.VISIBLE
-            binding.view.visibility=View.VISIBLE
-            binding.view2.visibility=View.VISIBLE
-            binding.view3.visibility=View.VISIBLE
-            binding.textViewLogout.text="Logout"
-            binding.textViewClickLogout.text="click her to logout"
-        }else{
-            binding.ordersSettingLayout.visibility=View.GONE
-            binding.favoritesSettingLayout.visibility=View.GONE
-            binding.addressSettingLayout.visibility=View.GONE
-            binding.ivProfilePicture.visibility=View.INVISIBLE
-            binding.view.visibility=View.GONE
-            binding.view2.visibility=View.GONE
-            binding.view3.visibility=View.GONE
-            binding.textViewLogout.text="Login"
-            binding.textViewClickLogout.text="click her to login"
+            binding.ordersSettingLayout.visibility = View.VISIBLE
+            binding.favoritesSettingLayout.visibility = View.VISIBLE
+            binding.addressSettingLayout.visibility = View.VISIBLE
+            binding.ivProfilePicture.visibility = View.VISIBLE
+            binding.view.visibility = View.VISIBLE
+            binding.view2.visibility = View.VISIBLE
+            binding.view3.visibility = View.VISIBLE
+            binding.textViewLogout.text = "Logout"
+            binding.textViewClickLogout.text = "click her to logout"
+        } else {
+            binding.ordersSettingLayout.visibility = View.GONE
+            binding.favoritesSettingLayout.visibility = View.GONE
+            binding.addressSettingLayout.visibility = View.GONE
+            binding.ivProfilePicture.visibility = View.INVISIBLE
+            binding.view.visibility = View.GONE
+            binding.view2.visibility = View.GONE
+            binding.view3.visibility = View.GONE
+            binding.textViewLogout.text = "Login"
+            binding.textViewClickLogout.text = "click her to login"
         }
-
-
+        setupCurrencyRecyclerview()
         storageReference = FirebaseStorage.getInstance().reference
 
         fetchUserData()
@@ -89,11 +90,13 @@ class SettingFragment : Fragment() {
         }
 
         binding.ordersSettingLayout.setOnClickListener {
-            val action = SettingFragmentDirections.actionSettingFragmentToOrdersFragment(binding.tvUserName.text.toString())
+            val action =
+                SettingFragmentDirections.actionSettingFragmentToOrdersFragment(binding.tvUserName.text.toString())
             findNavController().navigate(action)
         }
         binding.addressSettingLayout.setOnClickListener {
-            val action = SettingFragmentDirections.actionSettingFragmentToAddressFragment2("setting")
+            val action =
+                SettingFragmentDirections.actionSettingFragmentToAddressFragment2("setting")
             findNavController().navigate(action)
         }
         binding.favoritesSettingLayout.setOnClickListener {
@@ -110,16 +113,16 @@ class SettingFragment : Fragment() {
         imagePickerLauncher.launch(intent)
     }
 
-    private val imagePickerLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-        if (result.resultCode == Activity.RESULT_OK && result.data != null) {
-            val imageUri: Uri? = result.data?.data
-            Log.d("ImageURI", imageUri.toString())
-            imageUri?.let {
-                uploadImageToFirebase(it)
+    private val imagePickerLauncher =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            if (result.resultCode == Activity.RESULT_OK && result.data != null) {
+                val imageUri: Uri? = result.data?.data
+                Log.d("ImageURI", imageUri.toString())
+                imageUri?.let {
+                    uploadImageToFirebase(it)
+                }
             }
         }
-    }
-
 
 
     private fun uploadImageToFirebase(imageUri: Uri) {
@@ -159,30 +162,52 @@ class SettingFragment : Fragment() {
                 when (e.errorCode) {
                     StorageException.ERROR_OBJECT_NOT_FOUND -> {
                         Log.e("Upload Error", "The object does not exist at the location.")
-                        Toast.makeText(requireContext(), "File not found. Please upload a new image.", Toast.LENGTH_LONG).show()
+                        Toast.makeText(
+                            requireContext(),
+                            "File not found. Please upload a new image.",
+                            Toast.LENGTH_LONG
+                        ).show()
                     }
+
                     StorageException.ERROR_RETRY_LIMIT_EXCEEDED -> {
                         Log.e("Upload Error", "Upload session terminated, retry limit exceeded.")
-                        Toast.makeText(requireContext(), "Upload failed, please try again later.", Toast.LENGTH_LONG).show()
+                        Toast.makeText(
+                            requireContext(),
+                            "Upload failed, please try again later.",
+                            Toast.LENGTH_LONG
+                        ).show()
                     }
+
                     else -> {
                         Log.e("Upload Error", "Other StorageException occurred: ${e.message}")
-                        Toast.makeText(requireContext(), "Upload failed: ${e.message}", Toast.LENGTH_LONG).show()
+                        Toast.makeText(
+                            requireContext(),
+                            "Upload failed: ${e.message}",
+                            Toast.LENGTH_LONG
+                        ).show()
                     }
                 }
             }
+
             is IOException -> {
                 Log.e("Upload Error", "IO Exception occurred: ${e.message}")
-                Toast.makeText(requireContext(), "IO error occurred during upload: ${e.message}", Toast.LENGTH_LONG).show()
+                Toast.makeText(
+                    requireContext(),
+                    "IO error occurred during upload: ${e.message}",
+                    Toast.LENGTH_LONG
+                ).show()
             }
+
             else -> {
                 Log.e("Upload Error", "An unexpected error occurred: ${e.message}")
-                Toast.makeText(requireContext(), "An unexpected error occurred: ${e.message}", Toast.LENGTH_LONG).show()
+                Toast.makeText(
+                    requireContext(),
+                    "An unexpected error occurred: ${e.message}",
+                    Toast.LENGTH_LONG
+                ).show()
             }
         }
     }
-
-
 
 
     private fun updateProfileImageInFirestore(imageUrl: String) {
@@ -206,9 +231,11 @@ class SettingFragment : Fragment() {
     private fun logout() {
         FirebaseAuth.getInstance().signOut()
 
-        val sharedPreferences = requireActivity().getSharedPreferences("UserPrefs", Context.MODE_PRIVATE)
-       val favouriteSharedPrefs=requireActivity().getSharedPreferences("ShopifyPrefs",Context.MODE_PRIVATE)
-      favouriteSharedPrefs.edit().clear().apply()
+        val sharedPreferences =
+            requireActivity().getSharedPreferences("UserPrefs", Context.MODE_PRIVATE)
+        val favouriteSharedPrefs =
+            requireActivity().getSharedPreferences("ShopifyPrefs", Context.MODE_PRIVATE)
+        favouriteSharedPrefs.edit().clear().apply()
         with(sharedPreferences.edit()) {
             clear()
             apply()
@@ -234,11 +261,12 @@ class SettingFragment : Fragment() {
                     dialog.cancel()
                 }
                 .show()
-        }else{
-           val intent = Intent(requireActivity(),LoginActivity::class.java)
+        } else {
+            val intent = Intent(requireActivity(), LoginActivity::class.java)
             startActivity(intent)
         }
     }
+
     private fun fetchUserData() {
         val userId = FirebaseAuth.getInstance().currentUser?.uid
         if (userId != null) {
@@ -266,6 +294,25 @@ class SettingFragment : Fragment() {
         } else {
             binding.tvUserName.text = "No user logged in"
             binding.tvUserEmail.text = ""
+        }
+    }
+
+    private fun setupCurrencyRecyclerview() {
+        val currencyList = listOf("EUR", "USD", "EGP")
+        val savedPosition = LocalDataSourceImpl.getCurrencyColorState(requireContext())
+        val currencyAdapter = CurrencyAdapter(currencyList, { onCurrencyClick ->
+            LocalDataSourceImpl.saveCurrencyText(requireContext(), onCurrencyClick)
+            LocalDataSourceImpl.saveCurrencyColorState(
+                requireContext(),
+                currencyList.indexOf(onCurrencyClick)
+            )
+
+        }, savedPosition, requireContext())
+        val manager = LinearLayoutManager(requireContext())
+        manager.orientation = LinearLayoutManager.HORIZONTAL
+        binding.currencyRv.apply {
+            adapter = currencyAdapter
+            layoutManager = manager
         }
     }
 }

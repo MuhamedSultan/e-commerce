@@ -7,9 +7,11 @@ import androidx.lifecycle.viewModelScope
 import com.example.e_commerce_app.model.cart.DraftOrderRequest
 import com.example.e_commerce_app.model.cart.DraftOrderResponse
 import com.example.e_commerce_app.model.cart.UpdateCartItemRequest
+import com.example.e_commerce_app.model.currencyResponse.CurrencyResponse
 import com.example.e_commerce_app.model.product.Product
 import com.example.e_commerce_app.model.repo.ShopifyRepo
 import com.example.e_commerce_app.util.ApiState
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -26,6 +28,8 @@ class ProductDetailsViewModel(
     private val _draftOrderState = MutableStateFlow<ApiState<DraftOrderResponse>>(ApiState.Loading())
     val draftOrderState: StateFlow<ApiState<DraftOrderResponse>> = _draftOrderState
 
+    private val _currencyRates: MutableStateFlow<ApiState<CurrencyResponse>> = MutableStateFlow(ApiState.Loading())
+    val currencyRates: StateFlow<ApiState<CurrencyResponse>> = _currencyRates
 
 
 
@@ -121,6 +125,14 @@ class ProductDetailsViewModel(
         }
     }
 
-
-
+    fun fetchCurrencyRates() {
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                val rates = repository.exchangeRate()
+                _currencyRates.value = rates
+            } catch (e: Exception) {
+                Log.e("productInfo", "Failed to fetch currency rates: ${e.message}")
+            }
+        }
+    }
 }

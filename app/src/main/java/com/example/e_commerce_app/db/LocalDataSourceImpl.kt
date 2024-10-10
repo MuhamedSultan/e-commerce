@@ -1,6 +1,8 @@
 package com.example.e_commerce_app.db
 
 import android.content.Context
+import android.util.Log
+import androidx.core.content.ContentProviderCompat.requireContext
 import com.example.e_commerce_app.model.product.Product
 
 class LocalDataSourceImpl(private val shopifyDao: ShopifyDao) : LocalDataSource {
@@ -26,20 +28,44 @@ class LocalDataSourceImpl(private val shopifyDao: ShopifyDao) : LocalDataSource 
         val PREFS_NAME: String = "ShopifyPrefs"
         val KEY_FAVORITES: String = "favorites"
 
-        fun setProductFavoriteStatus(context: Context, mealId: String, isFavorite: Boolean) {
+        fun setProductFavoriteStatus(context: Context, productId: String, isFavorite: Boolean) {
             val prefs =
                 context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
             val editor = prefs.edit()
-            editor.putBoolean(KEY_FAVORITES + "_" + mealId, isFavorite)
+            editor.putBoolean(KEY_FAVORITES + "_" + productId, isFavorite)
             editor.apply()
         }
 
-        fun isProductFavorite(context: Context, mealId: String): Boolean {
+        fun isProductFavorite(context: Context, productId: String): Boolean {
             val prefs =
                 context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
             val isFavorite =
-                prefs.getBoolean(KEY_FAVORITES + "_" + mealId, false)
+                prefs.getBoolean(KEY_FAVORITES + "_" + productId, false)
             return isFavorite
+        }
+
+
+        fun saveCurrencyText(context: Context, currency: String) {
+            val prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+            val editor = prefs.edit()
+            editor.putString("currency", currency)
+            editor.apply()
+        }
+        fun getCurrencyText(context: Context): String {
+            val prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+            return prefs.getString("currency", "EUR") ?: "EUR"
+        }
+
+        fun saveCurrencyColorState(context: Context, position: Int) {
+            val prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+            val editor = prefs.edit()
+            editor.putInt("selected_currency_color_position", position)
+            editor.apply()
+        }
+
+        fun getCurrencyColorState(context: Context): Int {
+            val prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+            return prefs.getInt("selected_currency_color_position", 0)
         }
     }
 }

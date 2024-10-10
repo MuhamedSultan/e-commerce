@@ -11,6 +11,7 @@ import com.example.e_commerce_app.model.cart.DraftOrderResponse
 import com.example.e_commerce_app.model.cart.PriceRuleResponse
 import com.example.e_commerce_app.model.cart.UpdateCartItemRequest
 import com.example.e_commerce_app.model.cart.UpdateCartItemResponse
+import com.example.e_commerce_app.model.currencyResponse.CurrencyResponse
 import com.example.e_commerce_app.model.custom_collection.CustomCollectionResponse
 import com.example.e_commerce_app.model.order_details.OrderDetailsResponse
 import com.example.e_commerce_app.model.orders.CustomerOrders
@@ -157,6 +158,10 @@ class ShopifyRepoImpl(
 
     override suspend fun getAllCoupons() :ApiState<PriceRuleResponse>{
         return remoteDataSource.getAllCoupons()
+    }
+
+    override suspend fun exchangeRate(): ApiState<CurrencyResponse> {
+        return remoteDataSource.exchangeRate()
     }
 
 }

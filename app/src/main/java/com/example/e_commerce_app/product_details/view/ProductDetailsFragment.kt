@@ -1,5 +1,6 @@
 package com.example.e_commerce_app.product_details.view
 
+import android.content.Context
 import android.content.SharedPreferences
 import android.os.Bundle
 import android.util.Log
@@ -10,8 +11,10 @@ import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -50,14 +53,25 @@ class ProductDetailsFragment : Fragment() {
     private lateinit var sizeRecyclerView: RecyclerView
     private lateinit var imageViewPager: ViewPager2
     private lateinit var sharedPreferences: SharedPreferences
+    private var conversionRate: Double? = 0.0
+    private lateinit var selectedCurrency:String
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
             productId = it.getLong("productId")
         }
+        selectedCurrency = LocalDataSourceImpl.getCurrencyText(requireContext())
+
+        LocalDataSourceImpl.saveCurrencyText(requireContext(), selectedCurrency)
 
         sharedPreferences = requireContext().getSharedPreferences("UserPrefs", 0)
+        val sharedPreferences =
+            requireContext().getSharedPreferences("UserPrefs", Context.MODE_PRIVATE)
+
+        LocalDataSourceImpl.saveCurrencyText(requireContext(), selectedCurrency )
+
+        LocalDataSourceImpl.getCurrencyText(requireContext())
         val shopifyDao = ShopifyDB.getInstance(requireContext()).shopifyDao()
         val localDataSource = LocalDataSourceImpl(shopifyDao)
         val repo = ShopifyRepoImpl(RemoteDataSourceImpl(), localDataSource)
@@ -70,7 +84,8 @@ class ProductDetailsFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         val view = inflater.inflate(R.layout.fragment_product_details, container, false)
-        (activity as MainActivity).findViewById<BottomNavigationView>(R.id.bottomNavigationView).visibility = View.GONE
+        (activity as MainActivity).findViewById<BottomNavigationView>(R.id.bottomNavigationView).visibility =
+            View.GONE
 
         colorRecyclerView = view.findViewById(R.id.productColorRecyclerView)
         sizeRecyclerView = view.findViewById(R.id.productSizeRecyclerView)
@@ -85,7 +100,8 @@ class ProductDetailsFragment : Fragment() {
             viewModel.fetchProductDetails(it)
         }
 
-        observeViewModel()
+        //observeViewModel()
+
 
         return view
     }
@@ -96,38 +112,33 @@ class ProductDetailsFragment : Fragment() {
                 when (state) {
                     is ApiState.Success -> {
                         state.data?.let { product ->
-                            updateUI(product)
+                            viewModel.currencyRates.collect { ratesState ->
+                                when (ratesState) {
+                                    is ApiState.Success -> {
+                                        conversionRate = when (selectedCurrency) {
+                                            "USD" -> ratesState.data?.rates?.USD
+                                            "EUR" -> ratesState.data?.rates?.EUR
+                                            "EGP" -> ratesState.data?.rates?.EGP
+                                            else -> 0.0
+                                        }
+                                        updateUI(product)
+                                    }
+                                    is ApiState.Loading->{
+                                    }
+                                    is ApiState.Error->{
+                                        Toast.makeText(requireContext(),"Error",Toast.LENGTH_LONG).show()
+                                    }
+
+                                }
+                            }
                         } ?: showError("Product data is null")
                     }
-
                     is ApiState.Error -> {
                         val errorMessage = state.message ?: "An unknown error occurred"
                         showError(errorMessage)
                     }
-
                     is ApiState.Loading -> {
-
-                    }
-                }
-            }
-        }
-        lifecycleScope.launch {
-            viewModel.draftOrderState.collect{
-                state ->
-                when(state){
-                    is ApiState.Success -> {
-                        Log.i("TAG", "observeViewModel: ${state.data?.draft_order?.line_items}")
-                       Toast.makeText(requireContext(),"Product added to cart Sucessfully",Toast.LENGTH_SHORT).show()
-                    }
-
-                    is ApiState.Error -> {
-                        val errorMessage = state.message ?: "An unknown error occurred"
-                        Log.e("TAG", "draftOrder Error: ${errorMessage}")
-                        showError(errorMessage)
-                    }
-
-                    is ApiState.Loading -> {
-
+                        // Optionally show loading state
                     }
                 }
             }
@@ -137,8 +148,10 @@ class ProductDetailsFragment : Fragment() {
     private fun updateUI(product: Product) {
         view?.findViewById<TextView>(R.id.productTitle)?.text = product.title
         view?.findViewById<TextView>(R.id.productDescription)?.text = product.body_html
-        view?.findViewById<TextView>(R.id.productPrice)?.text =
-            product.variants.firstOrNull()?.price ?: "$0.00"
+        val price = product.variants.firstOrNull()?.price?.toDoubleOrNull() ?: 0.0
+        val convertedPrice = conversionRate?.let { price * it } ?: price
+
+        view?.findViewById<TextView>(R.id.productPrice)?.text = "$convertedPrice $selectedCurrency"
 
         val seeRatingTextView = view?.findViewById<TextView>(R.id.seeRating)
 
@@ -147,7 +160,8 @@ class ProductDetailsFragment : Fragment() {
         val favoriteButton = view?.findViewById<Button>(R.id.btn_add_to_favorite)
 
         seeRatingTextView?.setOnClickListener {
-            val action = ProductDetailsFragmentDirections.actionProductDetailsFragmentToRatingFragment()
+            val action =
+                ProductDetailsFragmentDirections.actionProductDetailsFragmentToRatingFragment()
             findNavController().navigate(action)
         }
 
@@ -167,8 +181,9 @@ class ProductDetailsFragment : Fragment() {
                 val draftOrderId = shp.getDraftedOrderId()
                 viewModel.addProductToDraftOrder(
                     draftOrderRequest = DraftOrderRequest(
-                        DraftOrderManager.getInstance().addProductToDraftOrder(lineItem,product.image.src)
-                        ),
+                        DraftOrderManager.getInstance()
+                            .addProductToDraftOrder(lineItem, product.image.src)
+                    ),
                     draftOrderId = draftOrderId ?: 0
                 )
                 observeViewModel()
@@ -204,7 +219,7 @@ class ProductDetailsFragment : Fragment() {
 
             if (shopifyCustomerId != null) {
                 val isFavorite = viewModel.isProductFavorite(product.id, shopifyCustomerId)
-                favoriteButton?.setBackgroundResource(if (isFavorite) R.drawable.favfill else R.drawable.favadd)
+                favoriteButton?.setBackgroundResource(if (isFavorite) R.drawable.ic_favourite_fill else R.drawable.ic_favourite_border)
             }
 
             favoriteButton?.setOnClickListener {
@@ -269,11 +284,31 @@ class ProductDetailsFragment : Fragment() {
     private fun isProductFavorite(productId: Long, shopifyCustomerId: String): Boolean {
         return false
     }
+
     override fun onDestroy() {
         super.onDestroy()
-        (activity as MainActivity).findViewById<BottomNavigationView>(R.id.bottomNavigationView).visibility = View.VISIBLE
+        (activity as MainActivity).findViewById<BottomNavigationView>(R.id.bottomNavigationView).visibility =
+            View.VISIBLE
 
     }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        observeViewModel()
+        viewModel.fetchCurrencyRates()
+        lifecycleScope.launch {
+            viewLifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.currencyRates.collect {
+                    conversionRate = when (selectedCurrency) {
+                        "USD" -> it.data?.rates?.USD
+                        "EUR" -> it.data?.rates?.EUR
+                        "EGP" -> it.data?.rates?.EGP
+                        else -> null
+                    }
+                }
+
+            }
+        }
+    }
+
 }
-
-

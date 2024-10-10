@@ -62,7 +62,7 @@ class OrderDetailsFragment : Fragment() {
                             hideLoadingIndicator()
                             val order = result.data?.orders?.get(0)
                             binding.orderIdTv.text = "#${order?.order_number}"
-                            binding.phone.text = order?.phone.toString()
+                            binding.phone.text = order?.billing_address?.phone.toString()
                             binding.location.text =
                                 order?.billing_address?.address1 + ", " +
                                         order?.billing_address?.city + ", " + order?.billing_address?.country
