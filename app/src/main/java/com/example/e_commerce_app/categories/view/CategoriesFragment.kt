@@ -5,6 +5,9 @@ import android.animation.AnimatorListenerAdapter
 import android.animation.ObjectAnimator
 import android.content.SharedPreferences
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -29,6 +32,7 @@ import com.example.e_commerce_app.categories.viewmodel.CategoriesViewModelFactor
 import com.example.e_commerce_app.databinding.FragmentCategoriesBinding
 import com.example.e_commerce_app.db.LocalDataSourceImpl
 import com.example.e_commerce_app.db.ShopifyDB
+import com.example.e_commerce_app.home.view.adapter.SuggestionsAdapter
 import com.example.e_commerce_app.model.custom_collection.CustomCollection
 import com.example.e_commerce_app.model.product.Product
 import com.example.e_commerce_app.model.repo.ShopifyRepoImpl
@@ -50,6 +54,7 @@ class CategoriesFragment : Fragment(), OnCategoryClick {
     private var isOpen = false
     private var selectedProductType: String? = null
     private lateinit var sharedPreferences: SharedPreferences
+    private lateinit var suggestionsAdapter: SuggestionsAdapter
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -78,7 +83,64 @@ class CategoriesFragment : Fragment(), OnCategoryClick {
         observeResults()
         priceFiltering()
         productTypeFiltering()
+        setupSearchFunctionality()
+
     }
+
+    private fun setupSearchFunctionality() {
+        suggestionsAdapter = SuggestionsAdapter(emptyList()) { selectedProduct ->
+            val action =
+                CategoriesFragmentDirections.actionCategoriesFragmentToProductDetailsFragment(
+                    selectedProduct.id
+                )
+            findNavController().navigate(action)
+        }
+
+        binding.suggestionsRv.adapter = suggestionsAdapter
+        binding.suggestionsRv.layoutManager = LinearLayoutManager(requireContext())
+
+        binding.edSearch.addTextChangedListener(object : TextWatcher {
+            override fun afterTextChanged(s: Editable?) {}
+
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                val query = s.toString()
+                if (query.isNotEmpty()) {
+                    categoriesViewModel.searchProducts(query)
+                } else {
+                    binding.suggestionsRv.visibility = View.GONE
+                }
+            }
+        })
+
+        // Observe the filtered products
+        lifecycleScope.launch {
+            viewLifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                categoriesViewModel.filteredProducts.collect { filteredProducts ->
+                    if (filteredProducts.isNotEmpty()) {
+                        showSuggestions(filteredProducts)
+                    } else {
+//                        Toast.makeText(
+//                            requireContext(),
+//                            "No products found for query: ${binding.edSearch.text}",
+//                            Toast.LENGTH_SHORT
+//                        ).show()
+                        binding.suggestionsRv.visibility = View.GONE
+                    }
+                }
+            }
+        }
+    }
+
+
+
+
+    private fun showSuggestions(filteredProducts: List<Product>) {
+        suggestionsAdapter.updateProducts(filteredProducts)
+        binding.suggestionsRv.visibility = View.VISIBLE
+    }
+
 
     private fun observeResults() {
         categoriesViewModel.getCategorise()
@@ -117,6 +179,8 @@ class CategoriesFragment : Fragment(), OnCategoryClick {
                         is ApiState.Success -> {
                             hideLoadingIndicator()
                             allProducts = result.data?.products ?: emptyList()
+                            categoriesViewModel.originalProducts = allProducts
+                            Log.d("CategoriesFragment", "allProducts: ${allProducts.size}")
                             setupCategoriesProductsRecyclerview(allProducts)
                         }
 
@@ -265,7 +329,7 @@ class CategoriesFragment : Fragment(), OnCategoryClick {
             }, onFavouriteClick = { product, isFavorite ->
                 GuestUtil.handleFavoriteClick(requireContext(), sharedPreferences, product)
                 val shopifyCustomerId = sharedPreferences.getString("shopifyCustomerId", null)
-                if (shopifyCustomerId!=null) {
+                if (shopifyCustomerId != null) {
                     if (isFavorite) {
                         categoriesViewModel.addProductToFavourite(product, shopifyCustomerId)
                         Toast.makeText(requireContext(), "Added to favorites", Toast.LENGTH_SHORT)
@@ -285,7 +349,7 @@ class CategoriesFragment : Fragment(), OnCategoryClick {
                         isFavorite
                     )
                 }
-            },sharedPreferences)
+            }, sharedPreferences)
         val manager = GridLayoutManager(requireContext(), 2)
 
         binding.productsRv.apply {
@@ -326,5 +390,17 @@ class CategoriesFragment : Fragment(), OnCategoryClick {
             })
             animator.start()
         }
+    }
+
+    override fun onPause() {
+        super.onPause()
+        binding.suggestionsRv.visibility = View.GONE
+
+    }
+
+    override fun onResume() {
+        super.onResume()
+        binding.suggestionsRv.visibility = View.GONE
+        binding.edSearch.text?.clear()
     }
 }

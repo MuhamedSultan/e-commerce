@@ -11,6 +11,7 @@ import com.example.e_commerce_app.model.cart.DraftOrderDetailsResponse
 import com.example.e_commerce_app.model.cart.DraftOrderRequest
 import com.example.e_commerce_app.model.cart.DraftOrderResponse
 import com.example.e_commerce_app.model.cart.LineItem
+import com.example.e_commerce_app.model.cart.PriceRuleResponse
 import com.example.e_commerce_app.model.custom_collection.CustomCollectionResponse
 import com.example.e_commerce_app.model.order_details.OrderDetailsResponse
 import com.example.e_commerce_app.model.orders.CustomerOrders
@@ -236,6 +237,10 @@ class FakeRemoteDataSource : RemoteDataSource {
         }
     }
 
+    override suspend fun addOrderFromDraftOrder(draftFavoriteId: Long): ApiState<DraftOrderResponse> {
+        TODO("Not yet implemented")
+    }
+
 
     override suspend fun backUpDraftFavorite(
         draftOrderRequest: DraftOrderRequest,
@@ -287,6 +292,10 @@ class FakeRemoteDataSource : RemoteDataSource {
     }
 
     override suspend fun getOrderDetailsByID(orderId: Long): ApiState<OrderDetailsResponse> {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun getAllCoupons(): ApiState<PriceRuleResponse> {
         TODO("Not yet implemented")
     }
 }
