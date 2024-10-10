@@ -5,17 +5,16 @@ import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
-
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.viewpager2.widget.ViewPager2
 import com.example.e_commerce_app.cart.DraftOrderManager
@@ -28,7 +27,6 @@ import com.example.e_commerce_app.home.view.adapter.RandomProductsAdapter
 import com.example.e_commerce_app.home.view.adapter.SuggestionsAdapter
 import com.example.e_commerce_app.home.viewmodel.HomeViewModel
 import com.example.e_commerce_app.home.viewmodel.HomeViewModelFactory
-import com.example.e_commerce_app.model.address.testAdd
 import com.example.e_commerce_app.model.cart.CustomerId
 import com.example.e_commerce_app.model.cart.DraftOrder
 import com.example.e_commerce_app.model.cart.DraftOrderRequest
@@ -36,14 +34,13 @@ import com.example.e_commerce_app.model.cart.LineItems
 import com.example.e_commerce_app.model.coupon.Discount
 import com.example.e_commerce_app.model.currencyResponse.CurrencyResponse
 import com.example.e_commerce_app.model.product.Product
-import com.example.e_commerce_app.model.smart_collection.SmartCollection
 import com.example.e_commerce_app.model.repo.ShopifyRepoImpl
+import com.example.e_commerce_app.model.smart_collection.SmartCollection
 import com.example.e_commerce_app.network.RemoteDataSourceImpl
 import com.example.e_commerce_app.util.ApiState
 import com.example.e_commerce_app.util.GuestUtil
 import com.google.android.material.snackbar.Snackbar
 import com.tbuonomo.viewpagerdotsindicator.DotsIndicator
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 
@@ -54,7 +51,7 @@ class HomeFragment : Fragment() {
     private lateinit var dotsIndicator: DotsIndicator
     private lateinit var discountPagerAdapter: DiscountPagerAdapter
     private lateinit var sharedPreferences: SharedPreferences
-    private lateinit var selectedCurrency :String
+    private lateinit var selectedCurrency: String
 
     override fun onCreate(savedInstanceState: Bundle?) {
 
@@ -74,10 +71,10 @@ class HomeFragment : Fragment() {
     ): View {
         SharedPrefsManager.init(requireContext())
         val draftOrderId = SharedPrefsManager.getInstance().getDraftedOrderId()
-        if(draftOrderId == 0L || draftOrderId == null) {
+        if (draftOrderId == 0L || draftOrderId == null) {
             observeDraftOrderId()
             homeViewModel.getDraftOrderSaveInShP(requireContext())
-        }else{
+        } else {
             Log.i("TAG", "draftOrderId: $draftOrderId")
             observeGetDraftOrderData()
             homeViewModel.getProductsFromDraftOrder(draftOrderId)
@@ -175,21 +172,39 @@ class HomeFragment : Fragment() {
                             result.data?.let { product ->
                                 hideLoadingIndicator()
                                 homeViewModel.currencyRates.collect {
-                                  val   currencyResponse= it.data!!
+                                    val currencyResponse = it.data!!
 
-                                   val conversionRate = when (selectedCurrency) {
+                                    val conversionRate = when (selectedCurrency) {
                                         "USD" -> currencyResponse.rates.USD
                                         "EUR" -> currencyResponse.rates.EUR
                                         "EGP" -> currencyResponse.rates.EGP
-                                        else ->0.0
+                                        else -> 0.0
                                     }
 
 
                                     val randomProducts = product.products.shuffled().take(15)
-                                    setupRandomProductsRecyclerview(randomProducts,currencyResponse,conversionRate)
+                                    setupRandomProductsRecyclerview(
+                                        randomProducts,
+                                        currencyResponse,
+                                        conversionRate
+                                    )
+
+
+                                    homeViewModel.filteredProducts.collect { filteredList ->
+                                        setupSuggestionsRecyclerview(filteredList)
+                                        setupRandomProductsRecyclerview(filteredList.ifEmpty {
+                                            homeViewModel.originalProducts
+                                        }, currencyResponse, conversionRate)
+                                        if (filteredList.isEmpty() && binding.edSearch.text.isNotEmpty()) {
+                                            binding.suggestionsRv.visibility = View.GONE
+                                        }
+                                    }
                                 }
                             }
+
+
                         }
+
                         is ApiState.Error -> {
                             hideLoadingIndicator()
                             showError(result.message.toString())
@@ -200,6 +215,7 @@ class HomeFragment : Fragment() {
             }
         }
     }
+
     // Draft Order Observer
     private fun observeDraftOrderId() {
         lifecycleScope.launch {
@@ -211,13 +227,17 @@ class HomeFragment : Fragment() {
 
                         is ApiState.Success -> {
                             result.data?.let { collections ->
-                                SharedPrefsManager.getInstance().setDraftedOrderId(collections.draft_order.id)
-                                Log.i("TAG", "getDraftOrderSaveInShP: ${collections.draft_order.id}")
+                                SharedPrefsManager.getInstance()
+                                    .setDraftedOrderId(collections.draft_order.id)
+                                Log.i(
+                                    "TAG",
+                                    "getDraftOrderSaveInShP: ${collections.draft_order.id}"
+                                )
                             }
                         }
 
                         is ApiState.Error -> {
-                            Log.e("TAG", "observeDraftOrderId: ${result.message}", )
+                            Log.e("TAG", "observeDraftOrderId: ${result.message}")
                             showError(result.message.toString())
                         }
                     }
@@ -237,29 +257,31 @@ class HomeFragment : Fragment() {
                         is ApiState.Success -> {
                             result.data?.let { collections ->
                                 var lineItemsList = mutableListOf<LineItems>()
-                                for(lineItem in collections.draft_order.line_items){
+                                for (lineItem in collections.draft_order.line_items) {
                                     lineItemsList.add(
                                         LineItems(
-                                        title = lineItem.title ?: "null",
-                                        price = lineItem.price,
-                                        quantity = lineItem.quantity,
-                                        productId = lineItem.productId ?: "null",
-                                        variantId = lineItem.variantId
-                                    )
+                                            title = lineItem.title ,
+                                            price = lineItem.price,
+                                            quantity = lineItem.quantity,
+                                            productId = lineItem.productId ,
+                                            variantId = lineItem.variantId
+                                        )
                                     )
                                 }
                                 DraftOrderManager.init(
-                                    DraftOrderRequest( DraftOrder(
-                                    lineItems = lineItemsList,
-                                    customer = CustomerId(collections.draft_order.customer.id),
-                                    note = collections.draft_order.note.toString()
+                                    DraftOrderRequest(
+                                        DraftOrder(
+                                            lineItems = lineItemsList,
+                                            customer = CustomerId(collections.draft_order.customer.id),
+                                            note = collections.draft_order.note.toString()
+                                        )
+                                    )
                                 )
-                                    ))
                             }
                         }
 
                         is ApiState.Error -> {
-                            Log.e("TAG", "observeDraftOrderId: ${result.message}", )
+                            Log.e("TAG", "observeDraftOrderId: ${result.message}")
                             showError(result.message.toString())
                         }
                     }
@@ -286,17 +308,17 @@ class HomeFragment : Fragment() {
             override fun afterTextChanged(s: Editable?) {}
         })
 
-        lifecycleScope.launch {
-            viewLifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                homeViewModel.filteredProducts.collect { filteredList ->
-                    setupSuggestionsRecyclerview(filteredList)
-                   // setupRandomProductsRecyclerview(filteredList.ifEmpty { homeViewModel.originalProducts })
-                    if (filteredList.isEmpty() && binding.edSearch.text.isNotEmpty()) {
-                        binding.suggestionsRv.visibility = View.GONE
-                    }
-                }
-            }
-        }
+//        lifecycleScope.launch {
+//            viewLifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
+//                homeViewModel.filteredProducts.collect { filteredList ->
+//                    setupSuggestionsRecyclerview(filteredList)
+//                    setupRandomProductsRecyclerview(filteredList.ifEmpty { homeViewModel.originalProducts },currencyResponse,conversionRate)
+//                    if (filteredList.isEmpty() && binding.edSearch.text.isNotEmpty()) {
+//                        binding.suggestionsRv.visibility = View.GONE
+//                    }
+//                }
+//            }
+//        }
     }
 
 
@@ -349,7 +371,11 @@ class HomeFragment : Fragment() {
         }
     }
 
-    private fun setupRandomProductsRecyclerview(product: List<Product>,currencyResponse: CurrencyResponse,conversion:Double) {
+    private fun setupRandomProductsRecyclerview(
+        product: List<Product>,
+        currencyResponse: CurrencyResponse,
+        conversion: Double
+    ) {
         val randomProductsAdapter = RandomProductsAdapter(
             product,
             requireContext(),
@@ -388,7 +414,7 @@ class HomeFragment : Fragment() {
                     }
 
                 }
-            }, sharedPreferences,currencyResponse,selectedCurrency,conversion
+            }, sharedPreferences, currencyResponse, selectedCurrency, conversion
         )
         randomProductsAdapter.notifyDataSetChanged()
 
@@ -424,8 +450,8 @@ class HomeFragment : Fragment() {
         super.onResume()
         binding.suggestionsRv.visibility = View.GONE
         binding.edSearch.text?.clear()
-        selectedCurrency=LocalDataSourceImpl.getCurrencyText(requireContext())
-        Log.d("selected",selectedCurrency)
+        selectedCurrency = LocalDataSourceImpl.getCurrencyText(requireContext())
+        Log.d("selected", selectedCurrency)
         LocalDataSourceImpl.saveCurrencyText(requireContext(), selectedCurrency)
     }
 
