@@ -17,6 +17,7 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import com.example.e_commerce_app.databinding.FragmentAddressDetailsBinding
 import com.example.e_commerce_app.db.LocalDataSourceImpl
+import com.example.e_commerce_app.db.SharedPrefsManager
 import com.example.e_commerce_app.db.ShopifyDB
 import com.example.e_commerce_app.map.viewModel.AddressViewModel
 import com.example.e_commerce_app.map.viewModel.AddressViewModelFactory
@@ -77,31 +78,25 @@ class AddressDetailsFragment : Fragment() {
                 if (addresses != null && addresses.isNotEmpty()) {
                     val address = addresses[0]
                     val city = address.locality ?: "Unknown City"
-                    /*val addressResponse = AddressReqModel(
-                        address1 = binding.detailedAddress.text.toString(),
-                        address2 = "$city, ${address.countryCode}, ${address.adminArea}, ${address.subAdminArea}",
-                        city = city,
-                        country = "Canada",
-                        country_name = address.countryName,
-                        country_code = address.countryCode,
-                        name = "mohamed khedr",
-                        phone = binding.etPhone.text.toString(),
-                        province = "Quebec",
-                        zip = binding.etZip.text.toString(),
-                        company = "ITI" ,
-                        first_name = "moahmed",
-                        last_name = "khedr",
-                        province_code = "QC"
-                    )*/
+                    val userName = SharedPrefsManager.getInstance().getUserName()?:"Unknown User"
+                    val result = userName.split("|##|").filter { it.isNotEmpty() }
+                    var firstName = ""
+                    var lastName = ""
+                    if (result.size >1){
+                        firstName = result[0]
+                        lastName = result[1]
+                    }else{
+                        firstName = userName
+                    }
                     val testAdd1 = testAdd(
                         address1 = binding.detailedAddress.text.toString(),
-                        address2 = "$city, ${address.countryCode}, ${address.adminArea}, ${address.subAdminArea}",
+                        address2 = "${address.countryCode}, ${address.adminArea}, ${address.subAdminArea} ,$city",
                         city = city,
                         country = "Canada",
                         phone = binding.etPhone.text.toString(),
                         province = "Quebec",
-                        first_name = "moahmed",
-                        last_name = "khedr"
+                        first_name = firstName,
+                        last_name = lastName
                     )
                     Log.i("TAG", "onViewCreated: $testAdd1")
                     viewModel.insertAddress(customerId,AddressRequest(testAdd1))
