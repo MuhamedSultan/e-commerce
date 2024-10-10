@@ -204,7 +204,7 @@ class ProductDetailsFragment : Fragment() {
 
             if (shopifyCustomerId != null) {
                 val isFavorite = viewModel.isProductFavorite(product.id, shopifyCustomerId)
-                favoriteButton?.setBackgroundResource(if (isFavorite) R.drawable.favfill else R.drawable.favadd)
+                favoriteButton?.setBackgroundResource(if (isFavorite) R.drawable.favfill else R.drawable.ic_favourite_border)
             }
 
             favoriteButton?.setOnClickListener {
@@ -216,7 +216,7 @@ class ProductDetailsFragment : Fragment() {
                             viewModel.isProductFavorite(product.id, shopifyCustomerId)
                         if (isCurrentlyFavorite) {
                             viewModel.removeFavorite(product, shopifyCustomerId)
-                            favoriteButton.setBackgroundResource(R.drawable.favadd)
+                            favoriteButton.setBackgroundResource(R.drawable.ic_favourite_border)
                             Toast.makeText(context, "Removed from favorites", Toast.LENGTH_SHORT)
                                 .show()
                             LocalDataSourceImpl.setProductFavoriteStatus(

@@ -4,6 +4,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 import com.example.e_commerce_app.R
 
@@ -32,6 +33,10 @@ class ColorAdapter(private val colors: List<String>) :
             "light_brown" -> holder.colorImageView.setImageResource(R.drawable.light_brown)
             "burgandy" -> holder.colorImageView.setImageResource(R.drawable.burgandy)
             else -> holder.colorImageView.setImageResource(R.drawable.light_brown)
+        }
+
+        holder.colorImageView.setOnClickListener {
+            Toast.makeText(holder.itemView.context, "Clicked on color: $color", Toast.LENGTH_SHORT).show()
         }
     }
 

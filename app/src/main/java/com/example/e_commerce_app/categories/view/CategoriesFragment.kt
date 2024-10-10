@@ -4,6 +4,7 @@ import android.animation.Animator
 import android.animation.AnimatorListenerAdapter
 import android.animation.ObjectAnimator
 import android.content.SharedPreferences
+import android.graphics.PorterDuff
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -14,6 +15,7 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.SeekBar
 import android.widget.Toast
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ViewModelProvider
@@ -79,6 +81,36 @@ class CategoriesFragment : Fragment(), OnCategoryClick {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+
+        // Set icon colors programmatically
+        val filteringOptionsFAB = binding.filteringOptions
+        filteringOptionsFAB.setColorFilter(ContextCompat.getColor(requireContext(), android.R.color.white), PorterDuff.Mode.SRC_IN)
+
+        val shirtsTypeFAB = binding.shirtsType
+        shirtsTypeFAB.setColorFilter(ContextCompat.getColor(requireContext(), android.R.color.white), PorterDuff.Mode.SRC_IN)
+
+        val shoesTypeFAB = binding.shoesType
+        shoesTypeFAB.setColorFilter(ContextCompat.getColor(requireContext(), android.R.color.white), PorterDuff.Mode.SRC_IN)
+
+        val accessoriesTypeFAB = binding.accessoriesType
+        accessoriesTypeFAB.setColorFilter(ContextCompat.getColor(requireContext(), android.R.color.white), PorterDuff.Mode.SRC_IN)
+
+        val allProductsFAB = binding.allProducts
+        allProductsFAB.setColorFilter(ContextCompat.getColor(requireContext(), android.R.color.white), PorterDuff.Mode.SRC_IN)
+
+        // Set background color programmatically
+        val backgroundColor = ContextCompat.getColor(requireContext(), R.color.basic_color) // Replace with your desired color
+
+        filteringOptionsFAB.setBackgroundColor(backgroundColor)
+        shirtsTypeFAB.setBackgroundColor(backgroundColor)
+        shoesTypeFAB.setBackgroundColor(backgroundColor)
+        accessoriesTypeFAB.setBackgroundColor(backgroundColor)
+        allProductsFAB.setBackgroundColor(backgroundColor)
+
+
+
+
 
         observeResults()
         priceFiltering()

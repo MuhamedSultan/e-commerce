@@ -100,7 +100,6 @@
         android:layout_marginTop="72dp"
         android:layout_marginEnd="30dp"
         android:backgroundTint="@color/basic_color"
-        android:drawableRight="@drawable/baseline_login_24"
         android:text="SIGN IN"
         android:textStyle="bold"
         app:cornerRadius="10dp"
@@ -168,11 +167,12 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
+        android:textColor="@color/black"
         android:id="@+id/textView13"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="112dp"
-        android:text="Enter the app as a "
+        android:layout_marginStart="137dp"
+        android:text="Continue as "
         android:textSize="14sp"
         app:layout_constraintBottom_toTopOf="@+id/textView7"
         app:layout_constraintStart_toStartOf="parent"
@@ -185,7 +185,6 @@
         android:layout_height="wrap_content"
         android:text="Guest"
         android:textStyle="bold"
-        android:textSize="14sp"
         app:layout_constraintStart_toEndOf="@id/textView13"
         app:layout_constraintTop_toTopOf="@id/textView13" />
 

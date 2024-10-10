@@ -5,10 +5,12 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 import com.example.e_commerce_app.R
 
-class SizeAdapter(private val sizes: List<String>) : RecyclerView.Adapter<SizeAdapter.SizeViewHolder>() {
+class SizeAdapter(private val sizes: List<String>) :
+    RecyclerView.Adapter<SizeAdapter.SizeViewHolder>() {
 
     class SizeViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val sizeTextView: TextView = itemView.findViewById(R.id.size_item)
@@ -20,7 +22,13 @@ class SizeAdapter(private val sizes: List<String>) : RecyclerView.Adapter<SizeAd
     }
 
     override fun onBindViewHolder(holder: SizeViewHolder, position: Int) {
-        holder.sizeTextView.text = sizes[position]
+        val size = sizes[position]
+        holder.sizeTextView.text = size
+
+        holder.sizeTextView.setOnClickListener {
+            Toast.makeText(holder.itemView.context, "Clicked on size: $size", Toast.LENGTH_SHORT)
+                .show()
+        }
     }
 
     override fun getItemCount() = sizes.size
