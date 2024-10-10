@@ -267,10 +267,10 @@ class HomeFragment : Fragment() {
                                 for (lineItem in collections.draft_order.line_items) {
                                     lineItemsList.add(
                                         LineItems(
-                                            title = lineItem.title ,
+                                            title = lineItem.title ?:"null",
                                             price = lineItem.price,
                                             quantity = lineItem.quantity,
-                                            productId = lineItem.productId ,
+                                            productId = lineItem.productId?:"null" ,
                                             variantId = lineItem.variantId
                                         )
                                     )

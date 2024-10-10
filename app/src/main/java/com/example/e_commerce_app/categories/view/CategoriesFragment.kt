@@ -349,13 +349,16 @@ class CategoriesFragment : Fragment(), OnCategoryClick {
 
         binding.seekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
             override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
-                binding.priceTv.text = progress.toString()
+                binding.priceTv.text ="${progress.toDouble()} $selectedCurrency"
                 filterProductsByTypeAndPrice(currencyResponse, conversionRate)
                 currentSeekBarProgress = progress
             }
 
             override fun onStartTrackingTouch(seekBar: SeekBar?) {}
             override fun onStopTrackingTouch(seekBar: SeekBar?) {
+                if (seekBar?.progress==0){
+                    showAllProducts(currencyResponse,conversionRate)
+                }
             }
         })
     }

@@ -4,11 +4,15 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.e_commerce_app.databinding.ItemOrdersBinding
+import com.example.e_commerce_app.model.currencyResponse.CurrencyResponse
 import com.example.e_commerce_app.model.orders.Order
 
 class OrdersAdapter(
     private val ordersList: List<Order>,
-    private val onOrderClick: (Order) -> Unit
+    private val onOrderClick: (Order) -> Unit,
+    private val currencyResponse: CurrencyResponse,
+    private val selectedCurrency: String,
+    private var conversionRate:Double
 ) :
     RecyclerView.Adapter<OrdersAdapter.OrdersViewHolder>() {
 
@@ -24,12 +28,20 @@ class OrdersAdapter(
 //        }
         val order = ordersList[position]
         holder.orderNumber.text = ("#${position + 1}").toString()
-        holder.orderPrice.text = order.total_price
         holder.createdAt.text = order.created_at
-        holder.currency.text = order.currency
+        val defaultPrice = order.total_price.toDoubleOrNull()?:0.0
+        val convertedPrice = defaultPrice * conversionRate
+        holder.orderPrice.text = String.format("%.2f %s", convertedPrice, selectedCurrency)
         holder.orderItem.setOnClickListener {
             onOrderClick(order)
         }
+        conversionRate = when (selectedCurrency) {
+            "USD" -> currencyResponse.rates.USD
+            "EUR" -> currencyResponse.rates.EUR
+            "EGP" -> currencyResponse.rates.EGP
+            else ->0.0
+        }
+
     }
 
     override fun getItemCount(): Int {
@@ -51,6 +63,5 @@ class OrdersAdapter(
         val orderNumber = binding.orderNumberTv
         val orderPrice = binding.OrderPriceTv
         val createdAt = binding.createdAtTv
-        val currency = binding.currencyTv
     }
 }
