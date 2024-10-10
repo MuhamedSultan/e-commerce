@@ -142,8 +142,8 @@ class ProductDetailsFragment : Fragment() {
         val price = product.variants.firstOrNull()?.price?.toDoubleOrNull() ?: 0.0
         val convertedPrice = conversionRate?.let { price * it } ?: price
 
-        view?.findViewById<TextView>(R.id.productPrice)?.text = "$convertedPrice $selectedCurrency"
-
+        val formattedPrice = String.format("%.2f", convertedPrice)
+        view?.findViewById<TextView>(R.id.productPrice)?.text = "$formattedPrice $selectedCurrency"
         val seeRatingTextView = view?.findViewById<TextView>(R.id.seeRating)
 
         val addToCartButton = view?.findViewById<Button>(R.id.btn_add_to_cart)

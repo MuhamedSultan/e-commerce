@@ -34,6 +34,7 @@ import com.example.e_commerce_app.model.cart.DraftOrder
 import com.example.e_commerce_app.model.cart.DraftOrderRequest
 import com.example.e_commerce_app.model.cart.LineItems
 import com.example.e_commerce_app.model.coupon.Discount
+import com.example.e_commerce_app.model.currencyResponse.CurrencyResponse
 import com.example.e_commerce_app.model.product.Product
 import com.example.e_commerce_app.model.smart_collection.SmartCollection
 import com.example.e_commerce_app.model.repo.ShopifyRepoImpl
@@ -42,6 +43,7 @@ import com.example.e_commerce_app.util.ApiState
 import com.example.e_commerce_app.util.GuestUtil
 import com.google.android.material.snackbar.Snackbar
 import com.tbuonomo.viewpagerdotsindicator.DotsIndicator
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 
@@ -52,11 +54,11 @@ class HomeFragment : Fragment() {
     private lateinit var dotsIndicator: DotsIndicator
     private lateinit var discountPagerAdapter: DiscountPagerAdapter
     private lateinit var sharedPreferences: SharedPreferences
+    private lateinit var selectedCurrency :String
 
     override fun onCreate(savedInstanceState: Bundle?) {
 
         sharedPreferences = requireContext().getSharedPreferences("UserPrefs", 0)
-
         super.onCreate(savedInstanceState)
         val dao = ShopifyDB.getInstance(requireContext()).shopifyDao()
         val localDataSource = LocalDataSourceImpl(dao)
@@ -134,6 +136,7 @@ class HomeFragment : Fragment() {
 
         homeViewModel.getAllBrands()
         homeViewModel.getRandomProducts()
+        homeViewModel.fetchCurrencyRates()
         lifecycleScope.launch {
             viewLifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 homeViewModel.brandsResult.collect { result ->
@@ -171,11 +174,22 @@ class HomeFragment : Fragment() {
                             hideLoadingIndicator()
                             result.data?.let { product ->
                                 hideLoadingIndicator()
-                                val randomProducts = product.products.shuffled().take(15)
-                                setupRandomProductsRecyclerview(randomProducts)
+                                homeViewModel.currencyRates.collect {
+                                  val   currencyResponse= it.data!!
+
+                                   val conversionRate = when (selectedCurrency) {
+                                        "USD" -> currencyResponse.rates.USD
+                                        "EUR" -> currencyResponse.rates.EUR
+                                        "EGP" -> currencyResponse.rates.EGP
+                                        else ->0.0
+                                    }
+
+
+                                    val randomProducts = product.products.shuffled().take(15)
+                                    setupRandomProductsRecyclerview(randomProducts,currencyResponse,conversionRate)
+                                }
                             }
                         }
-
                         is ApiState.Error -> {
                             hideLoadingIndicator()
                             showError(result.message.toString())
@@ -276,7 +290,7 @@ class HomeFragment : Fragment() {
             viewLifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 homeViewModel.filteredProducts.collect { filteredList ->
                     setupSuggestionsRecyclerview(filteredList)
-                    setupRandomProductsRecyclerview(filteredList.ifEmpty { homeViewModel.originalProducts })
+                   // setupRandomProductsRecyclerview(filteredList.ifEmpty { homeViewModel.originalProducts })
                     if (filteredList.isEmpty() && binding.edSearch.text.isNotEmpty()) {
                         binding.suggestionsRv.visibility = View.GONE
                     }
@@ -335,7 +349,7 @@ class HomeFragment : Fragment() {
         }
     }
 
-    private fun setupRandomProductsRecyclerview(product: List<Product>) {
+    private fun setupRandomProductsRecyclerview(product: List<Product>,currencyResponse: CurrencyResponse,conversion:Double) {
         val randomProductsAdapter = RandomProductsAdapter(
             product,
             requireContext(),
@@ -374,8 +388,9 @@ class HomeFragment : Fragment() {
                     }
 
                 }
-            }, sharedPreferences
+            }, sharedPreferences,currencyResponse,selectedCurrency,conversion
         )
+        randomProductsAdapter.notifyDataSetChanged()
 
         val manager = LinearLayoutManager(requireContext())
         manager.orientation = LinearLayoutManager.HORIZONTAL
@@ -409,6 +424,9 @@ class HomeFragment : Fragment() {
         super.onResume()
         binding.suggestionsRv.visibility = View.GONE
         binding.edSearch.text?.clear()
+        selectedCurrency=LocalDataSourceImpl.getCurrencyText(requireContext())
+        Log.d("selected",selectedCurrency)
+        LocalDataSourceImpl.saveCurrencyText(requireContext(), selectedCurrency)
     }
 
 

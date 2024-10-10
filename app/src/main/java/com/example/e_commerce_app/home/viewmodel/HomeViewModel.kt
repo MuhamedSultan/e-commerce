@@ -11,6 +11,7 @@ import com.example.e_commerce_app.model.cart.DraftOrder
 import com.example.e_commerce_app.model.cart.DraftOrderRequest
 import com.example.e_commerce_app.model.cart.DraftOrderResponse
 import com.example.e_commerce_app.model.cart.LineItems
+import com.example.e_commerce_app.model.currencyResponse.CurrencyResponse
 import com.example.e_commerce_app.model.product.Product
 import com.example.e_commerce_app.model.product.ProductResponse
 import com.example.e_commerce_app.model.smart_collection.SmartCollectionResponse
@@ -38,9 +39,13 @@ class HomeViewModel(private val shopifyRepo: ShopifyRepo) : ViewModel() {
         MutableStateFlow(ApiState.Loading())
     val creatingDraftOrder: StateFlow<ApiState<DraftOrderResponse>> = _creatingDraftOrder
 
-    private val _draftOrderState = MutableStateFlow<ApiState<DraftOrderResponse>>(ApiState.Loading())
+    private val _draftOrderState =
+        MutableStateFlow<ApiState<DraftOrderResponse>>(ApiState.Loading())
     val draftOrderState: StateFlow<ApiState<DraftOrderResponse>> = _draftOrderState
 
+    private val _currencyRates: MutableStateFlow<ApiState<CurrencyResponse>> =
+        MutableStateFlow(ApiState.Loading())
+    val currencyRates: StateFlow<ApiState<CurrencyResponse>> = _currencyRates
 
     fun getAllBrands() = viewModelScope.launch(Dispatchers.IO) {
         try {
@@ -99,8 +104,6 @@ class HomeViewModel(private val shopifyRepo: ShopifyRepo) : ViewModel() {
     }
 
 
-
-
     fun addProductToFavourite(product: Product, shopifyCustomerId: String) {
         viewModelScope.launch {
             val productWithShopifyId = product.copy(shopifyCustomerId = shopifyCustomerId)
@@ -109,12 +112,12 @@ class HomeViewModel(private val shopifyRepo: ShopifyRepo) : ViewModel() {
     }
 
 
-    fun getDraftOrderSaveInShP(context: Context)=viewModelScope.launch (Dispatchers.IO){
+    fun getDraftOrderSaveInShP(context: Context) = viewModelScope.launch(Dispatchers.IO) {
         Log.i("TAG", "getDraftOrderSaveInShP: Started")
         SharedPrefsManager.init(context)
         val customerId = SharedPrefsManager.getInstance().getShopifyCustomerId()
         Log.i("TAG", "customerId: $customerId")
-        if (customerId!=null) {
+        if (customerId != null) {
 
             val draftOrderRequest = DraftOrderRequest(
                 draftOrder = DraftOrder(
@@ -134,11 +137,12 @@ class HomeViewModel(private val shopifyRepo: ShopifyRepo) : ViewModel() {
             )
             val result = shopifyRepo.createFavoriteDraft(draftOrderRequest)
             DraftOrderManager.init(draftOrderRequest)
-            _creatingDraftOrder.value=result
+            _creatingDraftOrder.value = result
         }
     }
+
     // Function to fetch product IDs from the draft order (getting products in cart)
-    fun getProductsFromDraftOrder(draftFavoriteId: Long)=viewModelScope.launch (Dispatchers.IO){
+    fun getProductsFromDraftOrder(draftFavoriteId: Long) = viewModelScope.launch(Dispatchers.IO) {
 
         _draftOrderState.value = ApiState.Loading()
         val result = shopifyRepo.getProductsIdForDraftFavorite(draftFavoriteId)
@@ -148,6 +152,7 @@ class HomeViewModel(private val shopifyRepo: ShopifyRepo) : ViewModel() {
                 Log.d("TAG", "get Draft Order data successfully")
                 Log.i("TAG", "Add Response: ${result.data?.draft_order}")
             }
+
             is ApiState.Error -> {
                 Log.e(
                     "TAG",
@@ -167,6 +172,17 @@ class HomeViewModel(private val shopifyRepo: ShopifyRepo) : ViewModel() {
         }
     }
 
+    fun fetchCurrencyRates() {
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                val rates = shopifyRepo.exchangeRate()
+                _currencyRates.value = rates
+            } catch (e: Exception) {
+                Log.e("productInfo", "Failed to fetch currency rates: ${e.message}")
+            }
+
+        }
+    }
 }
 
 
