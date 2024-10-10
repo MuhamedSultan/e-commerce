@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ViewModelProvider
@@ -22,6 +23,7 @@ import com.example.e_commerce_app.db.SharedPrefsManager
 import com.example.e_commerce_app.db.ShopifyDB
 import com.example.e_commerce_app.model.cart.Cart
 import com.example.e_commerce_app.model.cart.CartResponse
+import com.example.e_commerce_app.model.cart.DraftOrderRequest
 import com.example.e_commerce_app.model.cart.DraftOrderResponse
 import com.example.e_commerce_app.model.cart.LineItem
 import com.example.e_commerce_app.model.repo.ShopifyRepoImpl
@@ -210,14 +212,52 @@ class CartFragment : Fragment() {
 
     private fun handleDeleteClick(lineItem: LineItem) {
         Log.d("CartFragment", "Delete item: ${lineItem.title}")
+        // Show delete confirmation dialog
+        val builder = AlertDialog.Builder(requireContext())
+        builder.setTitle("Delete Item")
+        builder.setMessage("Are you sure you want to delete ${lineItem.title}?")
+
+        // Set the positive button (Yes)
+        builder.setPositiveButton("Yes") { dialogInterface, _ ->
+            Log.d("CartFragment", "Deleted item: ${lineItem.title}")
+            SharedPrefsManager.getInstance().getDraftedOrderId()?.let {
+                viewModel.UpdateDraftOrderProducts(DraftOrderRequest(DraftOrderManager.getInstance().delete(lineItem)),
+                    it
+                )
+            }
+            dialogInterface.dismiss()  // Close the dialog
+        }
+
+        // Set the negative button (No)
+        builder.setNegativeButton("No") { dialogInterface, _ ->
+            // Just dismiss the dialog if "No" is clicked
+            dialogInterface.dismiss()
+        }
+
+        // Create and show the dialog
+        val alertDialog = builder.create()
+        alertDialog.show()
     }
 
     private fun handleIncreaseQuantity(lineItem: LineItem) {
-        Log.d("CartFragment", "Increase quantity for: ${lineItem.title}")
+        viewModel.UpdateDraftOrderProducts(DraftOrderRequest(
+            DraftOrderManager.getInstance().IncreaseQuantity(lineItem)
+        ),
+            SharedPrefsManager.getInstance().getDraftedOrderId() ?: 0
+        )
     }
 
     private fun handleDecreaseQuantity(lineItem: LineItem) {
-        Log.d("CartFragment", "Decrease quantity for: ${lineItem.title}")
+        if (lineItem.quantity == 1){
+            handleDeleteClick(lineItem)
+        }else{
+            viewModel.UpdateDraftOrderProducts(DraftOrderRequest(
+                DraftOrderManager.getInstance().DecreaseQuantity(lineItem)
+            ),
+                SharedPrefsManager.getInstance().getDraftedOrderId() ?: 0
+            )
+        }
+
     }
 
     private fun createCartResponseFromDraftOrder(draftOrderResponse: DraftOrderResponse): CartResponse {

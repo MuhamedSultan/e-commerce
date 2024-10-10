@@ -5,14 +5,12 @@ import com.example.e_commerce_app.model.address.testAdd
 import com.example.e_commerce_app.model.cart.AppliedDiscount
 import com.example.e_commerce_app.model.cart.DraftOrder
 import com.example.e_commerce_app.model.cart.DraftOrderRequest
+import com.example.e_commerce_app.model.cart.LineItem
 import com.example.e_commerce_app.model.cart.LineItems
 import kotlin.math.abs
 import kotlin.math.floor
 
 class DraftOrderManager private constructor(var draftOrder: DraftOrder) {
-
-    /*private val sharedPreferences: SharedPreferences =
-        context.getSharedPreferences("UserPrefs", Context.MODE_PRIVATE)*/
 
     companion object {
         private var INSTANCE: DraftOrderManager? = null
@@ -53,6 +51,48 @@ class DraftOrderManager private constructor(var draftOrder: DraftOrder) {
 
     fun addCouponToDraftOrder(appliedDiscount: AppliedDiscount): DraftOrder {
         draftOrder.appliedDiscount = appliedDiscount
+        return draftOrder
+    }
+
+    fun delete(lineItem: LineItem): DraftOrder {
+        val result = draftOrder.note.split("|##|").filter { it.isNotEmpty() }
+        var deletedIndex :Int= 0
+        for ((index, item) in draftOrder.lineItems.drop(1).withIndex()) {
+            if (index < result.size) {
+                if (lineItem.variantId == item.variantId){
+                    deletedIndex = index
+                    draftOrder.lineItems.removeAt(index)
+                }
+            }
+        }
+        var tempNote:String = ""
+        for ((index,item) in result.withIndex()){
+            if(index!=deletedIndex){
+                tempNote = tempNote +"|##|"+item
+            }
+        }
+        draftOrder.note = tempNote
+
+        return draftOrder
+    }
+
+    fun IncreaseQuantity(lineItem: LineItem): DraftOrder {
+        for (item in draftOrder.lineItems){
+            if (lineItem.variantId == item.variantId){
+                item.quantity++
+                break
+            }
+        }
+        return draftOrder
+    }
+
+    fun DecreaseQuantity(lineItem: LineItem): DraftOrder {
+        for (item in draftOrder.lineItems){
+            if (lineItem.variantId == item.variantId){
+                item.quantity--
+                break
+            }
+        }
         return draftOrder
     }
 
