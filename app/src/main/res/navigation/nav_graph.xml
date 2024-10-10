@@ -118,6 +118,12 @@
         <action
             android:id="@+id/action_paymentFragment_to_creditCardFragment"
             app:destination="@id/creditCardFragment" />
+        <action
+            android:id="@+id/action_paymentFragment_to_ordersFragment"
+            app:destination="@id/ordersFragment" />
+        <argument
+            android:name="price"
+            app:argType="string" />
     </fragment>
     <fragment
         android:id="@+id/mapFragment"

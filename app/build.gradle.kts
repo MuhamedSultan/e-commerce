@@ -168,6 +168,13 @@ dependencies {
     testImplementation("androidx.test:core-ktx:1.5.0")
     testImplementation("org.robolectric:robolectric:4.8")
 
+    // Paypal
+
+    implementation("com.paypal.sdk:paypal-android-sdk:2.16.0")
+
+
+
+
 
 
 }
