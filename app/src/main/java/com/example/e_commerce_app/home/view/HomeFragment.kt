@@ -263,7 +263,7 @@ class HomeFragment : Fragment() {
                                             title = lineItem.title ,
                                             price = lineItem.price,
                                             quantity = lineItem.quantity,
-                                            productId = lineItem.productId ,
+                                            productId = lineItem.productId?:"" ,
                                             variantId = lineItem.variantId
                                         )
                                     )
