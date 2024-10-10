@@ -50,6 +50,7 @@ class PaymentViewModel(private val repo: ShopifyRepo) :ViewModel() {
     fun getDraftOrderSaveInShP()=viewModelScope.launch (Dispatchers.IO){
         Log.i("TAG", "getDraftOrderSaveInShP: Started")
         val customerId = SharedPrefsManager.getInstance().getShopifyCustomerId()
+        DraftOrderManager.destroy()
         Log.i("TAG", "customerId: $customerId")
         if (customerId!=null) {
 
