@@ -28,6 +28,8 @@ class CategoriesViewModel(private val shopifyRepo: ShopifyRepo) : ViewModel() {
     val filteredProducts: StateFlow<List<Product>> = _filteredProducts
     var originalProducts: List<Product> = emptyList()
 
+    private val _searchResults: MutableStateFlow<List<Product>> = MutableStateFlow(emptyList())
+    val searchResults: StateFlow<List<Product>> = _searchResults
 
 
 
@@ -56,20 +58,16 @@ class CategoriesViewModel(private val shopifyRepo: ShopifyRepo) : ViewModel() {
     }
 
 
-
-
     fun searchProducts(query: String) {
-        viewModelScope.launch(Dispatchers.Default) {
-            val filteredList = if (query.isBlank()) {
-                originalProducts // Return all products if the query is empty
-            } else {
-                originalProducts.filter { product ->
-                    product.title.contains(query, ignoreCase = true) // Modify this condition based on your search requirements
-                }
-            }
-            withContext(Dispatchers.Main) {
-                _filteredProducts.value = filteredList // Update the UI
-            }
+        val cleanedQuery = query.trim().lowercase()
+        val filtered = originalProducts.filter { product ->
+            val productTitle = product.title.lowercase()
+            // Check if the product title starts with or contains the cleaned query
+            productTitle.startsWith(cleanedQuery) || productTitle.contains(cleanedQuery)
         }
+        _filteredProducts.value = filtered
     }
+
+
+
 }
