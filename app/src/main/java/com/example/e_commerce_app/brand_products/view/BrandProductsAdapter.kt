@@ -12,6 +12,7 @@ import com.example.e_commerce_app.R
 import com.example.e_commerce_app.databinding.ItemBrandProductBinding
 import com.example.e_commerce_app.db.LocalDataSourceImpl
 import com.example.e_commerce_app.db.SharedPrefsManager
+import com.example.e_commerce_app.model.currencyResponse.CurrencyResponse
 import com.example.e_commerce_app.model.product.Product
 
 class BrandProductsAdapter(
@@ -19,7 +20,10 @@ class BrandProductsAdapter(
     private val context: Context,
     private val onProductClick: (Product) -> (Unit),
     private val onFavouriteClick: (Product, Boolean) -> Unit,
-    private val sharedPrefs: SharedPreferences
+    private val sharedPrefs: SharedPreferences,
+    private val currencyResponse: CurrencyResponse,
+    private val selectedCurrency: String,
+    private var conversionRate:Double
 
 ) :
     Adapter<BrandProductsAdapter.BrandProductsViewHolder>() {
@@ -33,7 +37,9 @@ class BrandProductsAdapter(
         val product = productList[position]
         Glide.with(context).load(product.image.src).into(holder.productImage)
         holder.productName.text = product.title.split('|').getOrNull(1)?.trim() ?: ""
-        holder.productPrice.text = "${product.variants[0].price} EGP"
+        val defaultPrice = product.variants[0].price.toDoubleOrNull() ?: 0.0
+        val convertedPrice = defaultPrice * conversionRate
+        holder.productPrice.text = String.format("%.2f %s", convertedPrice, selectedCurrency)
 
         var isFavorite = LocalDataSourceImpl.isProductFavorite(context, product.id.toString())
         holder.favouriteIcon.setImageResource(
@@ -59,6 +65,12 @@ class BrandProductsAdapter(
                     Toast.LENGTH_SHORT
                 ).show()
             }
+        }
+        conversionRate = when (selectedCurrency) {
+            "USD" -> currencyResponse.rates.USD
+            "EUR" -> currencyResponse.rates.EUR
+            "EGP" -> currencyResponse.rates.EGP
+            else ->0.0
         }
     }
 
