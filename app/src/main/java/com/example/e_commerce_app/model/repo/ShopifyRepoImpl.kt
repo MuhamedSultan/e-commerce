@@ -123,8 +123,8 @@ class ShopifyRepoImpl(
         return remoteDataSource.getProductsIdForDraftFavorite(draftFavoriteId)
     }
 
-    override suspend fun addOrderFromDraftOrder(draftFavoriteId: Long): ApiState<DraftOrderResponse> {
-        return remoteDataSource.addOrderFromDraftOrder(draftFavoriteId)
+    override suspend fun addOrderFromDraftOrder(draftFavoriteId: Long , paymentPending : Boolean): ApiState<DraftOrderResponse> {
+        return remoteDataSource.addOrderFromDraftOrder(draftFavoriteId , paymentPending)
     }
 
     override suspend fun backUpDraftFavorite(
