@@ -12,6 +12,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import androidx.navigation.fragment.findNavController
 import com.example.e_commerce_app.R
 import com.example.e_commerce_app.cart.DraftOrderManager
 import com.example.e_commerce_app.cart.viewmodel.CartViewModel
@@ -35,6 +36,7 @@ class AddingCouponFragment : Fragment() {
     private lateinit var binding:FragmentAddingCouponBinding
     private lateinit var viewModel: CartViewModel
     private lateinit var CouponsList: List<PriceRule>
+    private lateinit var totalPrice: String
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -59,6 +61,10 @@ class AddingCouponFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        binding.btnSubmit.setOnClickListener{
+            val action = AddingCouponFragmentDirections.actionAddingCouponFragmentToPaymentFragment(totalPrice)
+            findNavController().navigate(action)
+        }
         binding.btnApply.setOnClickListener{
             val CouponeTitle = binding.etCouponCode.text.toString()
             disableUi()
@@ -103,10 +109,12 @@ class AddingCouponFragment : Fragment() {
                         is ApiState.Success -> {
                             binding.addCouponLayout.visibility = View.VISIBLE
                             binding.loadingIndicator.visibility = View.GONE
+                            enableUi()
                             result.data?.let { draftOrderResponse ->
                                 binding.tvTax.text = draftOrderResponse.draft_order.total_tax
                                 binding.tvSubtotal.text = draftOrderResponse.draft_order.subtotal_price
                                 binding.tvTotal.text = draftOrderResponse.draft_order.total_price
+                                totalPrice = draftOrderResponse.draft_order.total_price.toString()
                             }
                         }
 

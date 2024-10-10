@@ -200,7 +200,11 @@
         android:id="@+id/addingCouponFragment"
         android:name="com.example.e_commerce_app.cart.view.AddingCouponFragment"
         android:label="fragment_adding_coupon"
-        tools:layout="@layout/fragment_adding_coupon" />
+        tools:layout="@layout/fragment_adding_coupon" >
+        <action
+            android:id="@+id/action_addingCouponFragment_to_paymentFragment"
+            app:destination="@id/paymentFragment" />
+    </fragment>
 
 
 </navigation>

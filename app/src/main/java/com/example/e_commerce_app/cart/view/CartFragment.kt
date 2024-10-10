@@ -68,12 +68,8 @@ class CartFragment : Fragment() {
         binding.checkoutBtn.setOnClickListener {
             val action = CartFragmentDirections.actionCartFragmentToAddressFragment("cart")
             findNavController().navigate(action)
-            //viewModel.completeOrderForSultan()
-            //observeCompleteOrder()
         }
 
-        // Fetch products based on customer ID
-        //fetchProductsFromDraftOrder()
     }
 
     private fun observeGetDraftOrderData() {
@@ -87,24 +83,6 @@ class CartFragment : Fragment() {
                         is ApiState.Success -> {
                             result.data?.let { collections ->
                                 updateCartUI(collections)
-                                /*var lineItemsList = mutableListOf<LineItems>()
-                                for(lineItem in collections.draft_order.line_items){
-                                    lineItemsList.add(
-                                        LineItems(
-                                            title = lineItem.title,
-                                            price = lineItem.price,
-                                            quantity = lineItem.quantity,
-                                            productId = lineItem.productId ?: "null",
-                                            variantId = lineItem.variantId
-                                        )
-                                    )
-                                }
-                                DraftOrderManager.init(
-                                    DraftOrder(
-                                    lineItems = lineItemsList,
-                                    customer = CustomerId(collections.draft_order.customer.id)
-                                )
-                                )*/
                             }
                         }
 
@@ -131,53 +109,6 @@ class CartFragment : Fragment() {
             adapter = cartAdapter
         }
     }
-/*
-    private fun fetchProductsFromDraftOrder() {
-        //val shopifyCustomerId = sharedPreferences.getString("shopifyCustomerId", null)
-
-        Log.d("CartFragment", "shopifyCustomerId: $shopifyCustomerId")
-
-        // Check if shopifyCustomerId is null
-        if (shopifyCustomerId == null) {
-            Log.e("TAG", "No Shopify customer ID found in SharedPreferences.")
-            showError("No Shopify customer ID found in SharedPreferences.")
-            return
-        }
-
-        // Get the draft order ID associated with the customer
-        val draftFavoriteId = getDraftOrderIdForCustomer(shopifyCustomerId)
-
-        // Check if draftFavoriteId is null
-        if (draftFavoriteId == null) {
-            Log.e("CartFragment", "No draft order ID found for the customer.")
-            showNoDraftOrderMessage()
-            return
-        }
-
-        // Fetch products from the draft order
-        viewModel.getProductsFromDraftOrder(draftFavoriteId)
-
-        lifecycleScope.launch {
-            viewModel.draftOrderState.collect { state ->
-                when (state) {
-                    is ApiState.Loading -> {
-                        // Optionally show loading indicator
-                        Log.d("CartFragment", "Loading draft order products...")
-                    }
-                    is ApiState.Success -> {
-                        val draftOrderResponse = state.data as DraftOrderResponse
-                        val cartResponse = createCartResponseFromDraftOrder(draftOrderResponse)
-                        updateCartUI(cartResponse)
-                    }
-                    is ApiState.Error -> {
-                        Log.e("CartFragment", "Error fetching products: ${state.message}")
-                        showError(state.message)
-                    }
-                }
-            }
-        }
-    }
-    */
 
     private fun showError(message: String?) {
         Toast.makeText(requireContext(), "Error fetching products: ${message ?: "Unknown error occurred."}", Toast.LENGTH_LONG).show()
