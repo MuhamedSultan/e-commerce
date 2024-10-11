@@ -64,7 +64,7 @@ class PaymentActivity : AppCompatActivity() {
 
 
         // Initially hide the "Start Order" button
-        binding.confirmPaymentButton.visibility = View.GONE
+
 
         // Fetch access token on start
         fetchAccessToken()
@@ -157,6 +157,7 @@ class PaymentActivity : AppCompatActivity() {
                 if (!approvalLink.isNullOrEmpty()) {
                     Log.i(TAG, "Approval Link: $approvalLink")
                     // Redirect the user to the approval link
+                    SharedPrefsManager.getInstance().setPaidStatus(true)
                     openApprovalUrl(approvalLink)
                 } else {
                     Log.e(TAG, "Approval link not found in the response.")
@@ -209,7 +210,6 @@ class PaymentActivity : AppCompatActivity() {
     private fun captureOrder(token: String, payerId: String) {
         lifecycleScope.launch(handler) {
             try {
-                SharedPrefsManager.getInstance().setPaidStatus(true)
                 val capturedOrderId = payPalRepository.captureOrder(orderId, "10.00", token, payerId)
                 Toast.makeText(this@PaymentActivity, "Order Captured! ID: $capturedOrderId", Toast.LENGTH_SHORT).show()
             } catch (e: Exception) {
