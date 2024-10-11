@@ -62,13 +62,18 @@
                 android:id="@+id/delete_cart_item_Btn"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginEnd="8dp"
-                android:layout_marginBottom="8dp"
-                app:layout_constraintBottom_toBottomOf="parent"
+                android:layout_marginStart="60dp"
+                android:backgroundTint="@color/white"
+                app:layout_constraintBottom_toBottomOf="@+id/plusBtn"
                 app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toEndOf="@+id/plusBtn"
+                app:layout_constraintTop_toTopOf="@+id/plusBtn"
+                app:layout_constraintVertical_bias="0.0"
                 app:srcCompat="@drawable/delete_svg" />
 
             <ImageButton
+                android:backgroundTint="@color/white"
                 android:id="@+id/plusBtn"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -78,6 +83,7 @@
                 app:srcCompat="@drawable/plus_svgrepo_com" />
 
             <ImageButton
+                android:backgroundTint="@color/white"
                 android:id="@+id/minusBtn"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
