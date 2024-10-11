@@ -18,6 +18,7 @@ import com.example.e_commerce_app.model.cart.DraftOrder
 import com.example.e_commerce_app.model.cart.LineItems
 import com.example.e_commerce_app.model.cart.PriceRuleResponse
 import com.example.e_commerce_app.model.currencyResponse.CurrencyResponse
+import com.example.e_commerce_app.model.currencyResponse.Rates
 import com.example.e_commerce_app.model.custom_collection.CustomCollection
 import com.example.e_commerce_app.model.order_details.OrderDetailsResponse
 import com.example.e_commerce_app.model.orders.CustomerOrders
@@ -469,6 +470,6 @@ class FakeShopifyRepository : ShopifyRepo {
     }
 
     override suspend fun exchangeRate(): ApiState<CurrencyResponse> {
-        TODO("Not yet implemented")
+        return ApiState.Success(CurrencyResponse("EUR","", Rates(0.0,0.0,0.0),true,0))
     }
 }
