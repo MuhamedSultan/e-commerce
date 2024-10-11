@@ -1,29 +1,22 @@
 package com.example.e_commerce_app.payment
 
-import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.RadioButton
-import android.widget.Toast
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
-import com.example.e_commerce_app.R
 import com.example.e_commerce_app.cart.DraftOrderManager
-import com.example.e_commerce_app.cart.viewmodel.CartViewModel
-import com.example.e_commerce_app.cart.viewmodel.CartViewModelFactory
-import com.example.e_commerce_app.databinding.FragmentCartBinding
 import com.example.e_commerce_app.databinding.FragmentPaymentBinding
 import com.example.e_commerce_app.db.SharedPrefsManager
 import com.example.e_commerce_app.db.ShopifyDB
-import com.example.e_commerce_app.map.AddressDetailsFragmentArgs
 import com.example.e_commerce_app.model.cart.CustomerId
 import com.example.e_commerce_app.model.cart.DraftOrder
 import com.example.e_commerce_app.model.cart.DraftOrderRequest
@@ -32,16 +25,9 @@ import com.example.e_commerce_app.model.repo.ShopifyRepoImpl
 import com.example.e_commerce_app.network.RemoteDataSourceImpl
 import com.example.e_commerce_app.payment.viewModel.PaymentViewModel
 import com.example.e_commerce_app.payment.viewModel.PaymentViewModelFactory
-import com.example.e_commerce_app.setting.SettingFragmentDirections
 import com.example.e_commerce_app.util.ApiState
 import com.google.android.material.snackbar.Snackbar
-import com.paypal.android.sdk.payments.PayPalConfiguration
-import com.paypal.android.sdk.payments.PayPalPayment
-import com.paypal.android.sdk.payments.PayPalService
-import com.paypal.android.sdk.payments.PaymentActivity
-import com.paypal.android.sdk.payments.PaymentConfirmation
 import kotlinx.coroutines.launch
-import java.math.BigDecimal
 
 
 class PaymentFragment : Fragment() {
@@ -50,11 +36,11 @@ class PaymentFragment : Fragment() {
     lateinit var totalPrice : String
     private val PAYPAL_REQUEST_CODE = 123
 
-    // PayPal configuration
+   /* // PayPal configuration
     private val config = PayPalConfiguration()
         .environment(PayPalConfiguration.ENVIRONMENT_SANDBOX) // Use ENVIRONMENT_PRODUCTION for live payments
         .clientId("AVGCA-t76v87mfeQ5xe5h_yAD0xJEWWijGIDIGJ_xytjUVvp7nBZodsFpmb2PMJZX8anfBb7I1S9pgPZ") // Replace with your client ID
-
+*/
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -66,9 +52,9 @@ class PaymentFragment : Fragment() {
         val factory = PaymentViewModelFactory(repo)
         viewModel = ViewModelProvider(this, factory)[PaymentViewModel::class.java]
         // Start the PayPal Service
-        val intent = Intent(context, PayPalService::class.java)
+        /*val intent = Intent(context, PayPalService::class.java)
         intent.putExtra(PayPalService.EXTRA_PAYPAL_CONFIGURATION, config)
-        context?.startService(intent)
+        context?.startService(intent)*/
     }
 
     override fun onCreateView(
@@ -97,13 +83,13 @@ class PaymentFragment : Fragment() {
                     Log.i("TAG", "onViewCreated: ")
                 }
                 "PayPal" -> {
-                    processPayment()
+                    //processPayment()
                 }
             }
         }
     }
 
-    // PayPal Part
+    /*// PayPal Part
     private fun processPayment() {
         // Create a payment
         val payment = PayPalPayment(
@@ -134,7 +120,7 @@ class PaymentFragment : Fragment() {
                 // Handle invalid payment
             }
         }
-    }
+    }*/
     private fun observeDraftOrderId() {
         lifecycleScope.launch {
             viewLifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {

@@ -1,5 +1,6 @@
 package com.example.e_commerce_app.cart.view
 
+import android.content.Intent
 import android.content.res.ColorStateList
 import android.os.Bundle
 import android.util.Log
@@ -27,6 +28,7 @@ import com.example.e_commerce_app.model.cart.PriceRule
 import com.example.e_commerce_app.model.cart.PriceRuleResponse
 import com.example.e_commerce_app.model.repo.ShopifyRepoImpl
 import com.example.e_commerce_app.network.RemoteDataSourceImpl
+import com.example.e_commerce_app.payment.PaymentActivity
 import com.example.e_commerce_app.util.ApiState
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.launch
@@ -62,8 +64,16 @@ class AddingCouponFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.btnSubmit.setOnClickListener{
-            val action = AddingCouponFragmentDirections.actionAddingCouponFragmentToPaymentFragment(totalPrice)
-            findNavController().navigate(action)
+//            val action = AddingCouponFragmentDirections.actionAddingCouponFragmentToPaymentFragment(totalPrice)
+//            findNavController().navigate(action)
+            // Create an Intent to start PaymentActivity
+            val intent = Intent(requireContext(), PaymentActivity::class.java)
+
+            // You can pass the totalPrice as an extra to the intent
+            intent.putExtra("TOTAL_PRICE", totalPrice)
+
+            // Start the PaymentActivity
+            startActivity(intent)
         }
         binding.btnApply.setOnClickListener{
             val CouponeTitle = binding.etCouponCode.text.toString()
