@@ -5,6 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:padding="8dp"
+    android:background="@color/white"
     tools:context=".favorite.view.FavoriteFragment">
 
 
@@ -15,17 +16,19 @@
         android:visibility="visible"
         android:layout_height="match_parent"></androidx.recyclerview.widget.RecyclerView>
 
-    <ImageView
+    <com.airbnb.lottie.LottieAnimationView
+        android:id="@+id/lottieView"
+        android:layout_width="300dp"
+        android:layout_height="300dp"
+        android:layout_marginTop="160dp"
         android:visibility="gone"
-        android:id="@+id/imageView4"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="156dp"
-        android:src="@drawable/nofav2"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.497"
+        app:layout_constraintHorizontal_bias="0.494"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:lottie_autoPlay="true"
+        app:lottie_loop="true"
+        app:lottie_rawRes="@raw/nodataloading" />
 
     <TextView
         android:visibility="gone"
@@ -41,7 +44,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/imageView4"
+        app:layout_constraintTop_toBottomOf="@+id/lottieView"
         app:layout_constraintVertical_bias="0.072" />
 
 

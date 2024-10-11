@@ -17,6 +17,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.airbnb.lottie.LottieAnimationView
 import com.example.e_commerce_app.MainActivity
 import com.example.e_commerce_app.R
 import com.example.e_commerce_app.db.LocalDataSourceImpl
@@ -34,6 +35,7 @@ class FavoriteFragment : Fragment() {
     private lateinit var textView: TextView
     private lateinit var sharedPreferences: SharedPreferences
     private var shopifyCustomerId: String? = null
+    private lateinit var lottieView: LottieAnimationView
 
     private val favoriteViewModel: FavoriteViewModel by viewModels {
         FavoriteViewModelFactory(
@@ -59,13 +61,15 @@ class FavoriteFragment : Fragment() {
 
         setupRecyclerView(view)
         observeFavorites()
-        // Retrieve shopifyCustomerId from SharedPreferences
+        lottieView = view.findViewById(R.id.lottieView)
+
+
         val shopifyCustomerId = sharedPreferences.getString("shopifyCustomerId", null)
         if (shopifyCustomerId != null) {
             favoriteViewModel.getAllFavorites(shopifyCustomerId)
         }
 
-        imageView = view.findViewById(R.id.imageView4)
+//        imageView = view.findViewById(R.id.imageView4)
         textView = view.findViewById(R.id.textView)
 
         return view
@@ -78,11 +82,12 @@ class FavoriteFragment : Fragment() {
 
                 if (favoriteProducts.isEmpty()) {
                     recyclerView.visibility = View.GONE
-                    imageView.visibility = View.VISIBLE
+                    lottieView.visibility = View.VISIBLE
+                    lottieView.playAnimation()
                     textView.visibility = View.VISIBLE
                 } else {
                     recyclerView.visibility = View.VISIBLE
-                    imageView.visibility = View.GONE
+                    lottieView.visibility = View.GONE
                     textView.visibility = View.GONE
                 }
             }
