@@ -37,7 +37,16 @@ class SharedPrefsManager private constructor(context: Context) {
     }
 
     fun getUserName(): String? {
-            return sharedPreferences.getString("userName", "Unknown User")
+        return sharedPreferences.getString("userName", "Unknown User")
+    }
+
+    fun getPaidStatus(): Boolean {
+        return sharedPreferences.getBoolean("paid", false)
+    }
+    fun setPaidStatus(paidStatus : Boolean) {
+        val editor = sharedPreferences.edit()
+        editor.putBoolean("paid", paidStatus)
+        editor.apply()
     }
 
 
