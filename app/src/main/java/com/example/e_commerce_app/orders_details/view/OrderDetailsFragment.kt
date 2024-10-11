@@ -84,9 +84,11 @@ class OrderDetailsFragment : Fragment() {
                                 val productImage = (order?.note ?: "").split("|##|").filter { it.isNotEmpty() }
                                 binding.orderIdTv.text = "#${order?.order_number}"
                                 binding.phone.text = order?.billing_address?.phone.toString()
+
                                 binding.location.text =
                                     order?.billing_address?.address1 + ", " +
                                             order?.billing_address?.city + ", " + order?.billing_address?.country
+                                binding.paymentStatus.text=order?.financial_status
 
 
                                 val orderSubTotal =
