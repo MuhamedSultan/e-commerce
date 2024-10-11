@@ -2,12 +2,17 @@ package com.example.e_commerce_app.categories.viewmodel
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import com.example.e_commerce_app.data.source.FakeShopifyRepository
+import com.example.e_commerce_app.model.custom_collection.CustomCollection
 import com.example.e_commerce_app.model.product.Product
+import com.example.e_commerce_app.util.ApiState
+import getOrAwaitValue
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.test.runBlockingTest
+import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
 import org.hamcrest.CoreMatchers.`is`
+import org.hamcrest.CoreMatchers.notNullValue
 import org.hamcrest.MatcherAssert.assertThat
 import org.junit.Before
 import org.junit.Rule
@@ -113,5 +118,28 @@ class CategoriesViewModelTest {
 
         assertThat(filteredResults[0].title.lowercase(), `is`("apple"))
     }
+
+    @Test
+    fun `getCategorise successfully`() = runTest {
+        // When calling getCategorise
+        categoriesViewModel.getCategorise()
+
+        // Then assert that categoriesResult triggered and contains categories
+        val result = categoriesViewModel.categoriesResult.getOrAwaitValue { }
+        assertThat(result, notNullValue())
+    }
+
+
+    @Test
+    fun `getProductsOfSelectedCategory should emit products successfully`() = runTest {
+        // When calling getProductsOfSelectedCategory
+        val collectionId = 123L
+        categoriesViewModel.getProductsOfSelectedCategory(collectionId)
+
+        // Then assert that productsResult triggered and contains products
+        val result = categoriesViewModel.productsResult.getOrAwaitValue { }
+        assertThat(result, notNullValue()) // Check that the result is not null
+    }
+
 
 }
