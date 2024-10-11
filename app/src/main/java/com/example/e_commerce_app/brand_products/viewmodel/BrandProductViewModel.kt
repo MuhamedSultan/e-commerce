@@ -1,7 +1,9 @@
 package com.example.e_commerce_app.brand_products.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.e_commerce_app.model.currencyResponse.CurrencyResponse
 import com.example.e_commerce_app.model.product.Product
 import com.example.e_commerce_app.model.product.ProductResponse
 import com.example.e_commerce_app.model.repo.ShopifyRepo
@@ -23,7 +25,9 @@ class BrandProductViewModel(private val shopifyRepo: ShopifyRepo) : ViewModel() 
     private var allProducts: List<Product> = emptyList()
 
 
-
+    private val _currencyRates: MutableStateFlow<ApiState<CurrencyResponse>> =
+        MutableStateFlow(ApiState.Loading())
+    val currencyRates: StateFlow<ApiState<CurrencyResponse>> = _currencyRates
 
     fun getBrandProducts(brandName: String) = viewModelScope.launch(Dispatchers.IO) {
         val result = shopifyRepo.getBrandProducts(brandName)
@@ -61,5 +65,15 @@ class BrandProductViewModel(private val shopifyRepo: ShopifyRepo) : ViewModel() 
         allProducts = products
         _filteredProducts.value = allProducts
     }
+    fun fetchCurrencyRates() {
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                val rates = shopifyRepo.exchangeRate()
+                _currencyRates.value = rates
+            } catch (e: Exception) {
+                Log.e("productInfo", "Failed to fetch currency rates: ${e.message}")
+            }
 
+        }
+    }
 }

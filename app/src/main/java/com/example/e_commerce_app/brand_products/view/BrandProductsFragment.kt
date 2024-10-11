@@ -4,6 +4,7 @@ import android.content.SharedPreferences
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -25,6 +26,8 @@ import com.example.e_commerce_app.databinding.FragmentBrandProductsBinding
 import com.example.e_commerce_app.db.LocalDataSourceImpl
 import com.example.e_commerce_app.db.ShopifyDB
 import com.example.e_commerce_app.home.view.adapter.SuggestionsAdapter
+import com.example.e_commerce_app.model.currencyResponse.CurrencyResponse
+import com.example.e_commerce_app.model.currencyResponse.Rates
 import com.example.e_commerce_app.model.product.Product
 import com.example.e_commerce_app.model.repo.ShopifyRepoImpl
 import com.example.e_commerce_app.network.RemoteDataSourceImpl
@@ -42,6 +45,8 @@ class BrandProductsFragment : Fragment() {
     private var filteredProducts: List<Product> = emptyList()
     private lateinit var sharedPreferences: SharedPreferences
     private lateinit var suggestionsAdapter: SuggestionsAdapter
+    private lateinit var selectedCurrency: String
+
 
     //    private lateinit var gridLayoutManager: GridLayoutManager
     private lateinit var linearLayoutManager: LinearLayoutManager
@@ -70,8 +75,9 @@ class BrandProductsFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        (activity as MainActivity).findViewById<BottomNavigationView>(R.id.bottomNavigationView).visibility = View.GONE
-
+        (activity as MainActivity).findViewById<BottomNavigationView>(R.id.bottomNavigationView).visibility =
+            View.GONE
+        brandProductViewModel.fetchCurrencyRates()
 
         linearLayoutManager = LinearLayoutManager(requireContext())
 
@@ -87,21 +93,12 @@ class BrandProductsFragment : Fragment() {
         binding.suggestionsRv.layoutManager = linearLayoutManager
 
         searchSetUp()
-        
+
         binding.filterPrice.setOnClickListener {
             binding.seekBar.visibility = View.VISIBLE
             binding.priceTv.visibility = View.VISIBLE
             binding.priceTextTv.visibility = View.VISIBLE
         }
-        binding.seekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
-            override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
-                filterProductsByPrice(progress)
-                binding.priceTv.text = progress.toString()
-            }
-
-            override fun onStartTrackingTouch(seekBar: SeekBar?) {}
-            override fun onStopTrackingTouch(seekBar: SeekBar?) {}
-        })
         brandProductViewModel.getBrandProducts(brandName)
         lifecycleScope.launch {
             viewLifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
@@ -114,9 +111,30 @@ class BrandProductsFragment : Fragment() {
                         is ApiState.Success -> {
                             hideLoadingIndicator()
                             result.data?.let { product ->
-                                allProducts = product.products
-                                brandProductViewModel.setAllProducts(allProducts)
-                                setupBrandProductsRecyclerview(allProducts)
+                                brandProductViewModel.currencyRates.collect {
+                                    val currencyResponse = it.data ?: CurrencyResponse(
+                                        "",
+                                        "",
+                                        Rates(0.0, 0.0, 0.0),
+                                        true,
+                                        0
+                                    )
+
+                                    val conversionRate = when (selectedCurrency) {
+                                        "USD" -> currencyResponse.rates.USD
+                                        "EUR" -> currencyResponse.rates.EUR
+                                        "EGP" -> currencyResponse.rates.EGP
+                                        else -> 0.0
+                                    }
+                                    allProducts = product.products
+                                    brandProductViewModel.setAllProducts(allProducts)
+                                    setupBrandProductsRecyclerview(
+                                        allProducts,
+                                        currencyResponse,
+                                        conversionRate
+                                    )
+                                    setupSeekBar(currencyResponse, conversionRate)
+                                }
                             }
                         }
 
@@ -130,12 +148,32 @@ class BrandProductsFragment : Fragment() {
         }
     }
 
+    private fun setupSeekBar(currencyResponse: CurrencyResponse, conversionRate: Double) {
+        binding.seekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+            override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
+                filterProductsByPrice(progress, currencyResponse, conversionRate)
+                binding.priceTv.text = "${progress.toDouble()}$selectedCurrency"
+            }
 
-    private fun filterProductsByPrice(maxPrice: Int) {
+            override fun onStartTrackingTouch(seekBar: SeekBar?) {}
+            override fun onStopTrackingTouch(seekBar: SeekBar?) {}
+        })
+
+    }
+
+    private fun filterProductsByPrice(
+        maxPrice: Int,
+        currencyResponse: CurrencyResponse,
+        conversionRate: Double
+    ) {
+
         filteredProducts = allProducts.filter {
-            it.variants[0].price.toDouble() <= maxPrice
+            val price = it.variants[0].price.toDouble()
+            val convertedPrice = conversionRate * price
+            convertedPrice <= maxPrice
         }
-        setupBrandProductsRecyclerview(filteredProducts)
+
+        setupBrandProductsRecyclerview(filteredProducts, currencyResponse, conversionRate)
     }
 
     private fun showLoadingIndicator() {
@@ -152,7 +190,11 @@ class BrandProductsFragment : Fragment() {
         Snackbar.make(requireView(), message, Snackbar.LENGTH_SHORT).show()
     }
 
-    private fun setupBrandProductsRecyclerview(product: List<Product>) {
+    private fun setupBrandProductsRecyclerview(
+        product: List<Product>,
+        currencyResponse: CurrencyResponse,
+        conversionRate: Double
+    ) {
         val brandProductsAdapter =
             BrandProductsAdapter(product, requireContext(), { selectedProduct ->
                 val action =
@@ -161,9 +203,9 @@ class BrandProductsFragment : Fragment() {
                     )
                 findNavController().navigate(action)
             }, onFavouriteClick = { product, isFavorite ->
-                GuestUtil.handleFavoriteClick(requireContext(),sharedPreferences,product)
+                GuestUtil.handleFavoriteClick(requireContext(), sharedPreferences, product)
                 val shopifyCustomerId = sharedPreferences.getString("shopifyCustomerId", null)
-                if (shopifyCustomerId!=null) {
+                if (shopifyCustomerId != null) {
                     if (isFavorite) {
                         brandProductViewModel.addProductToFavourite(
                             product,
@@ -189,7 +231,7 @@ class BrandProductsFragment : Fragment() {
                         isFavorite
                     )
                 }
-            },sharedPreferences)
+            }, sharedPreferences, currencyResponse, selectedCurrency, conversionRate)
 
         val manager = GridLayoutManager(requireContext(), 2)
 
@@ -227,7 +269,8 @@ class BrandProductsFragment : Fragment() {
             }
 
             suggestionsAdapter.updateProducts(filteredProducts)
-            setupBrandProductsRecyclerview(filteredProducts)
+            val currencyResponse = CurrencyResponse("", "", Rates(0.0, 0.0, 0.0), true, 0)
+            setupBrandProductsRecyclerview(filteredProducts, currencyResponse, 0.0)
             binding.suggestionsRv.visibility =
                 if (searchText.isNotEmpty() && filteredProducts.isNotEmpty()) View.VISIBLE else View.GONE
         }
@@ -244,11 +287,15 @@ class BrandProductsFragment : Fragment() {
         super.onResume()
         binding.suggestionsRv.visibility = View.GONE
         binding.edSearch.text?.clear()
+        selectedCurrency = LocalDataSourceImpl.getCurrencyText(requireContext())
+        LocalDataSourceImpl.saveCurrencyText(requireContext(), selectedCurrency)
     }
+
 
     override fun onDestroy() {
         super.onDestroy()
-        (activity as MainActivity).findViewById<BottomNavigationView>(R.id.bottomNavigationView).visibility = View.VISIBLE
+        (activity as MainActivity).findViewById<BottomNavigationView>(R.id.bottomNavigationView).visibility =
+            View.VISIBLE
 
     }
 }

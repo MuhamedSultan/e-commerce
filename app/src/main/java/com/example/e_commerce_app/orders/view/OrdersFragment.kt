@@ -15,7 +15,10 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.e_commerce_app.MainActivity
 import com.example.e_commerce_app.R
 import com.example.e_commerce_app.databinding.FragmentOrdersBinding
+import com.example.e_commerce_app.db.LocalDataSourceImpl
 import com.example.e_commerce_app.db.SharedPrefsManager
+import com.example.e_commerce_app.model.currencyResponse.CurrencyResponse
+import com.example.e_commerce_app.model.currencyResponse.Rates
 import com.example.e_commerce_app.model.orders.Order
 import com.example.e_commerce_app.model.repo.ShopifyRepoImpl
 import com.example.e_commerce_app.network.RemoteDataSourceImpl
@@ -31,12 +34,14 @@ class OrdersFragment : Fragment() {
     private lateinit var binding: FragmentOrdersBinding
     private lateinit var ordersViewModel: OrdersViewModel
     private lateinit var  ordersAdapter :OrdersAdapter
+    private lateinit var selectedCurrency:String
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val remoteDataSource = RemoteDataSourceImpl()
         val repo = ShopifyRepoImpl(remoteDataSource)
         val factory = OrdersViewModelFactory(repo)
         ordersViewModel = ViewModelProvider(this, factory)[OrdersViewModel::class.java]
+        selectedCurrency = LocalDataSourceImpl.getCurrencyText(requireContext())
     }
 
     override fun onCreateView(
@@ -55,6 +60,7 @@ class OrdersFragment : Fragment() {
        val customerId= SharedPrefsManager.getInstance().getShopifyCustomerId()
         if (customerId != null) {
             ordersViewModel.getCustomerOrders(customerId.toLong())
+            ordersViewModel.fetchCurrencyRates()
         }
         lifecycleScope.launch {
             viewLifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
@@ -66,10 +72,26 @@ class OrdersFragment : Fragment() {
 
                         is ApiState.Success -> {
                             hideLoadingIndicator()
-                            Log.i("TAG", "Orders Sucess: $customerId \n${result.data?.orders}")
-                            setupOrdersRecyclerview(result.data?.orders ?: emptyList())
-                        }
+                            ordersViewModel.currencyRates.collect {
+                                val currencyResponse = it.data ?: CurrencyResponse(
+                                    "",
+                                    "",
+                                    Rates(0.0, 0.0, 0.0),
+                                    true,
+                                    0
+                                )
 
+                                val conversionRate = when (selectedCurrency) {
+                                    "USD" -> currencyResponse.rates.USD
+                                    "EUR" -> currencyResponse.rates.EUR
+                                    "EGP" -> currencyResponse.rates.EGP
+                                    else -> 0.0
+                                }
+
+
+                                setupOrdersRecyclerview(result.data?.orders ?: emptyList(),currencyResponse,conversionRate)
+                            }
+                        }
                         is ApiState.Error -> {
                             hideLoadingIndicator()
                             showError(result.message.toString())
@@ -101,11 +123,11 @@ class OrdersFragment : Fragment() {
     }
 
 
-    private fun setupOrdersRecyclerview(orders: List<Order>) {
-         ordersAdapter = OrdersAdapter(orders){selectedOrder->
+    private fun setupOrdersRecyclerview(orders: List<Order>,currencyResponse: CurrencyResponse,conversionRate:Double) {
+         ordersAdapter = OrdersAdapter(orders,{selectedOrder->
              val action=OrdersFragmentDirections.actionOrdersFragmentToOrderDetailsFragment(selectedOrder.id)
              findNavController().navigate(action)
-         }
+         },currencyResponse,selectedCurrency,conversionRate)
         val manger = LinearLayoutManager(requireContext())
         binding.orderRv.apply {
             adapter = ordersAdapter
@@ -122,4 +144,10 @@ class OrdersFragment : Fragment() {
         (activity as MainActivity).findViewById<BottomNavigationView>(R.id.bottomNavigationView).visibility = View.VISIBLE
 
     }
+    override fun onResume() {
+        super.onResume()
+        selectedCurrency = LocalDataSourceImpl.getCurrencyText(requireContext())
+        LocalDataSourceImpl.saveCurrencyText(requireContext(), selectedCurrency)
+    }
+
 }

@@ -33,6 +33,7 @@ import com.example.e_commerce_app.model.cart.DraftOrderRequest
 import com.example.e_commerce_app.model.cart.LineItems
 import com.example.e_commerce_app.model.coupon.Discount
 import com.example.e_commerce_app.model.currencyResponse.CurrencyResponse
+import com.example.e_commerce_app.model.currencyResponse.Rates
 import com.example.e_commerce_app.model.product.Product
 import com.example.e_commerce_app.model.repo.ShopifyRepoImpl
 import com.example.e_commerce_app.model.smart_collection.SmartCollection
@@ -172,7 +173,13 @@ class HomeFragment : Fragment() {
                             result.data?.let { product ->
                                 hideLoadingIndicator()
                                 homeViewModel.currencyRates.collect {
-                                    val currencyResponse = it.data!!
+                                    val currencyResponse = it.data ?:CurrencyResponse(
+                                        "",
+                                        "",
+                                        Rates(0.0, 0.0, 0.0),
+                                        true,
+                                        0
+                                    )
 
                                     val conversionRate = when (selectedCurrency) {
                                         "USD" -> currencyResponse.rates.USD
@@ -260,10 +267,10 @@ class HomeFragment : Fragment() {
                                 for (lineItem in collections.draft_order.line_items) {
                                     lineItemsList.add(
                                         LineItems(
-                                            title = lineItem.title ,
+                                            title = lineItem.title ?:"null",
                                             price = lineItem.price,
                                             quantity = lineItem.quantity,
-                                            productId = lineItem.productId?:"" ,
+                                            productId = lineItem.productId?:"null" ,
                                             variantId = lineItem.variantId
                                         )
                                     )

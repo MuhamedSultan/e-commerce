@@ -11,6 +11,7 @@ import com.bumptech.glide.Glide
 import com.example.e_commerce_app.R
 import com.example.e_commerce_app.databinding.ItemBrandProductBinding
 import com.example.e_commerce_app.db.LocalDataSourceImpl
+import com.example.e_commerce_app.model.currencyResponse.CurrencyResponse
 import com.example.e_commerce_app.model.product.Product
 
 class CategoriesProductsAdapter(
@@ -18,7 +19,10 @@ class CategoriesProductsAdapter(
     private val context: Context,
     private val onProductClick: (Product) -> (Unit),
     private val onFavouriteClick: (Product, Boolean) -> Unit,
-    private val sharedPrefs: SharedPreferences
+    private val sharedPrefs: SharedPreferences,
+    private val currencyResponse: CurrencyResponse,
+    private val selectedCurrency: String,
+    private var conversionRate:Double
 
 ) :
     Adapter<CategoriesProductsAdapter.CategoriesProductsViewHolder>() {
@@ -36,7 +40,10 @@ class CategoriesProductsAdapter(
         val product = productList[position]
         Glide.with(context).load(product.image.src).into(holder.productImage)
         holder.productName.text = product.title.split('|').getOrNull(1)?.trim() ?: ""
-        holder.productPrice.text = product.variants[0].price
+        val defaultPrice = product.variants[0].price.toDoubleOrNull() ?: 0.0
+        val convertedPrice = defaultPrice * conversionRate
+        holder.productPrice.text = String.format("%.2f %s", convertedPrice, selectedCurrency)
+
         var isFavorite = LocalDataSourceImpl.isProductFavorite(context, product.id.toString())
         holder.favouriteIcon.setImageResource(
             if (isFavorite) R.drawable.ic_favourite_fill
@@ -61,6 +68,14 @@ class CategoriesProductsAdapter(
                 ).show()
             }
         }
+
+        conversionRate = when (selectedCurrency) {
+            "USD" -> currencyResponse.rates.USD
+            "EUR" -> currencyResponse.rates.EUR
+            "EGP" -> currencyResponse.rates.EGP
+            else ->0.0
+        }
+
     }
 
     override fun getItemCount(): Int {

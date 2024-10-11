@@ -63,7 +63,7 @@
     <string name="filter">Filter</string>
     <string name="price">Price :</string>
     <string name="orderPrice">Price -</string>
-    <string name="order_number">order Number -</string>
+    <string name="order_number">order No -</string>
     <string name="created_at">Created at -</string>
     <string name="currency">EGP</string>
     <string name="orders">#Orders</string>
