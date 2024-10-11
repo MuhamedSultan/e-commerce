@@ -210,6 +210,9 @@
         <action
             android:id="@+id/action_addingCouponFragment_to_paymentFragment"
             app:destination="@id/paymentFragment" />
+        <action
+            android:id="@+id/action_addingCouponFragment_to_cartFragment"
+            app:destination="@id/cartFragment" />
     </fragment>
 
 

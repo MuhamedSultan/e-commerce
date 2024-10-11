@@ -16,6 +16,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
+import com.example.e_commerce_app.MainActivity
 import com.example.e_commerce_app.R
 import com.example.e_commerce_app.cart.DraftOrderManager
 import com.example.e_commerce_app.databinding.ActivityMainBinding
@@ -52,11 +53,13 @@ class PaymentActivity : AppCompatActivity() {
         val repo = ShopifyRepoImpl(RemoteDataSourceImpl())
         val factory = PaymentViewModelFactory(repo)
         viewModel = ViewModelProvider(this, factory)[PaymentViewModel::class.java]
-        totalPrice = intent.getDoubleExtra("TOTAL_PRICE", 0.0).toString()
+        totalPrice = intent.getStringExtra("TOTAL_PRICE")?:"1.0"
 
         payPalRepository = PayPalRepository(
-            clientID = "AQSo4-8c09dCj6c-SU8c_5dmxfpDeOqkgoRwqmI80ZxNYMuwciCLnf6k1z_X2niaNNwHPyA67OuUxQBl",
-            secretID = "ECe4BSmb5wSs57wrq-hN94TJRurRrovSPfjJqRmq1Sxdm40sx6vPU--vZIA1xXQSBSOB5nEZ3obHtKjG"
+//            clientID = "AQSo4-8c09dCj6c-SU8c_5dmxfpDeOqkgoRwqmI80ZxNYMuwciCLnf6k1z_X2niaNNwHPyA67OuUxQBl",
+//            secretID = "ECe4BSmb5wSs57wrq-hN94TJRurRrovSPfjJqRmq1Sxdm40sx6vPU--vZIA1xXQSBSOB5nEZ3obHtKjG"
+            clientID = "AVGCA-t76v87mfeQ5xe5h_yAD0xJEWWijGIDIGJ_xytjUVvp7nBZodsFpmb2PMJZX8anfBb7I1S9pgPZ",
+            secretID = "EHXdPi2SBNS427-LyCgsfjINOqh43C559f-VceKHX85zAuznxAOS60X4M6qS35Lnn39ubkGYWZQkb2hP"
         )
 
 
@@ -96,10 +99,21 @@ class PaymentActivity : AppCompatActivity() {
     private fun fetchAccessToken() {
         lifecycleScope.launch(handler) {
             try {
-                val token = payPalRepository.fetchAccessToken()
-                Toast.makeText(this@PaymentActivity, "Access Token Fetched!", Toast.LENGTH_SHORT).show()
-                // Show the "Start Order" button once the token is fetched
-                binding.confirmPaymentButton.visibility = View.VISIBLE
+                var paidStatus : Boolean = SharedPrefsManager.getInstance().getPaidStatus()
+                if (paidStatus == false) {
+                    val token = payPalRepository.fetchAccessToken()
+                    Toast.makeText(
+                        this@PaymentActivity,
+                        "Access Token Fetched!",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                    // Show the "Start Order" button once the token is fetched
+                    binding.confirmPaymentButton.visibility = View.VISIBLE
+                }else{
+                    SharedPrefsManager.getInstance().setPaidStatus(false)
+                    viewModel.CreateOrder(paymentPending = false)
+                    observeDraftOrderId()
+                }
             } catch (e: Exception) {
                 Toast.makeText(this@PaymentActivity, "Failed to fetch access token: ${e.localizedMessage}", Toast.LENGTH_SHORT).show()
             }
@@ -115,7 +129,7 @@ class PaymentActivity : AppCompatActivity() {
             purchase_units = listOf(
                 PurchaseUnit(
                     reference_id = uniqueId,
-                    amount = Amount(currency_code = "USD", value = "5.00")
+                    amount = Amount(currency_code = "USD", value = totalPrice)
                 )
             ),
             payment_source = PaymentSource(
@@ -195,6 +209,7 @@ class PaymentActivity : AppCompatActivity() {
     private fun captureOrder(token: String, payerId: String) {
         lifecycleScope.launch(handler) {
             try {
+                SharedPrefsManager.getInstance().setPaidStatus(true)
                 val capturedOrderId = payPalRepository.captureOrder(orderId, "10.00", token, payerId)
                 Toast.makeText(this@PaymentActivity, "Order Captured! ID: $capturedOrderId", Toast.LENGTH_SHORT).show()
             } catch (e: Exception) {
@@ -232,6 +247,13 @@ class PaymentActivity : AppCompatActivity() {
                                     )
                                 )
                             )
+                            /*val intent = Intent()
+                            intent.putExtra("PAYMENT_SUCCESS", true)  // Pass any relevant data
+                            setResult(RESULT_OK, intent)
+                            finish()*/
+                            val intent = Intent(this@PaymentActivity, MainActivity::class.java)
+                            startActivity(intent)
+                            finish()
                             /*val action = PaymentFragmentDirections.actionPaymentFragmentToHomeFragment()
                             findNavController().navigate(action)*/
                             Log.i("TAG", "getDraftOrderSaveInShP: ${collections.draft_order.id}")

@@ -1,5 +1,6 @@
 package com.example.e_commerce_app.cart.view
 
+import android.app.Activity
 import android.content.Intent
 import android.content.res.ColorStateList
 import android.os.Bundle
@@ -8,6 +9,8 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ViewModelProvider
@@ -39,6 +42,8 @@ class AddingCouponFragment : Fragment() {
     private lateinit var viewModel: CartViewModel
     private lateinit var CouponsList: List<PriceRule>
     private lateinit var totalPrice: String
+    private lateinit var paymentLauncher: ActivityResultLauncher<Intent>
+
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -63,6 +68,20 @@ class AddingCouponFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        paymentLauncher = registerForActivityResult(
+            ActivityResultContracts.StartActivityForResult()
+        ) { result ->
+            if (result.resultCode == Activity.RESULT_OK) {
+                // You can pass data from PaymentActivity via Intent extras
+                val paymentResult = result.data?.getBooleanExtra("PAYMENT_SUCCESS", false)
+
+                // Navigate to another fragment based on the result
+                if (paymentResult == true) {
+                    val action = AddingCouponFragmentDirections.actionAddingCouponFragmentToCartFragment()
+                    findNavController().navigate(action)
+                }
+            }
+        }
         binding.btnSubmit.setOnClickListener{
 //            val action = AddingCouponFragmentDirections.actionAddingCouponFragmentToPaymentFragment(totalPrice)
 //            findNavController().navigate(action)
