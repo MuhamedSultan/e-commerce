@@ -49,6 +49,8 @@ interface RemoteDataSource {
         addressResponse: AddressRequest
     ): ApiState<AddressResponse>
     suspend fun deleteAddress(customerId: Long, addressId: Long)
+    suspend fun updateAddress(customerId: Long, addressId: Long, addressRequest: AddressRequest)
+
 
     suspend fun createFavoriteDraft(draftOrderRequest: DraftOrderRequest): ApiState<DraftOrderResponse>
     suspend fun getProductsIdForDraftFavorite(draftFavoriteId: Long): ApiState<DraftOrderResponse>

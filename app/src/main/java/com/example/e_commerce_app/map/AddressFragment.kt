@@ -27,6 +27,7 @@ import com.example.e_commerce_app.map.AddressAdapter
 import com.example.e_commerce_app.map.viewModel.AddressViewModel
 import com.example.e_commerce_app.map.viewModel.AddressViewModelFactory
 import com.example.e_commerce_app.model.address.Address
+import com.example.e_commerce_app.model.address.AddressRequest
 import com.example.e_commerce_app.model.address.AddressResponseModel
 import com.example.e_commerce_app.model.address.testAdd
 import com.example.e_commerce_app.model.cart.DraftOrderRequest
@@ -43,6 +44,7 @@ class AddressFragment : Fragment() {
     private lateinit var adapter: AddressAdapter
     private lateinit var page: String
     private var selectedAddress: AddressResponseModel? = null
+    private var defaultAddress: AddressResponseModel? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -61,8 +63,9 @@ class AddressFragment : Fragment() {
             viewModel.getAllAddresses(customerId)
         }
 
-        adapter = AddressAdapter(viewModel) { selected ->
+        adapter = AddressAdapter(viewModel) { selected,default ->
             selectedAddress = selected
+            defaultAddress = default
         }
     }
 
@@ -91,11 +94,27 @@ class AddressFragment : Fragment() {
             if (selectedAddress != null) {
                 Log.i("TAG", "onViewCreated: $selectedAddress")
                 if (page == "setting"){
-                    Log.i("TAG", "AF: $page")
+                    viewModel.setDefaultAddress(
+                        addressId = selectedAddress!!.id,
+                        addressRequest = AddressRequest(
+                            testAdd(
+                                address1 = selectedAddress!!.address1 ?: "Unknown Address",
+                                address2 = selectedAddress!!.address2,
+                                city = selectedAddress!!.city ?: "Unknown City",
+                                country = "Canada",
+                                phone = selectedAddress!!.phone,
+                                province = "Quebec",
+                                first_name = "moahmed",
+                                last_name = "khedr",
+                                default = true
+                            )
+                        )
+                    )
+                    defaultAddress!!.default=false
+                    selectedAddress!!.default = true
+                    Toast.makeText(requireContext(),"Address Updated",Toast.LENGTH_SHORT).show()
                 }else if(page == "cart"){
                     Log.i("TAG", "AF: $page")
-//                    val action = AddressFragmentDirections.actionAddressFragmentToNextFragment(selectedAddress!!)
-//                    findNavController().navigate(action)
                     var shp = SharedPrefsManager.getInstance()
                     val draftOrderId = shp.getDraftedOrderId()
                     viewModel.addAddressToDraftOrder(

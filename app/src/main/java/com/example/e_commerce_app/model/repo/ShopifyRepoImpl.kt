@@ -118,6 +118,10 @@ class ShopifyRepoImpl(
     override suspend fun deleteAddress(customerId: Long, addressId: Long){
         return remoteDataSource.deleteAddress(customerId = customerId,addressId = addressId)
     }
+    override suspend fun updateAddress(customerId: Long, addressId: Long, addressRequest: AddressRequest){
+        return remoteDataSource.updateAddress(customerId = customerId , addressId = addressId , addressRequest = addressRequest)
+    }
+
 
     override suspend fun createFavoriteDraft(draftOrderRequest: DraftOrderRequest): ApiState<DraftOrderResponse> {
         return remoteDataSource.createFavoriteDraft(draftOrderRequest)

@@ -49,6 +49,7 @@ interface ShopifyRepo {
     suspend fun getAllAddresses(customerId: String): ApiState<AddressesResponse>
     suspend fun insertAddress(customerId: Long, addressResponse: AddressRequest): ApiState<AddressResponse>
     suspend fun deleteAddress(customerId: Long, addressId: Long)
+    suspend fun updateAddress(customerId: Long, addressId: Long, addressRequest: AddressRequest)
 
 
     suspend fun createFavoriteDraft(draftOrderRequest: DraftOrderRequest): ApiState<DraftOrderResponse>

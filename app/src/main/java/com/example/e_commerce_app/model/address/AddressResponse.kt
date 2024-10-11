@@ -22,7 +22,7 @@ data class AddressResponseModel(
     @SerializedName("customer_id")
     val customerId: Long,
     @SerializedName("default")
-    val default: Boolean? = null,
+    var default: Boolean? = null,
     @SerializedName("first_name")
     val firstName: String? = null,
     @SerializedName("id")

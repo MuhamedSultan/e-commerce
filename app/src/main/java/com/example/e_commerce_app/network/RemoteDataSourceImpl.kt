@@ -4,6 +4,7 @@ import android.util.Log
 import com.example.e_commerce_app.model.address.AddressRequest
 import com.example.e_commerce_app.model.address.AddressResponse
 import com.example.e_commerce_app.model.address.AddressesResponse
+import com.example.e_commerce_app.model.address.testAdd
 import com.example.e_commerce_app.model.cart.CartResponse
 import com.example.e_commerce_app.model.cart.DraftOrderRequest
 import com.example.e_commerce_app.model.cart.DraftOrderResponse
@@ -138,6 +139,19 @@ class RemoteDataSourceImpl : RemoteDataSource {
             return
         }
     }
+    override suspend fun updateAddress(customerId: Long, addressId: Long, addressRequest: AddressRequest){
+        return try {
+            val response = Network.shopifyService.updateAddressOfCustomer(
+                customerId = customerId,
+                addressId = addressId,
+                updatedAddress = addressRequest
+            )
+        }catch (e:Exception){
+            Log.e("TAG", "updateAddress: Failed")
+            return
+        }
+    }
+
 
 
     override suspend fun createFavoriteDraft(draftOrderRequest: DraftOrderRequest): ApiState<DraftOrderResponse> {

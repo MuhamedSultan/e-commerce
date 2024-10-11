@@ -17,14 +17,16 @@ import com.example.e_commerce_app.map.viewModel.AddressViewModel
 import com.example.e_commerce_app.model.address.Address
 import com.example.e_commerce_app.model.address.AddressResponse
 import com.example.e_commerce_app.model.address.AddressResponseModel
+import com.example.e_commerce_app.model.order_details.DefaultAddress
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.*
-class AddressAdapter(val viewModel: AddressViewModel,private val onAddressSelected: (AddressResponseModel) -> Unit) :
+class AddressAdapter(val viewModel: AddressViewModel,private val onAddressSelected: (AddressResponseModel , AddressResponseModel) -> Unit) :
     ListAdapter<AddressResponseModel, AddressAdapter.AddressHolder>(AddressDiffUtilItem()) {
 
     private var selectedPosition = RecyclerView.NO_POSITION
     lateinit var context : Context
+    lateinit var defaultAddress : AddressResponseModel
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): AddressHolder {
         context=parent.context
@@ -37,7 +39,11 @@ class AddressAdapter(val viewModel: AddressViewModel,private val onAddressSelect
     override fun onBindViewHolder(holder: AddressHolder, position: Int) {
         val address = getItem(position)
         holder.bind(address)
-
+        for (add in currentList){
+            if (add.default==true){
+                defaultAddress = add
+            }
+        }
         // Highlight the selected address
         holder.binding.root.isSelected = selectedPosition == position
 
@@ -49,7 +55,7 @@ class AddressAdapter(val viewModel: AddressViewModel,private val onAddressSelect
             notifyItemChanged(selectedPosition)  // Highlight the new selection
 
             // Trigger the selection callback
-            onAddressSelected(address)
+            onAddressSelected(address,defaultAddress)
         }
         holder.binding.btnDeleteAddress.setOnClickListener {
             if(address.default == true) {

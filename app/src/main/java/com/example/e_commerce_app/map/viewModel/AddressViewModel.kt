@@ -63,9 +63,12 @@ class AddressViewModel(val repo: ShopifyRepo) : ViewModel() {
     }
 
     fun deleteAddress(addressId: Long) = viewModelScope.launch(Dispatchers.IO) {
-        Log.i("TAG", "deleteAddress: in vm")
         var customerId = SharedPrefsManager.getInstance().getShopifyCustomerId()?.toLong()?:0
-        Log.i("TAG", "customerId: $customerId\naddressId : $addressId")
-        repo.deleteAddress(customerId = customerId,addressId = addressId)
+        repo.deleteAddress(customerId = customerId , addressId = addressId)
+    }
+
+    fun setDefaultAddress(addressId: Long, addressRequest: AddressRequest) = viewModelScope.launch(Dispatchers.IO) {
+        var customerId = SharedPrefsManager.getInstance().getShopifyCustomerId()?.toLong()?:0
+        repo.updateAddress(customerId = customerId , addressId = addressId , addressRequest = addressRequest)
     }
 }

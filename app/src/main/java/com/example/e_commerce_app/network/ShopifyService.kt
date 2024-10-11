@@ -110,7 +110,7 @@ interface ShopifyService {
         @Query("payment_pending") paymentPending: Boolean
     ): DraftOrderResponse
 
-    @PUT("customers/{customerId}/addresses/{addressId}")
+    @PUT("customers/{customerId}/addresses/{addressId}.json")
     suspend fun updateAddressOfCustomer(
         @Path("customerId") customerId: Long,
         @Path("addressId") addressId: Long,
