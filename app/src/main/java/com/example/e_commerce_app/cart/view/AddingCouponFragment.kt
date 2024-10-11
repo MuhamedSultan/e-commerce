@@ -87,7 +87,7 @@ class AddingCouponFragment : Fragment() {
 //            findNavController().navigate(action)
             // Create an Intent to start PaymentActivity
             val intent = Intent(requireContext(), PaymentActivity::class.java)
-
+            SharedPrefsManager.getInstance().setPaidStatus(false)
             // You can pass the totalPrice as an extra to the intent
             intent.putExtra("TOTAL_PRICE", totalPrice)
 

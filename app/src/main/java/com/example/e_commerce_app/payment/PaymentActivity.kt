@@ -107,6 +107,7 @@ class PaymentActivity : AppCompatActivity() {
                         "Access Token Fetched!",
                         Toast.LENGTH_SHORT
                     ).show()
+                    SharedPrefsManager.getInstance().setPaidStatus(true)
                     // Show the "Start Order" button once the token is fetched
                     binding.confirmPaymentButton.visibility = View.VISIBLE
                 }else{
@@ -157,7 +158,6 @@ class PaymentActivity : AppCompatActivity() {
                 if (!approvalLink.isNullOrEmpty()) {
                     Log.i(TAG, "Approval Link: $approvalLink")
                     // Redirect the user to the approval link
-                    SharedPrefsManager.getInstance().setPaidStatus(true)
                     openApprovalUrl(approvalLink)
                 } else {
                     Log.e(TAG, "Approval link not found in the response.")
