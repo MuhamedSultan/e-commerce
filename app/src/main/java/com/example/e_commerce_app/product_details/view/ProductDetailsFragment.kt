@@ -133,7 +133,7 @@ class ProductDetailsFragment : Fragment() {
                                 }
                             }
                             progressBar.visibility = View.GONE
-                        } ?: showError("Product data is null")
+                        }
                     }
 
                     is ApiState.Error -> {
@@ -184,6 +184,8 @@ class ProductDetailsFragment : Fragment() {
                     draftOrderId = draftOrderId ?: 0
                 )
                 observeViewModel()
+                Toast.makeText(context, "Added to cart successfully", Toast.LENGTH_SHORT)
+                    .show()
             } else {
                 Toast.makeText(context, "No variant available for this product", Toast.LENGTH_SHORT)
                     .show()
