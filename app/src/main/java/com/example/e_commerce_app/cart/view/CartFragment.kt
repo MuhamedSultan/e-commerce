@@ -82,7 +82,14 @@ class CartFragment : Fragment() {
 
                         is ApiState.Success -> {
                             result.data?.let { collections ->
-                                updateCartUI(collections)
+                                if (collections.draft_order.line_items.size==1) {
+                                    binding.emptyCart.visibility = View.VISIBLE
+                                    binding.cartLayout.visibility = View.GONE
+                                }else{
+                                    binding.emptyCart.visibility = View.GONE
+                                    binding.cartLayout.visibility = View.VISIBLE
+                                    updateCartUI(collections)
+                                }
                             }
                         }
 

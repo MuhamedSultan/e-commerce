@@ -5,6 +5,7 @@ import android.os.Build
 import android.telephony.PhoneNumberUtils
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
@@ -20,8 +21,10 @@ class AddressAdapter(private val onAddressSelected: (AddressResponseModel) -> Un
     ListAdapter<AddressResponseModel, AddressAdapter.AddressHolder>(AddressDiffUtilItem()) {
 
     private var selectedPosition = RecyclerView.NO_POSITION
+    lateinit var context : Context
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): AddressHolder {
+        context=parent.context
         val inflater: LayoutInflater =
             parent.context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
         val binding = ItemAddressBinding.inflate(inflater, parent, false)
@@ -44,6 +47,14 @@ class AddressAdapter(private val onAddressSelected: (AddressResponseModel) -> Un
 
             // Trigger the selection callback
             onAddressSelected(address)
+
+            holder.binding.btnDeleteAddress.setOnClickListener {
+                if(address.default == true) {
+                    Toast.makeText(context , "Can't delete Default Address" , Toast.LENGTH_SHORT).show()
+                }else{
+                    removeItem(holder.adapterPosition)
+                }
+            }
         }
     }
 
@@ -64,7 +75,13 @@ class AddressAdapter(private val onAddressSelected: (AddressResponseModel) -> Un
             return oldItem == newItem
         }
     }
+    private fun removeItem(position: Int) {
+        val mutableList = currentList.toMutableList()
+        mutableList.removeAt(position)
+        submitList(mutableList)  // Submit updated list to the adapter
+    }
 }
+
 
 /*class AddressAdapter() :
     ListAdapter<AddressResponseModel, AddressAdapter.AddressHolder>(AddressDiffUtilItem()) {
