@@ -64,6 +64,8 @@ class HomeFragment : Fragment() {
         val repo = ShopifyRepoImpl(remoteDataSource, localDataSource)
         val factory = HomeViewModelFactory(repo)
         homeViewModel = ViewModelProvider(this, factory)[HomeViewModel::class.java]
+        selectedCurrency = LocalDataSourceImpl.getCurrencyText(requireContext())
+
     }
 
     override fun onCreateView(

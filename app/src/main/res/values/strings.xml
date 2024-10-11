@@ -70,6 +70,6 @@
     <string name="view_all">View all</string>
     <string name="orderId">order No.</string>
     <string name="st_store">ST Store</string>
-    <string name="payment_status">payment Status</string>
+    <string name="payment_status">payment Status -</string>
 
 </resources>
