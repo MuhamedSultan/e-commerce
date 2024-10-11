@@ -87,7 +87,7 @@ class OrderDetailsFragment : Fragment() {
 
                                 binding.location.text =
                                     order?.billing_address?.address1 + ", " +
-                                            order?.billing_address?.city + ", " + order?.billing_address?.country
+                                            order?.billing_address?.address2
                                 binding.paymentStatus.text=order?.financial_status
 
 
