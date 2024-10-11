@@ -63,6 +63,7 @@ class SettingFragment : Fragment() {
             binding.ordersSettingLayout.visibility = View.VISIBLE
             binding.favoritesSettingLayout.visibility = View.VISIBLE
             binding.addressSettingLayout.visibility = View.VISIBLE
+            binding.currencySettingLayout.visibility = View.VISIBLE
             binding.ivProfilePicture.visibility = View.VISIBLE
             binding.view.visibility = View.VISIBLE
             binding.view2.visibility = View.VISIBLE
@@ -73,6 +74,7 @@ class SettingFragment : Fragment() {
             binding.ordersSettingLayout.visibility = View.GONE
             binding.favoritesSettingLayout.visibility = View.GONE
             binding.addressSettingLayout.visibility = View.GONE
+            binding.currencySettingLayout.visibility = View.GONE
             binding.ivProfilePicture.visibility = View.INVISIBLE
             binding.view.visibility = View.GONE
             binding.view2.visibility = View.GONE
