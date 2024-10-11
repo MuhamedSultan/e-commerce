@@ -7,6 +7,6 @@ import retrofit2.http.Query
 interface CurrencyService {
     @GET("latest")
     suspend fun getExchangeRates(
-        @Query("access_key") accessKey: String="54a08e7a53416df4d065f28c95affe32",
+        @Query("access_key") accessKey: String="c5bec40815ad06c0ce20f8b56b690ebf",
     ): CurrencyResponse
 }
