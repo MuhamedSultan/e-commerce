@@ -161,8 +161,10 @@ class FakeShopifyRepository : ShopifyRepo {
         return ApiState.Error("Not implemented")
     }
     override suspend fun getBrandProducts(brandName: String): ApiState<ProductResponse> {
-        return ApiState.Error("Not implemented")
-    }
+        return ApiState.Success(ProductResponse(
+            listOf( Product(id= 9828915151163,
+            title= "ASICS TIGER | GEL-LYTE V '30 YEARS OF GEL' PACK",))))
+        }
     override suspend fun signInUser(email: String, password: String): ApiState<UserData> {
         return signInUserResult ?: ApiState.Error("No result set")
     }

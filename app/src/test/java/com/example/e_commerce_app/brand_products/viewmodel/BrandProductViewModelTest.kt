@@ -4,17 +4,24 @@ import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import com.example.e_commerce_app.data.source.FakeShopifyRepository
 import com.example.e_commerce_app.model.product.Product
 import com.example.e_commerce_app.model.product.ProductResponse
+import com.example.e_commerce_app.model.smart_collection.SmartCollection
+import com.example.e_commerce_app.util.ApiState
+import getOrAwaitValue
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.test.runBlockingTest
+import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
 import org.hamcrest.CoreMatchers.`is`
+import org.hamcrest.CoreMatchers.notNullValue
+import org.hamcrest.CoreMatchers.nullValue
 import org.hamcrest.MatcherAssert.assertThat
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
+import javax.annotation.Nonnull
 
 
-class BrandProductViewModelTest{
+class BrandProductViewModelTest {
     @get:Rule
     var instantTaskExecutorRule = InstantTaskExecutorRule()
 
@@ -63,5 +70,13 @@ class BrandProductViewModelTest{
         assertThat(favorites.size, `is`(0))
     }
 
-
+    @Test
+    fun `getBrandProducts should update brandProductResult when data is available`() = runTest {
+        // when calling getBrandProduct
+        val brandName = "ASICS TIGER"
+        brandProductViewModel.getBrandProducts(brandName)
+        // then assert that brand product result
+        val result = brandProductViewModel.brandProductResult.getOrAwaitValue {}
+        assertThat(result, notNullValue())
+    }
 }
