@@ -7,6 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.ProgressBar
 import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
@@ -54,6 +55,7 @@ class ProductDetailsFragment : Fragment() {
     private lateinit var sharedPreferences: SharedPreferences
     private var conversionRate: Double? = 0.0
     private lateinit var selectedCurrency: String
+    private lateinit var progressBar: ProgressBar
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -92,6 +94,7 @@ class ProductDetailsFragment : Fragment() {
         productId?.let {
             viewModel.fetchProductDetails(it)
         }
+        progressBar = view.findViewById(R.id.progressBar2)
 
         observeViewModel()
 
@@ -103,6 +106,9 @@ class ProductDetailsFragment : Fragment() {
             viewModel.productState.collect { state ->
                 when (state) {
                     is ApiState.Success -> {
+
+                        progressBar.visibility = View.GONE
+
                         state.data?.let { product ->
                             viewModel.currencyRates.collect { ratesState ->
                                 when (ratesState) {
@@ -113,6 +119,8 @@ class ProductDetailsFragment : Fragment() {
                                             "EGP" -> ratesState.data?.rates?.EGP
                                             else -> 0.0
                                         }
+                                        progressBar.visibility = View.GONE
+
                                         updateUI(product)
                                     }
                                     is ApiState.Error ->{}
@@ -120,15 +128,18 @@ class ProductDetailsFragment : Fragment() {
                                     }
                                 }
                             }
+                            progressBar.visibility = View.GONE
                         } ?: showError("Product data is null")
                     }
 
                     is ApiState.Error -> {
+                        progressBar.visibility = View.GONE
                         val errorMessage = state.message ?: "An unknown error occurred"
                         showError(errorMessage)
                     }
 
                     is ApiState.Loading -> {
+                        progressBar.visibility = View.VISIBLE
                     }
                 }
             }
