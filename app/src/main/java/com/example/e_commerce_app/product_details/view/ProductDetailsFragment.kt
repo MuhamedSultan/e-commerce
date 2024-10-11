@@ -2,13 +2,10 @@ package com.example.e_commerce_app.product_details.view
 
 import android.content.SharedPreferences
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
 import android.widget.ProgressBar
-import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Lifecycle
@@ -17,17 +14,13 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
-import androidx.viewpager2.widget.ViewPager2
 import com.example.e_commerce_app.MainActivity
 import com.example.e_commerce_app.R
 import com.example.e_commerce_app.cart.DraftOrderManager
+import com.example.e_commerce_app.databinding.FragmentProductDetailsBinding
 import com.example.e_commerce_app.db.LocalDataSourceImpl
 import com.example.e_commerce_app.db.SharedPrefsManager
 import com.example.e_commerce_app.db.ShopifyDB
-import com.example.e_commerce_app.model.cart.CustomerId
-import com.example.e_commerce_app.model.cart.DraftOrder
-import com.example.e_commerce_app.model.cart.DraftOrderRequest
 import com.example.e_commerce_app.model.cart.LineItems
 import com.example.e_commerce_app.model.product.Product
 import com.example.e_commerce_app.model.repo.ShopifyRepoImpl
@@ -49,13 +42,11 @@ class ProductDetailsFragment : Fragment() {
     private lateinit var colorAdapter: ColorAdapter
     private lateinit var sizeAdapter: SizeAdapter
     private lateinit var imageAdapter: ImageAdapter
-    private lateinit var colorRecyclerView: RecyclerView
-    private lateinit var sizeRecyclerView: RecyclerView
-    private lateinit var imageViewPager: ViewPager2
     private lateinit var sharedPreferences: SharedPreferences
     private var conversionRate: Double? = 0.0
     private lateinit var selectedCurrency: String
     private lateinit var progressBar: ProgressBar
+    private lateinit var binding: FragmentProductDetailsBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -74,41 +65,55 @@ class ProductDetailsFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        val view = inflater.inflate(R.layout.fragment_product_details, container, false)
+    ): View {
+        binding = FragmentProductDetailsBinding.inflate(inflater, container, false)
 
         (activity as MainActivity).findViewById<BottomNavigationView>(R.id.bottomNavigationView).visibility =
             View.GONE
+
         selectedCurrency = LocalDataSourceImpl.getCurrencyText(requireContext())
-
         LocalDataSourceImpl.saveCurrencyText(requireContext(), selectedCurrency)
-        colorRecyclerView = view.findViewById(R.id.productColorRecyclerView)
-        sizeRecyclerView = view.findViewById(R.id.productSizeRecyclerView)
-        imageViewPager = view.findViewById(R.id.productImageViewPager)
 
-        colorRecyclerView.layoutManager =
+        binding.productColorRecyclerView.layoutManager =
             LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
-        sizeRecyclerView.layoutManager =
+        binding.productSizeRecyclerView.layoutManager =
             LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
+        binding.productImageViewPager.setPageTransformer(ZoomOutPageTransformer())
 
-        productId?.let {
-            viewModel.fetchProductDetails(it)
-        }
-        progressBar = view.findViewById(R.id.progressBar2)
+        productId?.let { viewModel.fetchProductDetails(it) }
+
+        progressBar = binding.progressBar2
 
         observeViewModel()
 
-        return view
+        return binding.root
     }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        observeViewModel()
+        viewModel.fetchCurrencyRates()
+        lifecycleScope.launch {
+            viewLifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.currencyRates.collect {
+                    conversionRate = when (selectedCurrency) {
+                        "USD" -> it.data?.rates?.USD
+                        "EUR" -> it.data?.rates?.EUR
+                        "EGP" -> it.data?.rates?.EGP
+                        else -> null
+                    }
+                }
+            }
+        }
+    }
+
 
     private fun observeViewModel() {
         lifecycleScope.launch {
             viewModel.productState.collect { state ->
                 when (state) {
                     is ApiState.Success -> {
-
                         progressBar.visibility = View.GONE
-
                         state.data?.let { product ->
                             viewModel.currencyRates.collect { ratesState ->
                                 when (ratesState) {
@@ -120,12 +125,11 @@ class ProductDetailsFragment : Fragment() {
                                             else -> 0.0
                                         }
                                         progressBar.visibility = View.GONE
-
                                         updateUI(product)
                                     }
-                                    is ApiState.Error ->{}
-                                    is ApiState.Loading ->{
-                                    }
+
+                                    is ApiState.Error -> {}
+                                    is ApiState.Loading -> {}
                                 }
                             }
                             progressBar.visibility = View.GONE
@@ -146,29 +150,21 @@ class ProductDetailsFragment : Fragment() {
         }
     }
 
-
     private fun updateUI(product: Product) {
-        view?.findViewById<TextView>(R.id.productTitle)?.text = product.title
-        view?.findViewById<TextView>(R.id.productDescription)?.text = product.body_html
+        binding.productTitle.text = product.title
+        binding.productDescription.text = product.body_html
         val price = product.variants.firstOrNull()?.price?.toDoubleOrNull() ?: 0.0
         val convertedPrice = conversionRate?.let { price * it } ?: price
-
         val formattedPrice = String.format("%.2f", convertedPrice)
-        view?.findViewById<TextView>(R.id.productPrice)?.text = "$formattedPrice $selectedCurrency"
-        val seeRatingTextView = view?.findViewById<TextView>(R.id.seeRating)
+        binding.productPrice.text = "$formattedPrice $selectedCurrency"
 
-        val addToCartButton = view?.findViewById<Button>(R.id.btn_add_to_cart)
-
-        val favoriteButton = view?.findViewById<Button>(R.id.btn_add_to_favorite)
-
-        seeRatingTextView?.setOnClickListener {
+        binding.seeRating.setOnClickListener {
             val action =
                 ProductDetailsFragmentDirections.actionProductDetailsFragmentToRatingFragment()
             findNavController().navigate(action)
         }
 
-
-        addToCartButton?.setOnClickListener {
+        binding.btnAddToCart.setOnClickListener {
             val variant = product.variants.firstOrNull()
             if (variant != null) {
                 val lineItem = LineItems(
@@ -178,7 +174,7 @@ class ProductDetailsFragment : Fragment() {
                     productId = product.id.toString(),
                     variantId = variant.id.toString(),
                 )
-                var shp = SharedPrefsManager.getInstance()
+                val shp = SharedPrefsManager.getInstance()
                 val customerId = shp.getShopifyCustomerId()
                 val draftOrderId = shp.getDraftedOrderId()
                 viewModel.addProductToDraftOrder(
@@ -188,51 +184,28 @@ class ProductDetailsFragment : Fragment() {
                     draftOrderId = draftOrderId ?: 0
                 )
                 observeViewModel()
-                /*val shopifyCustomerId = sharedPreferences.getString("shopifyCustomerId", null)
-                val customerDraftRequest = if (shopifyCustomerId != null) {
-                    CustomerDraftRequest(id = shopifyCustomerId.toLong())
-                } else {
-                    CustomerDraftRequest(id = -1)
-                }
-
-                val draftOrderDetailsRequest = DraftOrderDetailsRequest(
-                    line_items = listOf(lineItem),
-                    customer = customerDraftRequest
-                )
-
-                val draftOrderRequest = DraftOrderRequest(
-                    draft_order = draftOrderDetailsRequest
-                )
-                lifecycleScope.launch {
-                    //viewModel.addToCart(draftOrderRequest)
-                    Toast.makeText(context, "Product added to cart", Toast.LENGTH_SHORT).show()
-                    Log.d("ProductDetailsFragment", "Product added to cart: ${product.title}")
-                }*/
             } else {
                 Toast.makeText(context, "No variant available for this product", Toast.LENGTH_SHORT)
                     .show()
             }
         }
 
-
         lifecycleScope.launch {
             val shopifyCustomerId = sharedPreferences.getString("shopifyCustomerId", null)
-
             if (shopifyCustomerId != null) {
                 val isFavorite = viewModel.isProductFavorite(product.id, shopifyCustomerId)
-                favoriteButton?.setBackgroundResource(if (isFavorite) R.drawable.ic_favourite_fill else R.drawable.ic_favourite_border)
+                binding.btnAddToFavorite.setBackgroundResource(if (isFavorite) R.drawable.ic_favourite_fill else R.drawable.ic_favourite_border)
             }
 
-            favoriteButton?.setOnClickListener {
+            binding.btnAddToFavorite.setOnClickListener {
                 lifecycleScope.launch {
                     val shopifyCustomerId = sharedPreferences.getString("shopifyCustomerId", null)
                     if (shopifyCustomerId != null) {
-
                         val isCurrentlyFavorite =
                             viewModel.isProductFavorite(product.id, shopifyCustomerId)
                         if (isCurrentlyFavorite) {
                             viewModel.removeFavorite(product, shopifyCustomerId)
-                            favoriteButton.setBackgroundResource(R.drawable.ic_favourite_border)
+                            binding.btnAddToFavorite.setBackgroundResource(R.drawable.ic_favourite_border)
                             Toast.makeText(context, "Removed from favorites", Toast.LENGTH_SHORT)
                                 .show()
                             LocalDataSourceImpl.setProductFavoriteStatus(
@@ -242,7 +215,7 @@ class ProductDetailsFragment : Fragment() {
                             )
                         } else {
                             viewModel.addToFavorite(product, shopifyCustomerId)
-                            favoriteButton.setBackgroundResource(R.drawable.ic_favourite_fill)
+                            binding.btnAddToFavorite.setBackgroundResource(R.drawable.ic_favourite_fill)
                             Toast.makeText(context, "Added to favorites", Toast.LENGTH_SHORT).show()
                             LocalDataSourceImpl.setProductFavoriteStatus(
                                 requireContext(),
@@ -261,55 +234,29 @@ class ProductDetailsFragment : Fragment() {
             }
         }
 
-
         val colors = product.options.find { it.name == "Color" }?.values ?: emptyList()
         val sizes = product.options.find { it.name == "Size" }?.values ?: emptyList()
 
         colorAdapter = ColorAdapter(colors)
         sizeAdapter = SizeAdapter(sizes)
 
-        colorRecyclerView.adapter = colorAdapter
-        sizeRecyclerView.adapter = sizeAdapter
+        binding.productColorRecyclerView.adapter = colorAdapter
+        binding.productSizeRecyclerView.adapter = sizeAdapter
 
         val images = product.images
         imageAdapter = ImageAdapter(images)
 
-        imageViewPager.adapter = imageAdapter
-        imageViewPager.setPageTransformer(ZoomOutPageTransformer())
+        binding.productImageViewPager.adapter = imageAdapter
     }
 
     private fun showError(message: String) {
         Toast.makeText(context, message, Toast.LENGTH_LONG).show()
     }
 
-    private fun isProductFavorite(productId: Long, shopifyCustomerId: String): Boolean {
-        return false
-    }
-
     override fun onDestroy() {
         super.onDestroy()
         (activity as MainActivity).findViewById<BottomNavigationView>(R.id.bottomNavigationView).visibility =
             View.VISIBLE
-
-    }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        observeViewModel()
-        viewModel.fetchCurrencyRates()
-        lifecycleScope.launch {
-            viewLifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.currencyRates.collect {
-                    conversionRate = when (selectedCurrency) {
-                        "USD" -> it.data?.rates?.USD
-                        "EUR" -> it.data?.rates?.EUR
-                        "EGP" -> it.data?.rates?.EGP
-                        else -> null
-                    }
-                }
-
-            }
-        }
     }
 
 }
