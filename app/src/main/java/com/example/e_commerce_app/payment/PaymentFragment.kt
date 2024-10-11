@@ -108,7 +108,7 @@ class PaymentFragment : Fragment() {
         // Create a payment
         val payment = PayPalPayment(
             BigDecimal(totalPrice), "USD", "Sample Item",
-            PayPalPayment.PAYMENT_INTENT_SALE)
+            PayPalPayment.PAYMENT_INTENT_ORDER)
 
         // Create intent to start PaymentActivity
         val intent = Intent(context, PaymentActivity::class.java)
