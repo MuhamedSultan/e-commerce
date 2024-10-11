@@ -20,6 +20,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.airbnb.lottie.LottieAnimationView
 import com.example.e_commerce_app.MainActivity
 import com.example.e_commerce_app.R
+import com.example.e_commerce_app.databinding.FragmentFavoriteBinding
 import com.example.e_commerce_app.db.LocalDataSourceImpl
 import com.example.e_commerce_app.db.ShopifyDB
 import com.example.e_commerce_app.favorite.adapter.FavoriteAdapter
@@ -30,13 +31,10 @@ import kotlinx.coroutines.flow.collectLatest
 
 class FavoriteFragment : Fragment() {
     private lateinit var favoriteAdapter: FavoriteAdapter
-    private lateinit var recyclerView: RecyclerView
-    private lateinit var imageView: ImageView
-    private lateinit var textView: TextView
     private lateinit var sharedPreferences: SharedPreferences
     private var shopifyCustomerId: String? = null
     private lateinit var lottieView: LottieAnimationView
-
+    private lateinit var binding: FragmentFavoriteBinding
     private val favoriteViewModel: FavoriteViewModel by viewModels {
         FavoriteViewModelFactory(
             ShopifyRepoImpl(
@@ -55,50 +53,48 @@ class FavoriteFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        val view = inflater.inflate(R.layout.fragment_favorite, container, false)
-        (activity as MainActivity).findViewById<BottomNavigationView>(R.id.bottomNavigationView).visibility = View.GONE
+    ): View {
+        binding = FragmentFavoriteBinding.inflate(inflater, container, false)
 
-        setupRecyclerView(view)
+        (activity as MainActivity).findViewById<BottomNavigationView>(R.id.bottomNavigationView).visibility =
+            View.GONE
+
+        setupRecyclerView()
         observeFavorites()
-        lottieView = view.findViewById(R.id.lottieView)
+        lottieView = binding.lottieView
 
-
-        val shopifyCustomerId = sharedPreferences.getString("shopifyCustomerId", null)
-        if (shopifyCustomerId != null) {
-            favoriteViewModel.getAllFavorites(shopifyCustomerId)
+        shopifyCustomerId?.let { id ->
+            favoriteViewModel.getAllFavorites(id)
         }
 
-//        imageView = view.findViewById(R.id.imageView4)
-        textView = view.findViewById(R.id.textView)
-
-        return view
+        return binding.root
     }
 
     private fun observeFavorites() {
         viewLifecycleOwner.lifecycleScope.launchWhenStarted {
             favoriteViewModel.favorites.collectLatest { favoriteProducts ->
+
                 favoriteAdapter.submitList(favoriteProducts)
 
                 if (favoriteProducts.isEmpty()) {
-                    recyclerView.visibility = View.GONE
+                    binding.recyclerView.visibility =
+                        View.GONE
                     lottieView.visibility = View.VISIBLE
                     lottieView.playAnimation()
-                    textView.visibility = View.VISIBLE
+                    binding.textView.visibility = View.VISIBLE
                 } else {
-                    recyclerView.visibility = View.VISIBLE
+                    binding.recyclerView.visibility =
+                        View.VISIBLE
                     lottieView.visibility = View.GONE
-                    textView.visibility = View.GONE
+                    binding.textView.visibility = View.GONE
                 }
             }
         }
     }
 
-    private fun setupRecyclerView(view: View) {
-        recyclerView = view.findViewById(R.id.recyclerView)
+    private fun setupRecyclerView() {
         favoriteAdapter = FavoriteAdapter(
             onDeleteClick = { product ->
-                // Pass shopifyCustomerId to removeFavorite only if it is not null
                 shopifyCustomerId?.let { id ->
                     favoriteViewModel.removeFavorite(product, id)
                     LocalDataSourceImpl.setProductFavoriteStatus(
@@ -106,7 +102,6 @@ class FavoriteFragment : Fragment() {
                         product.id.toString(),
                         false
                     )
-
                 }
             },
             onProductClick = { productId ->
@@ -116,8 +111,7 @@ class FavoriteFragment : Fragment() {
             }
         )
 
-        recyclerView.apply {
-
+        binding.recyclerView.apply {
             layoutManager = LinearLayoutManager(context)
             adapter = favoriteAdapter
         }
@@ -125,7 +119,7 @@ class FavoriteFragment : Fragment() {
 
     override fun onDestroy() {
         super.onDestroy()
-        (activity as MainActivity).findViewById<BottomNavigationView>(R.id.bottomNavigationView).visibility = View.VISIBLE
-
+        (activity as MainActivity).findViewById<BottomNavigationView>(R.id.bottomNavigationView).visibility =
+            View.VISIBLE
     }
 }
