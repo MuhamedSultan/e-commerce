@@ -61,7 +61,7 @@ class AddressFragment : Fragment() {
             viewModel.getAllAddresses(customerId)
         }
 
-        adapter = AddressAdapter { selected ->
+        adapter = AddressAdapter(viewModel) { selected ->
             selectedAddress = selected
         }
     }

@@ -7,17 +7,20 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.annotation.RequiresApi
+import androidx.lifecycle.ViewModel
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.example.e_commerce_app.cart.viewmodel.CartViewModel
 import com.example.e_commerce_app.databinding.ItemAddressBinding
+import com.example.e_commerce_app.map.viewModel.AddressViewModel
 import com.example.e_commerce_app.model.address.Address
 import com.example.e_commerce_app.model.address.AddressResponse
 import com.example.e_commerce_app.model.address.AddressResponseModel
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.*
-class AddressAdapter(private val onAddressSelected: (AddressResponseModel) -> Unit) :
+class AddressAdapter(val viewModel: AddressViewModel,private val onAddressSelected: (AddressResponseModel) -> Unit) :
     ListAdapter<AddressResponseModel, AddressAdapter.AddressHolder>(AddressDiffUtilItem()) {
 
     private var selectedPosition = RecyclerView.NO_POSITION
@@ -47,13 +50,12 @@ class AddressAdapter(private val onAddressSelected: (AddressResponseModel) -> Un
 
             // Trigger the selection callback
             onAddressSelected(address)
-
-            holder.binding.btnDeleteAddress.setOnClickListener {
-                if(address.default == true) {
-                    Toast.makeText(context , "Can't delete Default Address" , Toast.LENGTH_SHORT).show()
-                }else{
-                    removeItem(holder.adapterPosition)
-                }
+        }
+        holder.binding.btnDeleteAddress.setOnClickListener {
+            if(address.default == true) {
+                Toast.makeText(context , "Can't delete Default Address" , Toast.LENGTH_SHORT).show()
+            }else{
+                removeItem(holder.adapterPosition)
             }
         }
     }
@@ -77,6 +79,7 @@ class AddressAdapter(private val onAddressSelected: (AddressResponseModel) -> Un
     }
     private fun removeItem(position: Int) {
         val mutableList = currentList.toMutableList()
+        viewModel.deleteAddress(mutableList.get(position).id)
         mutableList.removeAt(position)
         submitList(mutableList)  // Submit updated list to the adapter
     }

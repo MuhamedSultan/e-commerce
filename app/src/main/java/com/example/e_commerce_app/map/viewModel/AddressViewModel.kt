@@ -3,6 +3,7 @@ package com.example.e_commerce_app.map.viewModel
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.e_commerce_app.db.SharedPrefsManager
 import com.example.e_commerce_app.model.address.AddressRequest
 import com.example.e_commerce_app.model.address.AddressResponse
 import com.example.e_commerce_app.model.address.AddressesResponse
@@ -59,5 +60,12 @@ class AddressViewModel(val repo: ShopifyRepo) : ViewModel() {
             is ApiState.Loading -> TODO()
         }
 
+    }
+
+    fun deleteAddress(addressId: Long) = viewModelScope.launch(Dispatchers.IO) {
+        Log.i("TAG", "deleteAddress: in vm")
+        var customerId = SharedPrefsManager.getInstance().getShopifyCustomerId()?.toLong()?:0
+        Log.i("TAG", "customerId: $customerId\naddressId : $addressId")
+        repo.deleteAddress(customerId = customerId,addressId = addressId)
     }
 }

@@ -130,6 +130,15 @@ class RemoteDataSourceImpl : RemoteDataSource {
             ApiState.Error(e.message.toString())
         }
     }
+    override suspend fun deleteAddress(customerId: Long, addressId: Long){
+        return try {
+            val response = Network.shopifyService.deleteAddressOfCustomer(customerId,addressId)
+        }catch (e:Exception){
+            Log.e("TAG", "deleteAddress: Failed")
+            return
+        }
+    }
+
 
     override suspend fun createFavoriteDraft(draftOrderRequest: DraftOrderRequest): ApiState<DraftOrderResponse> {
         return try {

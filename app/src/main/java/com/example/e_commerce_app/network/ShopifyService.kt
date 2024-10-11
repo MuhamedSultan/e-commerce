@@ -117,7 +117,7 @@ interface ShopifyService {
         @Body updatedAddress: AddressRequest
     ): Response<AddressResponse>
 
-    @DELETE("customers/{customerId}/addresses/{addressId}")
+    @DELETE("customers/{customerId}/addresses/{addressId}.json")
     suspend fun deleteAddressOfCustomer(
         @Path("customerId") customerId: Long,
         @Path("addressId") addressId: Long
