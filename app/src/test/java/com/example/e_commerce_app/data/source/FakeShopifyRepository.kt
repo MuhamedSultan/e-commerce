@@ -17,6 +17,7 @@ import com.example.e_commerce_app.model.cart.CustomerId
 import com.example.e_commerce_app.model.cart.DraftOrder
 import com.example.e_commerce_app.model.cart.LineItems
 import com.example.e_commerce_app.model.cart.PriceRuleResponse
+import com.example.e_commerce_app.model.currencyResponse.CurrencyResponse
 import com.example.e_commerce_app.model.custom_collection.CustomCollection
 import com.example.e_commerce_app.model.order_details.OrderDetailsResponse
 import com.example.e_commerce_app.model.orders.CustomerOrders
@@ -366,9 +367,13 @@ class FakeShopifyRepository : ShopifyRepo {
         return ApiState.Success(DraftOrderResponse(draft_order = testDraftOrderDetails))
     }
 
-    override suspend fun addOrderFromDraftOrder(draftFavoriteId: Long): ApiState<DraftOrderResponse> {
+    override suspend fun addOrderFromDraftOrder(
+        draftFavoriteId: Long,
+        paymentPending: Boolean
+    ): ApiState<DraftOrderResponse> {
         TODO("Not yet implemented")
     }
+
 
     override suspend fun backUpDraftFavorite(
         draftOrderRequest: DraftOrderRequest,
@@ -460,6 +465,10 @@ class FakeShopifyRepository : ShopifyRepo {
     }
 
     override suspend fun getAllCoupons(): ApiState<PriceRuleResponse> {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun exchangeRate(): ApiState<CurrencyResponse> {
         TODO("Not yet implemented")
     }
 }
