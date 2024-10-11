@@ -81,6 +81,7 @@ class OrderDetailsFragment : Fragment() {
                                 }
 
                                 val order = result.data?.orders?.get(0)
+                                val productImage = (order?.note ?: "").split("|##|").filter { it.isNotEmpty() }
                                 binding.orderIdTv.text = "#${order?.order_number}"
                                 binding.phone.text = order?.billing_address?.phone.toString()
                                 binding.location.text =
@@ -88,14 +89,12 @@ class OrderDetailsFragment : Fragment() {
                                             order?.billing_address?.city + ", " + order?.billing_address?.country
 
 
-                                // Calculate and format subtotal
                                 val orderSubTotal =
                                     order?.subtotal_price?.toDoubleOrNull()?.times(conversionRate)
                                         ?: 0.0
                                 binding.subTotal.text =
                                     String.format("%.2f %s", orderSubTotal, selectedCurrency)
 
-// Calculate and format total tax
                                 val totalTax =
                                     order?.total_tax?.toDoubleOrNull()?.times(conversionRate) ?: 0.0
                                 binding.totalTax.text =
@@ -111,7 +110,8 @@ class OrderDetailsFragment : Fragment() {
                                 setupProductRecyclerView(
                                     order?.line_items!!.toMutableList(),
                                     currencyResponse,
-                                    conversionRate
+                                    conversionRate,
+                                    productImage
                                 )
                             }
                         }
@@ -145,7 +145,8 @@ class OrderDetailsFragment : Fragment() {
     private fun setupProductRecyclerView(
         item: MutableList<LineItem>,
         currencyResponse: CurrencyResponse,
-        conversionRate: Double
+        conversionRate: Double,
+        productImage:List<String>
     ) {
         val orderProductsAdapter = OrderProductsAdapter(item, { onProductClick ->
             val action =
@@ -153,7 +154,7 @@ class OrderDetailsFragment : Fragment() {
                     onProductClick.product_id
                 )
             findNavController().navigate(action)
-        }, currencyResponse, selectedCurrency, conversionRate)
+        }, currencyResponse, selectedCurrency, conversionRate,requireContext(), productImage)
         val manager = LinearLayoutManager(requireContext())
         manager.orientation = LinearLayoutManager.HORIZONTAL
 

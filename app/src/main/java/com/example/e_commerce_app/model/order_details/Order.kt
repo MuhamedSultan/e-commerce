@@ -46,7 +46,7 @@ data class Order(
     val location_id: Long,
     val merchant_of_record_app_id: Any,
     val name: String,
-    val note: Any,
+    val note: String,
     val note_attributes: List<Any>,
     val number: Int,
     val order_number: Int,

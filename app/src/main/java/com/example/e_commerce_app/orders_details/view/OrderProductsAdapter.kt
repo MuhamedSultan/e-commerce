@@ -1,8 +1,10 @@
 package com.example.e_commerce_app.orders_details.view
 
+import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import com.example.e_commerce_app.R
 import com.example.e_commerce_app.databinding.ItemOrderDetailsProductBinding
 import com.example.e_commerce_app.model.currencyResponse.CurrencyResponse
@@ -14,7 +16,9 @@ class OrderProductsAdapter(
     private val onProductClick: (LineItem) -> Unit,
     private val currencyResponse: CurrencyResponse,
     private val selectedCurrency: String,
-    private var conversionRate:Double
+    private var conversionRate: Double,
+    private val context: Context,
+    private val src: List<String>
 ) :
     RecyclerView.Adapter<OrderProductsAdapter.OrderProductsViewHolder>() {
 
@@ -26,9 +30,11 @@ class OrderProductsAdapter(
 
     override fun onBindViewHolder(holder: OrderProductsViewHolder, position: Int) {
         val item = itemsList[position]
-        holder.image.setImageResource(R.drawable.box)
+        Glide.with(context).load(src[position])
+            .placeholder(R.drawable.box).error(R.drawable.box)
+            .into(holder.image)
         holder.productName.text = item.title
-        val defaultPrice = item.price.toDoubleOrNull()?:0.0
+        val defaultPrice = item.price.toDoubleOrNull() ?: 0.0
         val convertedPrice = defaultPrice * conversionRate
         holder.productPrice.text = String.format("%.2f %s", convertedPrice, selectedCurrency)
 
@@ -41,6 +47,7 @@ class OrderProductsAdapter(
 
         return itemsList.size
     }
+
     fun removeFirstItem() {
         if (itemsList.isNotEmpty()) {
             itemsList.removeAt(0)
@@ -52,9 +59,10 @@ class OrderProductsAdapter(
             "USD" -> currencyResponse.rates.USD
             "EUR" -> currencyResponse.rates.EUR
             "EGP" -> currencyResponse.rates.EGP
-            else ->0.0
+            else -> 0.0
         }
     }
+
     class OrderProductsViewHolder(binding: ItemOrderDetailsProductBinding) :
         RecyclerView.ViewHolder(binding.root) {
         val productItem = binding.root
