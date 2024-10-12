@@ -11,8 +11,8 @@
         android:id="@+id/groupLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:visibility="visible"
-        app:constraint_referenced_ids="edSearch,productsRv,categoriesRv"
+        android:visibility="invisible"
+        app:constraint_referenced_ids="edSearch,productsRv,categoriesRv,filterPrice"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -88,7 +88,7 @@
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
         android:layout_marginEnd="16dp"
-        android:max="7000"
+        android:max="6000"
         android:thumbTint="@color/yellow"
         android:visibility="gone"
         app:layout_constraintEnd_toStartOf="@+id/priceTextTv"
@@ -97,7 +97,7 @@
 
     <TextView
         android:id="@+id/priceTv"
-        android:layout_width="60dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="8dp"
         android:textColor="@color/black"

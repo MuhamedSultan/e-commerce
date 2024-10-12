@@ -15,6 +15,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.viewpager2.widget.ViewPager2
 import com.example.e_commerce_app.cart.DraftOrderManager
@@ -189,8 +190,6 @@ class HomeFragment : Fragment() {
                                         "EGP" -> currencyResponse.rates.EGP
                                         else -> 0.0
                                     }
-
-
                                     val randomProducts = product.products.shuffled().take(15)
                                     setupRandomProductsRecyclerview(
                                         randomProducts,
@@ -428,8 +427,8 @@ class HomeFragment : Fragment() {
         )
         randomProductsAdapter.notifyDataSetChanged()
 
-        val manager = LinearLayoutManager(requireContext())
-        manager.orientation = LinearLayoutManager.HORIZONTAL
+        val manager = GridLayoutManager(requireContext(),2)
+        //manager.orientation = LinearLayoutManager.HORIZONTAL
 
         binding.recommendedProductsRv.apply {
             adapter = randomProductsAdapter
