@@ -173,6 +173,10 @@ dependencies {
     //implementation("com.paypal.sdk:paypal-android-sdk:2.16.0")
 
 
+    //mock
+    testImplementation ("org.mockito:mockito-core:5.2.0")
+    testImplementation ("org.mockito.kotlin:mockito-kotlin:5.0.0")
+
 
 
 
