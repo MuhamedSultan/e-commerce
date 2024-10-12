@@ -4,7 +4,6 @@ import android.util.Log
 import com.example.e_commerce_app.model.address.AddressRequest
 import com.example.e_commerce_app.model.address.AddressResponse
 import com.example.e_commerce_app.model.address.AddressesResponse
-import com.example.e_commerce_app.model.address.testAdd
 import com.example.e_commerce_app.model.cart.CartResponse
 import com.example.e_commerce_app.model.cart.DraftOrderRequest
 import com.example.e_commerce_app.model.cart.DraftOrderResponse
@@ -13,13 +12,14 @@ import com.example.e_commerce_app.model.currencyResponse.CurrencyResponse
 import com.example.e_commerce_app.model.custom_collection.CustomCollectionResponse
 import com.example.e_commerce_app.model.order_details.OrderDetailsResponse
 import com.example.e_commerce_app.model.orders.CustomerOrders
-import com.example.e_commerce_app.model.orders.Order
 import com.example.e_commerce_app.model.product.Product
 import com.example.e_commerce_app.model.product.ProductResponse
 import com.example.e_commerce_app.model.smart_collection.SmartCollectionResponse
 import com.example.e_commerce_app.model.user.CustomerDataRequest
 import com.example.e_commerce_app.model.user.CustomerRequest
 import com.example.e_commerce_app.model.user.UserData
+import com.example.e_commerce_app.network.currency.CurrencyNetwork
+import com.example.e_commerce_app.network.shopify.Network
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.tasks.await
@@ -231,7 +231,7 @@ class RemoteDataSourceImpl : RemoteDataSource {
 
     override suspend fun getOrderDetailsByID(orderId: Long): ApiState<OrderDetailsResponse> {
         return try {
-            val response =Network.shopifyService.getOrderDetailsByID(orderId)
+            val response = Network.shopifyService.getOrderDetailsByID(orderId)
             ApiState.Success(response)
         }catch (e:Exception){
             ApiState.Error(e.message.toString())

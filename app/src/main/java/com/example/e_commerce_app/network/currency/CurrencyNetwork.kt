@@ -1,4 +1,4 @@
-package com.example.e_commerce_app.network
+package com.example.e_commerce_app.network.currency
 
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory

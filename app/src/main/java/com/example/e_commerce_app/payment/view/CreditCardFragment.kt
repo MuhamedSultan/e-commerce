@@ -1,4 +1,4 @@
-package com.example.e_commerce_app.payment
+package com.example.e_commerce_app.payment.view
 
 import android.os.Bundle
 import androidx.fragment.app.Fragment

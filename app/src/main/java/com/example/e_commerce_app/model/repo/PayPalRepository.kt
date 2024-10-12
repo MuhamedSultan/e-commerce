@@ -1,8 +1,13 @@
-package com.example.e_commerce_app.payment
+package com.example.e_commerce_app.model.repo
 
 
 import android.util.Base64
 import android.util.Log
+import com.example.e_commerce_app.network.paypal.RetrofitClient
+import com.example.e_commerce_app.model.payment.Amount
+import com.example.e_commerce_app.model.payment.CaptureRequest
+import com.example.e_commerce_app.model.payment.OrderRequest
+import com.example.e_commerce_app.model.payment.OrderResponse
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 

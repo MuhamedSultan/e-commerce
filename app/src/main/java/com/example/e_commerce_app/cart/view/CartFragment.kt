@@ -78,10 +78,14 @@ class CartFragment : Fragment() {
                 viewModel.draftOrderState.collect { result ->
                     when (result) {
                         is ApiState.Loading -> {
+                            binding.loadingIndicator.visibility = View.VISIBLE
+                            binding.cartLayout.visibility = View.GONE
+                            binding.emptyCart.visibility = View.GONE
                         }
 
                         is ApiState.Success -> {
                             result.data?.let { collections ->
+                                binding.loadingIndicator.visibility = View.GONE
                                 if (collections.draft_order.line_items.size==1) {
                                     binding.emptyCart.visibility = View.VISIBLE
                                     binding.cartLayout.visibility = View.GONE
@@ -136,12 +140,6 @@ class CartFragment : Fragment() {
         }
         cartAdapter.updateData(lineItems.drop(1))
         binding.totalPrice.text = draftOrderResponse.draft_order.subtotal_price
-        /*if (cartResponse.carts.isNotEmpty()) {
-            val lineItems = cartResponse.carts[0].lineItems
-            cartAdapter.updateData(lineItems)
-        } else {
-            cartAdapter.updateData(emptyList())
-        }*/
     }
 
     private fun getDraftOrderIdForCustomer(customerId: String?): Long? {

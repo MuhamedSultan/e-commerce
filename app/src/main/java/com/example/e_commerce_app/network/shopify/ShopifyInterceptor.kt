@@ -1,4 +1,4 @@
-package com.example.e_commerce_app.network
+package com.example.e_commerce_app.network.shopify
 
 import okhttp3.Interceptor
 import okhttp3.Response

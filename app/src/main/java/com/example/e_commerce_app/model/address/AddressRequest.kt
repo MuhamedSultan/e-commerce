@@ -16,7 +16,7 @@ data class testAdd(
     val phone: String?,
     val province: String,
     val country: String,
-    val default : Boolean= false
+    val default : Boolean
 )
 data class AddressReqModel(
     val address1: String,

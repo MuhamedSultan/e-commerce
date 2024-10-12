@@ -22,16 +22,12 @@ import com.example.e_commerce_app.cart.DraftOrderManager
 import com.example.e_commerce_app.cart.viewmodel.CartViewModel
 import com.example.e_commerce_app.cart.viewmodel.CartViewModelFactory
 import com.example.e_commerce_app.databinding.FragmentAddingCouponBinding
-import com.example.e_commerce_app.databinding.FragmentHomeBinding
 import com.example.e_commerce_app.db.SharedPrefsManager
 import com.example.e_commerce_app.model.cart.AppliedDiscount
-import com.example.e_commerce_app.model.cart.DraftOrder
-import com.example.e_commerce_app.model.cart.DraftOrderRequest
 import com.example.e_commerce_app.model.cart.PriceRule
-import com.example.e_commerce_app.model.cart.PriceRuleResponse
 import com.example.e_commerce_app.model.repo.ShopifyRepoImpl
 import com.example.e_commerce_app.network.RemoteDataSourceImpl
-import com.example.e_commerce_app.payment.PaymentActivity
+import com.example.e_commerce_app.payment.view.PaymentActivity
 import com.example.e_commerce_app.util.ApiState
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.launch

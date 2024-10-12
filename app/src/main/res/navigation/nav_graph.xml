@@ -112,7 +112,7 @@
     </fragment>
     <fragment
         android:id="@+id/paymentFragment"
-        android:name="com.example.e_commerce_app.payment.PaymentFragment"
+        android:name="com.example.e_commerce_app.payment.view.PaymentFragment"
         android:label="Payment"
         tools:layout="@layout/fragment_payment">
         <action
@@ -133,7 +133,7 @@
     </fragment>
     <fragment
         android:id="@+id/mapFragment"
-        android:name="com.example.e_commerce_app.map.MapFragment"
+        android:name="com.example.e_commerce_app.map.view.MapFragment"
         android:label="Map"
         tools:layout="@layout/fragment_map">
         <action
@@ -157,7 +157,7 @@
     </fragment>
     <fragment
         android:id="@+id/creditCardFragment"
-        android:name="com.example.e_commerce_app.payment.CreditCardFragment"
+        android:name="com.example.e_commerce_app.payment.view.CreditCardFragment"
         android:label="fragment_credit_card"
         tools:layout="@layout/fragment_credit_card">
         <action
@@ -166,7 +166,7 @@
     </fragment>
     <fragment
         android:id="@+id/addressFragment"
-        android:name="com.example.e_commerce_app.map.AddressFragment"
+        android:name="com.example.e_commerce_app.map.view.AddressFragment"
         android:label="fragment_address"
         tools:layout="@layout/fragment_address" >
         <action
@@ -181,7 +181,7 @@
     </fragment>
     <fragment
         android:id="@+id/addressDetailsFragment"
-        android:name="com.example.e_commerce_app.map.AddressDetailsFragment"
+        android:name="com.example.e_commerce_app.map.view.AddressDetailsFragment"
         android:label="fragment_address_details"
         tools:layout="@layout/fragment_address_details" >
         <argument

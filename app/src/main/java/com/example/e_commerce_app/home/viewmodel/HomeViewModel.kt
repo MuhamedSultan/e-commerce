@@ -132,7 +132,7 @@ class HomeViewModel(private val shopifyRepo: ShopifyRepo) : ViewModel() {
                     ),
                     appliedDiscount = null,
                     customer = CustomerId(id = customerId.toLong()),
-                    useCustomerDefaultAddress = true
+                    useCustomerDefaultAddress = false
                 )
             )
             val result = shopifyRepo.createFavoriteDraft(draftOrderRequest)

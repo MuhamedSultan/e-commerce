@@ -1,4 +1,4 @@
-package com.example.e_commerce_app.network
+package com.example.e_commerce_app.network.shopify
 
 import com.example.e_commerce_app.model.address.AddressRequest
 import com.example.e_commerce_app.model.address.AddressResponse
@@ -11,16 +11,11 @@ import com.example.e_commerce_app.model.cart.PriceRuleResponse
 import com.example.e_commerce_app.model.custom_collection.CustomCollectionResponse
 import com.example.e_commerce_app.model.product.ProductResponse
 import com.example.e_commerce_app.model.product.SingleProductResponse
-import com.example.e_commerce_app.model.cart.UpdateCartItemRequest
-import com.example.e_commerce_app.model.cart.UpdateCartItemResponse
 import com.example.e_commerce_app.model.order_details.OrderDetailsResponse
 import com.example.e_commerce_app.model.orders.CustomerOrders
-import com.example.e_commerce_app.model.orders.Order
 import com.example.e_commerce_app.model.smart_collection.SmartCollectionResponse
 import com.example.e_commerce_app.model.user.CustomerRequest
 import com.example.e_commerce_app.model.user.CustomerResponse
-import com.example.e_commerce_app.util.ApiState
-import kotlinx.coroutines.flow.Flow
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.GET

@@ -1,8 +1,9 @@
-package com.example.e_commerce_app.map
+package com.example.e_commerce_app.map.view
 
 import android.content.Context
 import android.location.Geocoder
 import android.os.Bundle
+import android.text.Editable
 import android.util.Log
 import android.util.Patterns
 import android.view.LayoutInflater
@@ -21,7 +22,6 @@ import com.example.e_commerce_app.db.SharedPrefsManager
 import com.example.e_commerce_app.db.ShopifyDB
 import com.example.e_commerce_app.map.viewModel.AddressViewModel
 import com.example.e_commerce_app.map.viewModel.AddressViewModelFactory
-import com.example.e_commerce_app.model.address.AddressReqModel
 import com.example.e_commerce_app.model.address.AddressRequest
 import com.example.e_commerce_app.model.address.testAdd
 import com.example.e_commerce_app.model.repo.ShopifyRepoImpl
@@ -57,7 +57,8 @@ class AddressDetailsFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val args = AddressDetailsFragmentArgs.fromBundle(requireArguments())
+        val args =
+            AddressDetailsFragmentArgs.fromBundle(requireArguments())
         val latitude = args.latitude
         val longitude = args.longitude
         page = args.page
@@ -67,9 +68,9 @@ class AddressDetailsFragment : Fragment() {
         if (addresses != null && addresses.isNotEmpty()) {
             val address = addresses[0]
             val city = address.locality ?: "Unknown City"
-            binding.mapAddress.text = "$city \n" +
-                    "${address.countryCode}, ${address.adminArea}, ${address.subAdminArea}\n" +
-                    "Postal Code: ${address.postalCode}"
+            var detectedAddress = "${address.countryCode}, ${address.adminArea}, ${address.subAdminArea}"+" ,$city "
+
+            binding.detectedAddress.text = Editable.Factory.getInstance().newEditable(detectedAddress)
         }
 
         // Submit button click listener
@@ -96,7 +97,8 @@ class AddressDetailsFragment : Fragment() {
                         phone = binding.etPhone.text.toString(),
                         province = "Quebec",
                         first_name = firstName,
-                        last_name = lastName
+                        last_name = lastName,
+                        default = false
                     )
                     Log.i("TAG", "onViewCreated: $testAdd1")
                     viewModel.insertAddress(customerId,AddressRequest(testAdd1))
@@ -119,7 +121,10 @@ class AddressDetailsFragment : Fragment() {
                             hideLoadingIndicator()
                             viewModel.getAllAddresses(customerId)
                             Toast.makeText(requireContext(), "Location details submitted!", Toast.LENGTH_SHORT).show()
-                            val action = AddressDetailsFragmentDirections.actionAddressDetailsFragmentToAddressFragment2(page)
+                            val action =
+                                AddressDetailsFragmentDirections.actionAddressDetailsFragmentToAddressFragment2(
+                                    page
+                                )
                             findNavController().navigate(action)
                         }
 

@@ -20,7 +20,7 @@
         android:theme="@style/Theme.Ecommerce_app"
         tools:targetApi="31" >
         <activity
-            android:name=".payment.PaymentActivity"
+            android:name=".payment.view.PaymentActivity"
             android:exported="true" >
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />

@@ -1,4 +1,4 @@
-package com.example.e_commerce_app.map
+package com.example.e_commerce_app.map.view
 
 import android.content.Context
 import android.os.Bundle
@@ -16,21 +16,16 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.e_commerce_app.MainActivity
 import com.example.e_commerce_app.R
-import com.example.e_commerce_app.brand_products.viewmodel.BrandProductViewModel
-import com.example.e_commerce_app.brand_products.viewmodel.BrandProductViewModelFactory
 import com.example.e_commerce_app.cart.DraftOrderManager
 import com.example.e_commerce_app.databinding.FragmentAddressBinding
 import com.example.e_commerce_app.db.LocalDataSourceImpl
 import com.example.e_commerce_app.db.SharedPrefsManager
 import com.example.e_commerce_app.db.ShopifyDB
-import com.example.e_commerce_app.map.AddressAdapter
 import com.example.e_commerce_app.map.viewModel.AddressViewModel
 import com.example.e_commerce_app.map.viewModel.AddressViewModelFactory
-import com.example.e_commerce_app.model.address.Address
 import com.example.e_commerce_app.model.address.AddressRequest
 import com.example.e_commerce_app.model.address.AddressResponseModel
 import com.example.e_commerce_app.model.address.testAdd
-import com.example.e_commerce_app.model.cart.DraftOrderRequest
 import com.example.e_commerce_app.model.repo.ShopifyRepoImpl
 import com.example.e_commerce_app.network.RemoteDataSourceImpl
 import com.example.e_commerce_app.util.ApiState
@@ -128,7 +123,8 @@ class AddressFragment : Fragment() {
                                     phone = selectedAddress!!.phone,
                                     province = "Quebec",
                                     first_name = "moahmed",
-                                    last_name = "khedr"
+                                    last_name = "khedr",
+                                    default = false
                                 )
                             )
                         ,
@@ -144,7 +140,10 @@ class AddressFragment : Fragment() {
 
         // Handle Add Location button click
         binding.btnAddLocation.setOnClickListener {
-            val action = AddressFragmentDirections.actionAddressFragment2ToMapFragment(page)
+            val action =
+                AddressFragmentDirections.actionAddressFragment2ToMapFragment(
+                    page
+                )
             findNavController().navigate(action)
         }
 
@@ -181,7 +180,8 @@ class AddressFragment : Fragment() {
                         Log.i("TAG", "observeViewModel: billing:  ${state.data?.draft_order?.billing_address}\n" +
                                 "shopping : ${state.data?.draft_order?.shipping_address}")
                         Toast.makeText(requireContext(),"Address added to Order Sucessfully", Toast.LENGTH_SHORT).show()
-                        val action = AddressFragmentDirections.actionAddressFragmentToAddingCouponFragment()
+                        val action =
+                            AddressFragmentDirections.actionAddressFragmentToAddingCouponFragment()
                         findNavController().navigate(action)
                     }
 

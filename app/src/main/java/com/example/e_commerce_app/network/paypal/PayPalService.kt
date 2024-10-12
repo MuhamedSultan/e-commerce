@@ -1,6 +1,10 @@
-package com.example.e_commerce_app.payment
+package com.example.e_commerce_app.network.paypal
 
 
+import com.example.e_commerce_app.model.payment.AccessTokenResponse
+import com.example.e_commerce_app.model.payment.CaptureRequest
+import com.example.e_commerce_app.model.payment.OrderRequest
+import com.example.e_commerce_app.model.payment.OrderResponse
 import retrofit2.http.*
 
 

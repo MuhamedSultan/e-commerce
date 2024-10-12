@@ -282,7 +282,8 @@ class HomeFragment : Fragment() {
                                         DraftOrder(
                                             lineItems = lineItemsList,
                                             customer = CustomerId(collections.draft_order.customer.id),
-                                            note = collections.draft_order.note.toString()
+                                            note = collections.draft_order.note.toString(),
+                                            useCustomerDefaultAddress = false
                                         )
                                     )
                                 )

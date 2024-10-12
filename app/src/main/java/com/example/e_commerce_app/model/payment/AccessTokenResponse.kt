@@ -1,4 +1,4 @@
-package com.example.e_commerce_app.payment
+package com.example.e_commerce_app.model.payment
 
 
 // AccessTokenResponse.kt

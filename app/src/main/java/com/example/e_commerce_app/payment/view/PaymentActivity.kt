@@ -1,4 +1,4 @@
-package com.example.e_commerce_app.payment
+package com.example.e_commerce_app.payment.view
 
 import android.content.Intent
 import android.net.Uri
@@ -7,19 +7,11 @@ import android.util.Log
 import android.view.View
 import android.widget.RadioButton
 import android.widget.Toast
-import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
-import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.repeatOnLifecycle
-import androidx.navigation.fragment.findNavController
 import com.example.e_commerce_app.MainActivity
-import com.example.e_commerce_app.R
 import com.example.e_commerce_app.cart.DraftOrderManager
-import com.example.e_commerce_app.databinding.ActivityMainBinding
 import com.example.e_commerce_app.databinding.ActivityPaymentBinding
 import com.example.e_commerce_app.db.SharedPrefsManager
 import com.example.e_commerce_app.db.ShopifyDB
@@ -27,12 +19,18 @@ import com.example.e_commerce_app.model.cart.CustomerId
 import com.example.e_commerce_app.model.cart.DraftOrder
 import com.example.e_commerce_app.model.cart.DraftOrderRequest
 import com.example.e_commerce_app.model.cart.LineItems
+import com.example.e_commerce_app.model.payment.Amount
+import com.example.e_commerce_app.model.payment.ExperienceContext
+import com.example.e_commerce_app.model.payment.OrderRequest
+import com.example.e_commerce_app.model.payment.PayPalExperience
+import com.example.e_commerce_app.model.payment.PaymentSource
+import com.example.e_commerce_app.model.payment.PurchaseUnit
+import com.example.e_commerce_app.model.repo.PayPalRepository
 import com.example.e_commerce_app.model.repo.ShopifyRepoImpl
 import com.example.e_commerce_app.network.RemoteDataSourceImpl
 import com.example.e_commerce_app.payment.viewModel.PaymentViewModel
 import com.example.e_commerce_app.payment.viewModel.PaymentViewModelFactory
 import com.example.e_commerce_app.util.ApiState
-import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.launch
 import java.util.UUID

@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/light_gray"
-    tools:context=".map.AddressDetailsFragment">
+    tools:context=".map.view.AddressDetailsFragment">
 
     <ProgressBar
         android:id="@+id/loadingIndicator"
@@ -32,20 +32,28 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"/>
 
-    <TextView
+
+    <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/mapAddress"
-        android:layout_width="wrap_content"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:textAlignment="center"
-        tools:text="address map, cjow"
-        android:textSize="14sp"
-        android:textColor="@color/black"
-        android:layout_marginTop="16dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="32dp"
+        android:layout_marginEnd="24dp"
+        android:hint="Detected Address"
         app:layout_constraintTop_toBottomOf="@+id/tvTitle"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"/>
+        app:layout_constraintEnd_toEndOf="parent">
 
-
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/detectedAddress"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="text"
+            android:singleLine="true"
+            android:textColor="@color/black" />
+    </com.google.android.material.textfield.TextInputLayout>
     <!-- City -->
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/cityLayout"

@@ -1,4 +1,4 @@
-package com.example.e_commerce_app.map
+package com.example.e_commerce_app.map.view
 
 import android.Manifest
 import android.annotation.SuppressLint
@@ -88,11 +88,12 @@ class MapFragment : Fragment(), OnMapReadyCallback {
     private fun confirmLocation() {
         if (selectedLatLng != null) {
             // Pass the selected location to another fragment
-            val action = MapFragmentDirections.actionMapFragmentToAddressDetailsFragment(
-                selectedLatLng!!.latitude.toFloat(),
-                selectedLatLng!!.longitude.toFloat(),
-                page
-            )
+            val action =
+                MapFragmentDirections.actionMapFragmentToAddressDetailsFragment(
+                    selectedLatLng!!.latitude.toFloat(),
+                    selectedLatLng!!.longitude.toFloat(),
+                    page
+                )
             findNavController().navigate(action)
         } else {
             Toast.makeText(requireContext(), "Please select a location first.", Toast.LENGTH_SHORT).show()
