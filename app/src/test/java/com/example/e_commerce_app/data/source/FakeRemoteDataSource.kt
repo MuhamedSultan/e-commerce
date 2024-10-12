@@ -1,5 +1,6 @@
 package com.example.e_commerce_app.data.source
 
+import com.example.e_commerce_app.model.ApiResponse
 import com.example.e_commerce_app.model.address.AddressRequest
 import com.example.e_commerce_app.model.address.AddressResponse
 import com.example.e_commerce_app.model.address.AddressResponseModel
@@ -68,8 +69,7 @@ class FakeRemoteDataSource : RemoteDataSource {
     private var draftOrderCounter = 1L
 
     override suspend fun getAllBrands(): ApiState<SmartCollectionResponse> {
-        val fakeResponse = SmartCollectionResponse(listOf())
-        return ApiState.Success(fakeResponse)
+        return ApiState.Success(ApiResponse.brands)
     }
 
     override suspend fun getRandomProducts(): ApiState<ProductResponse> {
@@ -87,16 +87,15 @@ class FakeRemoteDataSource : RemoteDataSource {
     }
 
     override suspend fun getBrandProducts(brandName: String): ApiState<ProductResponse> {
-        return ApiState.Success(ProductResponse(fakeProducts))
+        return ApiState.Success(ApiResponse.brandProducts)
     }
 
     override suspend fun getCategories(): ApiState<CustomCollectionResponse> {
-        val fakeResponse = CustomCollectionResponse(listOf())
-        return ApiState.Success(fakeResponse)
+        return ApiState.Success(ApiResponse.customCollections)
     }
 
     override suspend fun getProductsOfSelectedBrand(collectionId: Long): ApiState<ProductResponse> {
-        return ApiState.Success(ProductResponse(fakeProducts))
+        return ApiState.Success(ApiResponse.testCategoriesProducts)
     }
 
     override suspend fun searchProductsByTitle(title: String): ApiState<ProductResponse> {
@@ -162,6 +161,18 @@ class FakeRemoteDataSource : RemoteDataSource {
         )
         val response = AddressResponse(customer_address = fakeAddressResponseModel)
         return ApiState.Success(response)
+    }
+
+    override suspend fun deleteAddress(customerId: Long, addressId: Long) {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun updateAddress(
+        customerId: Long,
+        addressId: Long,
+        addressRequest: AddressRequest
+    ) {
+        TODO("Not yet implemented")
     }
 
     override suspend fun createFavoriteDraft(draftOrderRequest: DraftOrderRequest): ApiState<DraftOrderResponse> {
@@ -294,7 +305,7 @@ class FakeRemoteDataSource : RemoteDataSource {
     }
 
     override suspend fun getCustomerOrders(customerId: Long): ApiState<CustomerOrders> {
-        return ApiState.Success(CustomerOrders(listOf()))
+        return ApiState.Success(ApiResponse.customerOrders)
     }
 
     override suspend fun getOrderDetailsByID(orderId: Long): ApiState<OrderDetailsResponse> {

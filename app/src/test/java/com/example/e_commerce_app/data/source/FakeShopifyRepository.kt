@@ -292,6 +292,18 @@ class FakeShopifyRepository : ShopifyRepo {
         return ApiState.Success(newAddress)
     }
 
+    override suspend fun deleteAddress(customerId: Long, addressId: Long) {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun updateAddress(
+        customerId: Long,
+        addressId: Long,
+        addressRequest: AddressRequest
+    ) {
+        TODO("Not yet implemented")
+    }
+
     override suspend fun createFavoriteDraft(draftOrderRequest: DraftOrderRequest): ApiState<DraftOrderResponse> {
         TODO("Not yet implemented")
     }
