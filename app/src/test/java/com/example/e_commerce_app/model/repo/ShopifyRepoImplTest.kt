@@ -65,36 +65,35 @@ class ShopifyRepoImplTest {
     }
 
 
+    @Test
+    fun `when searchProductsByTitle is called with a matching title then it returns the correct product`() =
+        runTest {
+            // given a title to search for
+            val titleToSearch = "Fake Product 1"
+
+            // when calling searchProductsByTitle
+            val result = repo.searchProductsByTitle(titleToSearch)
+
+            // then the result should not be null and should contain the correct product
+            assertThat(result.data, `is`(notNullValue()))
+            assertThat(result.data!!.products.size, `is`(1))
+            assertThat(result.data!!.products[0].title, `is`("Fake Product 1"))
+        }
+
 
     @Test
-    fun `when searchProductsByTitle is called with a matching title then it returns the correct product`() = runTest {
-        // given a title to search for
-        val titleToSearch = "Fake Product 1"
+    fun `when searchProductsByTitle is called with a non-matching title then it returns an empty list`() =
+        runTest {
+            // given a title that does not match any product
+            val titleToSearch = "Nonexistent Product"
 
-        // when calling searchProductsByTitle
-        val result = repo.searchProductsByTitle(titleToSearch)
+            // when calling searchProductsByTitle
+            val result = repo.searchProductsByTitle(titleToSearch)
 
-        // then the result should not be null and should contain the correct product
-        assertThat(result.data, `is`(notNullValue()))
-        assertThat(result.data!!.products.size, `is`(1))
-        assertThat(result.data!!.products[0].title, `is`("Fake Product 1"))
-    }
-
-
-    @Test
-    fun `when searchProductsByTitle is called with a non-matching title then it returns an empty list`() = runTest {
-        // given a title that does not match any product
-        val titleToSearch = "Nonexistent Product"
-
-        // when calling searchProductsByTitle
-        val result = repo.searchProductsByTitle(titleToSearch)
-
-        // then the result should not be null and the product list should be empty
-        assertThat(result.data, `is`(notNullValue()))
-        assertThat(result.data!!.products.size, `is`(0))
-    }
-
-
+            // then the result should not be null and the product list should be empty
+            assertThat(result.data, `is`(notNullValue()))
+            assertThat(result.data!!.products.size, `is`(0))
+        }
 
 
     @Test
