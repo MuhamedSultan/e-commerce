@@ -111,11 +111,12 @@ class BrandProductsFragment : Fragment() {
                         is ApiState.Success -> {
                             hideLoadingIndicator()
                             result.data?.let { product ->
+                               val  productPrice=product.products[0].variants[0].price.toDouble()
                                 brandProductViewModel.currencyRates.collect {
                                     val currencyResponse = it.data ?: CurrencyResponse(
                                         "",
                                         "",
-                                        Rates(0.0, 0.0, 0.0),
+                                        Rates(productPrice, productPrice, productPrice),
                                         true,
                                         0
                                     )
@@ -152,11 +153,15 @@ class BrandProductsFragment : Fragment() {
         binding.seekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
             override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
                 filterProductsByPrice(progress, currencyResponse, conversionRate)
-                binding.priceTv.text = "${progress.toDouble()}$selectedCurrency"
+                binding.priceTv.text = "${progress.toDouble()} $selectedCurrency"
             }
 
             override fun onStartTrackingTouch(seekBar: SeekBar?) {}
-            override fun onStopTrackingTouch(seekBar: SeekBar?) {}
+            override fun onStopTrackingTouch(seekBar: SeekBar?) {
+                if (seekBar?.progress==0){
+                    setupBrandProductsRecyclerview(allProducts,currencyResponse,conversionRate)
+                }
+            }
         })
 
     }
