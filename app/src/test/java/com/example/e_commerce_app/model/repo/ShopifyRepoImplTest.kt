@@ -30,14 +30,14 @@ class ShopifyRepoImplTest {
 
     @Test
     fun `when signInUser is called with valid credentials then it returns user data`() = runTest {
-        // Arrange
+        // given
         val email = "test@example.com"
         val password = "password"
 
-        // Act
+        // when
         val result = repo.signInUser(email, password)
 
-        // Assert
+        // then
         assertThat(result, `is`(notNullValue()))
         assertThat(result.data, `is`(notNullValue()))
         assertThat(result.data?.email, `is`(email))
@@ -47,7 +47,7 @@ class ShopifyRepoImplTest {
 
     @Test
     fun `when registerUser is called then it returns success`() = runTest {
-        // Arrange
+        // given
         val userData = UserData(
             id = 2L,
             userName = "New User",
@@ -56,17 +56,43 @@ class ShopifyRepoImplTest {
             phoneNumber = "987654321"
         )
 
-        // Act
+        // when
         val result = repo.registerUser(userData)
 
-        // Assert
+        // then
         assertThat(result, `is`(notNullValue()))
         assertThat(result is ApiState.Success, `is`(true))
     }
 
 
 
+    @Test
+    fun `when searchProductsByTitle is called with a matching title then it returns the correct product`() = runTest {
+        // given a title to search for
+        val titleToSearch = "Fake Product 1"
 
+        // when calling searchProductsByTitle
+        val result = repo.searchProductsByTitle(titleToSearch)
+
+        // then the result should not be null and should contain the correct product
+        assertThat(result.data, `is`(notNullValue()))
+        assertThat(result.data!!.products.size, `is`(1))
+        assertThat(result.data!!.products[0].title, `is`("Fake Product 1"))
+    }
+
+
+    @Test
+    fun `when searchProductsByTitle is called with a non-matching title then it returns an empty list`() = runTest {
+        // given a title that does not match any product
+        val titleToSearch = "Nonexistent Product"
+
+        // when calling searchProductsByTitle
+        val result = repo.searchProductsByTitle(titleToSearch)
+
+        // then the result should not be null and the product list should be empty
+        assertThat(result.data, `is`(notNullValue()))
+        assertThat(result.data!!.products.size, `is`(0))
+    }
 
 
 
