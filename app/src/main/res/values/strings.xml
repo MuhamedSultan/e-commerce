@@ -71,5 +71,6 @@
     <string name="orderId">order No.</string>
     <string name="st_store">ST Store</string>
     <string name="payment_status">payment Status -</string>
+    <string name="connection_lost">Connection Lost, Please Check Your Internet.</string>
 
 </resources>
