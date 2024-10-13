@@ -2,13 +2,56 @@ package com.example.e_commerce_app.util
 
 import android.content.Context
 import android.net.ConnectivityManager
+import android.net.Network
 import android.net.NetworkCapabilities
+import android.net.NetworkRequest
 import android.os.Build
+import androidx.lifecycle.LiveData
 
-object ConnectivityHelper {
-    fun isInternetAvailable(context: Context): Boolean {
-        val connectivityManager =
-            context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+class ConnectivityHelper(context: Context) : LiveData<Boolean>() {
+
+    private val connectivityManager =
+        context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+    private lateinit var networkCallback: ConnectivityManager.NetworkCallback
+
+    override fun onActive() {
+        super.onActive()
+        checkInternetConnection()
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            connectivityManager.registerDefaultNetworkCallback(getNetworkCallback())
+        } else {
+            val networkRequest = NetworkRequest.Builder()
+                .addCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
+                .build()
+            connectivityManager.registerNetworkCallback(networkRequest, getNetworkCallback())
+        }
+    }
+
+    override fun onInactive() {
+        super.onInactive()
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            connectivityManager.unregisterNetworkCallback(getNetworkCallback())
+        }
+    }
+
+    private fun getNetworkCallback(): ConnectivityManager.NetworkCallback {
+        networkCallback = object : ConnectivityManager.NetworkCallback() {
+            override fun onAvailable(network: Network) {
+                postValue(true)
+            }
+
+            override fun onLost(network: Network) {
+                postValue(false)
+            }
+        }
+        return networkCallback
+    }
+
+    private fun checkInternetConnection() {
+        postValue(isInternetAvailable())
+    }
+
+    private fun isInternetAvailable(): Boolean {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             val network = connectivityManager.activeNetwork ?: return false
             val networkCapabilities =
@@ -19,6 +62,4 @@ object ConnectivityHelper {
             return activeNetworkInfo != null && activeNetworkInfo.isConnected
         }
     }
-
-
 }
