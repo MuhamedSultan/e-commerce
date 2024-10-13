@@ -47,6 +47,10 @@ class HomeViewModel(private val shopifyRepo: ShopifyRepo) : ViewModel() {
         MutableStateFlow(ApiState.Loading())
     val currencyRates: StateFlow<ApiState<CurrencyResponse>> = _currencyRates
 
+    private val _currencyTodayRates: MutableStateFlow<ApiState<CurrencyResponse>> =
+        MutableStateFlow(ApiState.Loading())
+    val currencyTodayRates: StateFlow<ApiState<CurrencyResponse>> = _currencyTodayRates
+
     fun getAllBrands() = viewModelScope.launch(Dispatchers.IO) {
         try {
             val result = shopifyRepo.getAllBrands().data
@@ -182,6 +186,11 @@ class HomeViewModel(private val shopifyRepo: ShopifyRepo) : ViewModel() {
             }
 
         }
+    }
+
+    fun getCurrencyRates() =viewModelScope.launch(Dispatchers.IO){
+        val rates = shopifyRepo.exchangeRate()
+        _currencyTodayRates.value = rates
     }
 }
 

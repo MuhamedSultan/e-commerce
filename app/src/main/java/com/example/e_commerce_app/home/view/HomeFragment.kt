@@ -1,6 +1,7 @@
 package com.example.e_commerce_app.home.view
 
 import android.content.SharedPreferences
+import android.os.Build
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -9,6 +10,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.annotation.RequiresApi
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ViewModelProvider
@@ -44,6 +46,8 @@ import com.example.e_commerce_app.util.GuestUtil
 import com.google.android.material.snackbar.Snackbar
 import com.tbuonomo.viewpagerdotsindicator.DotsIndicator
 import kotlinx.coroutines.launch
+import java.time.LocalDate
+import kotlin.math.log
 
 
 class HomeFragment : Fragment() {
@@ -54,6 +58,7 @@ class HomeFragment : Fragment() {
     private lateinit var discountPagerAdapter: DiscountPagerAdapter
     private lateinit var sharedPreferences: SharedPreferences
     private lateinit var selectedCurrency: String
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
 
@@ -69,11 +74,21 @@ class HomeFragment : Fragment() {
 
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         SharedPrefsManager.init(requireContext())
+        ////////------> Currency Check Data
+        val currentDate = LocalDate.now().toString()
+        val currencyLastCheckDate = SharedPrefsManager.getInstance().getCurrencyLastDate()
+        if(currentDate != currencyLastCheckDate){
+            Log.i("TAG", "Currency is different now")
+            homeViewModel.getCurrencyRates()
+            observeTodayCurrentRates()
+        }
+
         val draftOrderId = SharedPrefsManager.getInstance().getDraftedOrderId()
         if (draftOrderId == 0L || draftOrderId == null) {
             observeDraftOrderId()
@@ -437,19 +452,33 @@ class HomeFragment : Fragment() {
 
     }
 
+    private fun observeTodayCurrentRates() {
+        lifecycleScope.launch {
+            viewLifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                homeViewModel.currencyTodayRates.collect { result ->
+                    when (result) {
+                        is ApiState.Loading -> {
+                        }
 
-//    private fun handleFavoriteClick(product: Product) {
-//        val isGuest = sharedPreferences.getBoolean("isGuest", false)
-//
-//        if (isGuest) {
-//            Toast.makeText(requireContext(), "Please log in to add items to favorites.", Toast.LENGTH_SHORT).show()
-//        } else {
-//            Log.d("HomeFragment", "Added ${product.title} to favorites")
-//        }
-//    }
-//
+                        is ApiState.Success -> {
+                            Log.i("TAG", "observeTodayCurrentRates: ${result.data?.rates}")
+                            val sharedPrefsManager = SharedPrefsManager.getInstance()
+                            result.data?.let { sharedPrefsManager.setCurrencyLastDate(it.date) }
+                            result.data?.rates?.EGP?.let { sharedPrefsManager.setCurrencyEGP(it.toFloat()) }
+                            result.data?.rates?.USD?.let { sharedPrefsManager.setCurrencyUSD(it.toFloat()) }
+                            result.data?.rates?.EUR?.let { sharedPrefsManager.setCurrencyEUR(it.toFloat()) }
+                        }
 
+                        is ApiState.Error -> {
+                            Log.e("TAG", "error geting today currency data: ${result.message}")
+                            showError(result.message.toString())
+                        }
+                    }
+                }
+            }
+        }
 
+    }
     override fun onPause() {
         super.onPause()
         binding.suggestionsRv.visibility = View.GONE
@@ -463,6 +492,7 @@ class HomeFragment : Fragment() {
         Log.d("selected", selectedCurrency)
         LocalDataSourceImpl.saveCurrencyText(requireContext(), selectedCurrency)
     }
+
 
 
 }

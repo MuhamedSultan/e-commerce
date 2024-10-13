@@ -10,6 +10,7 @@ import androidx.appcompat.app.AppCompatActivity
 import com.example.e_commerce_app.R
 import com.example.e_commerce_app.auth.login.view.LoginActivity
 import com.example.e_commerce_app.databinding.ActivityOnboardingBinding
+import com.example.e_commerce_app.db.SharedPrefsManager
 
 class OnboardingActivity : AppCompatActivity() {
 
@@ -20,7 +21,7 @@ class OnboardingActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityOnboardingBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
+        SharedPrefsManager.init(this)
         btnGetStart = binding.btnGetStart
         btnGetStart.setOnClickListener {
             val intent = Intent(this, LoginActivity::class.java)

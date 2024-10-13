@@ -2,11 +2,15 @@ package com.example.e_commerce_app.db
 
 import android.content.Context
 import android.content.SharedPreferences
+import com.example.e_commerce_app.db.LocalDataSourceImpl.Companion.PREFS_NAME
 
 class SharedPrefsManager private constructor(context: Context) {
 
     private val sharedPreferences: SharedPreferences =
         context.getSharedPreferences("UserPrefs", Context.MODE_PRIVATE)
+
+    private val shopifySharedPreferences: SharedPreferences =
+        context.getSharedPreferences("ShopifyPrefs", Context.MODE_PRIVATE)
 
     companion object {
         private var INSTANCE: SharedPrefsManager? = null
@@ -49,6 +53,47 @@ class SharedPrefsManager private constructor(context: Context) {
         editor.apply()
     }
 
+    ////////////////////// Currency Data //////////////////////////
+
+    fun getCurrencyLastDate(): String? {
+        return sharedPreferences.getString("currency_date","")
+    }
+    fun setCurrencyLastDate(currencyDate:String){
+        val editor = sharedPreferences.edit()
+        editor.putString("currency_date", currencyDate)
+        editor.apply()
+    }
+
+    fun setCurrencyEGP(egp: Float) {
+        val editor = sharedPreferences.edit()
+        editor.putFloat("EGP", egp)
+        editor.apply()
+    }
+    fun getCurrencyEGP(): Float {
+        return sharedPreferences.getFloat("EGP",1f)
+    }
+
+    fun setCurrencyEUR(eur: Float) {
+        val editor = sharedPreferences.edit()
+        editor.putFloat("EUR", eur)
+        editor.apply()
+    }
+    fun getCurrencyEUR(): Float {
+        return sharedPreferences.getFloat("EUR",1f)
+    }
+
+    fun setCurrencyUSD(usd: Float) {
+        val editor = sharedPreferences.edit()
+        editor.putFloat("USD", usd)
+        editor.apply()
+    }
+    fun getCurrencyUSD(): Float {
+        return sharedPreferences.getFloat("USD",1f)
+    }
+    // get Selected currency
+    fun getCurrency(): String {
+        return shopifySharedPreferences.getString("currency", "EUR") ?: "EUR"
+    }
 
 }
 
