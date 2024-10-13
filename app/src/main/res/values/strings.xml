@@ -55,22 +55,25 @@
     <string name="brand">Brands</string>
     <string name="recommended_for_you">Recommended For You</string>
     <string name="home_address">Home Address</string>
-    <string name="sub_total">Sub Total -</string>
-    <string name="total_tax">Total Tax -</string>
-    <string name="total_cost">Total Cost -</string>
+    <string name="sub_total">Sub Total :</string>
+    <string name="total_tax">Total Tax :</string>
+    <string name="total_cost">Total Cost :</string>
     <string name="search_here">Search here</string>
     <string name="Coupon">Coupon Image</string>
     <string name="filter">Filter</string>
     <string name="price">Price :</string>
-    <string name="orderPrice">Price -</string>
-    <string name="order_number">order No -</string>
-    <string name="created_at">Created at -</string>
+    <string name="orderPrice">Price :</string>
+    <string name="order_number">order No.</string>
+    <string name="created_at">Created at :</string>
+    <string name="quantity">Quantity:</string>
     <string name="currency">EGP</string>
     <string name="orders">#Orders</string>
     <string name="view_all">View all</string>
     <string name="orderId">order No.</string>
     <string name="st_store">ST Store</string>
-    <string name="payment_status">payment Status -</string>
+    <string name="payment_status">payment Status :</string>
     <string name="connection_lost">Connection Lost, Please Check Your Internet.</string>
+    <string name="order_products">Order Products</string>
+    <string name="invoice">Invoice</string>
 
 </resources>
