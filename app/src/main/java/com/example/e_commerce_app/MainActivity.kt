@@ -8,6 +8,7 @@ import androidx.navigation.Navigation.findNavController
 import androidx.navigation.ui.NavigationUI.setupActionBarWithNavController
 import androidx.navigation.ui.NavigationUI.setupWithNavController
 import com.example.e_commerce_app.databinding.ActivityMainBinding
+import com.example.e_commerce_app.util.ConnectivityHelper
 import com.google.android.material.bottomnavigation.BottomNavigationView
 
 class MainActivity : AppCompatActivity() {
@@ -21,6 +22,16 @@ class MainActivity : AppCompatActivity() {
 
         navController = findNavController(this, R.id.navHostfragment)
         setupWithNavController(binding.bottomNavigationView, navController)
+
+        if (!ConnectivityHelper.isInternetAvailable(this)){
+            binding.lottieAnimationView.visibility=View.VISIBLE
+            binding.connectionLostTv.visibility=View.VISIBLE
+           binding.groupLayout.visibility=View.GONE
+        }else{
+            binding.lottieAnimationView.visibility=View.GONE
+            binding.connectionLostTv.visibility=View.GONE
+            binding.groupLayout.visibility=View.VISIBLE
+        }
     }
 
     override fun onSupportNavigateUp(): Boolean {
@@ -31,4 +42,6 @@ class MainActivity : AppCompatActivity() {
         super.onResume()
         binding.bottomNavigationView.visibility = View.VISIBLE
     }
+
+
 }
