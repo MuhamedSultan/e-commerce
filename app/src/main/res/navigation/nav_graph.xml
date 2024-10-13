@@ -178,6 +178,12 @@
         <action
             android:id="@+id/action_addressFragment_to_addingCouponFragment"
             app:destination="@id/addingCouponFragment" />
+        <action
+            android:id="@+id/action_addressFragment_to_settingFragment"
+            app:destination="@id/settingFragment" />
+        <action
+            android:id="@+id/action_addressFragment_to_cartFragment"
+            app:destination="@id/cartFragment" />
     </fragment>
     <fragment
         android:id="@+id/addressDetailsFragment"

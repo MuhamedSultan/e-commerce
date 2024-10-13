@@ -7,6 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.activity.addCallback
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ViewModelProvider
@@ -166,6 +167,13 @@ class AddressFragment : Fragment() {
                         }
                     }
                 }
+            }
+        }
+        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner) {
+            if (page == "setting") {
+                findNavController().navigate(AddressFragmentDirections.actionAddressFragmentToSettingFragment())
+            } else {
+                findNavController().navigate(AddressFragmentDirections.actionAddressFragmentToCartFragment())
             }
         }
     }
