@@ -17,6 +17,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
+import com.example.e_commerce_app.MainActivity
 import com.example.e_commerce_app.R
 import com.example.e_commerce_app.cart.DraftOrderManager
 import com.example.e_commerce_app.cart.viewmodel.CartViewModel
@@ -29,6 +30,7 @@ import com.example.e_commerce_app.model.repo.ShopifyRepoImpl
 import com.example.e_commerce_app.network.RemoteDataSourceImpl
 import com.example.e_commerce_app.payment.view.PaymentActivity
 import com.example.e_commerce_app.util.ApiState
+import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.launch
 import kotlin.math.abs
@@ -64,6 +66,7 @@ class AddingCouponFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        (activity as MainActivity).findViewById<BottomNavigationView>(R.id.bottomNavigationView).visibility = View.GONE
         paymentLauncher = registerForActivityResult(
             ActivityResultContracts.StartActivityForResult()
         ) { result ->
@@ -79,8 +82,6 @@ class AddingCouponFragment : Fragment() {
             }
         }
         binding.btnSubmit.setOnClickListener{
-//            val action = AddingCouponFragmentDirections.actionAddingCouponFragmentToPaymentFragment(totalPrice)
-//            findNavController().navigate(action)
             // Create an Intent to start PaymentActivity
             val intent = Intent(requireContext(), PaymentActivity::class.java)
             SharedPrefsManager.getInstance().setPaidStatus(false)
@@ -117,6 +118,10 @@ class AddingCouponFragment : Fragment() {
                 }
             }
         }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
     }
 
 
@@ -189,18 +194,5 @@ class AddingCouponFragment : Fragment() {
         binding.btnApply.setBackgroundTintList(ColorStateList.valueOf(ContextCompat.getColor(requireContext(), R.color.basic_color)))
         binding.btnSubmit.setBackgroundTintList(ColorStateList.valueOf(ContextCompat.getColor(requireContext(), R.color.basic_color)))
     }
-
-
-//    private fun showLoadingIndicator() {
-//        binding.loadingIndicator.visibility = View.VISIBLE
-//        binding.groupLayout.visibility = View.GONE
-//    }
-//
-//    private fun hideLoadingIndicator() {
-//        binding.loadingIndicator.visibility = View.GONE
-//        binding.dotsIndicator.visibility = View.VISIBLE
-//        binding.couponPager.visibility = View.VISIBLE
-//        binding.groupLayout.visibility = View.VISIBLE
-//    }
 
 }

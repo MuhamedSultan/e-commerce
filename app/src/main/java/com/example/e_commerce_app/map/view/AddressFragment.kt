@@ -171,8 +171,10 @@ class AddressFragment : Fragment() {
         }
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner) {
             if (page == "setting") {
+                (activity as MainActivity).findViewById<BottomNavigationView>(R.id.bottomNavigationView).visibility = View.VISIBLE
                 findNavController().navigate(AddressFragmentDirections.actionAddressFragmentToSettingFragment())
             } else {
+                (activity as MainActivity).findViewById<BottomNavigationView>(R.id.bottomNavigationView).visibility = View.VISIBLE
                 findNavController().navigate(AddressFragmentDirections.actionAddressFragmentToCartFragment())
             }
         }
@@ -224,6 +226,11 @@ class AddressFragment : Fragment() {
 
     private fun showError(message: String) {
         Snackbar.make(requireView(), message, Snackbar.LENGTH_SHORT).show()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        (activity as MainActivity).findViewById<BottomNavigationView>(R.id.bottomNavigationView).visibility = View.GONE
     }
     override fun onDestroy() {
         super.onDestroy()
