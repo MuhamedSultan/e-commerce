@@ -16,6 +16,7 @@ import com.example.e_commerce_app.model.cart.Customer
 import com.example.e_commerce_app.model.cart.CustomerId
 import com.example.e_commerce_app.model.cart.DraftOrder
 import com.example.e_commerce_app.model.cart.LineItems
+import com.example.e_commerce_app.model.cart.PriceRule
 import com.example.e_commerce_app.model.cart.PriceRuleResponse
 import com.example.e_commerce_app.model.currencyResponse.CurrencyResponse
 import com.example.e_commerce_app.model.currencyResponse.Rates
@@ -480,7 +481,44 @@ class FakeShopifyRepository : ShopifyRepo {
     }
 
     override suspend fun getAllCoupons(): ApiState<PriceRuleResponse> {
-        TODO("Not yet implemented")
+        return ApiState.Success(
+            PriceRuleResponse(
+                listOf(
+                    PriceRule(
+                        id = 1234567890,
+                        value_type = "fixed_amount",
+                        value = "10.00",
+                        customer_selection = "all",
+                        target_type = "line_item",
+                        target_selection = "all",
+                        allocation_method = "each",
+                        allocation_limit = null,
+                        once_per_customer = true,
+                        usage_limit = null,
+                        starts_at = "2024-10-01T00:00:00Z",
+                        ends_at = null,
+                        created_at = "2024-09-01T12:00:00Z",
+                        updated_at = "2024-09-15T12:00:00Z",
+                        entitled_product_ids = listOf(111111, 222222, 333333),
+                        entitled_variant_ids = emptyList(),
+                        entitled_collection_ids = listOf(444444),
+                        entitled_country_ids = listOf(1, 2),
+                        prerequisite_product_ids = emptyList(),
+                        prerequisite_variant_ids = emptyList(),
+                        prerequisite_collection_ids = emptyList(),
+                        customer_segment_prerequisite_ids = emptyList(),
+                        prerequisite_customer_ids = emptyList(),
+                        prerequisite_subtotal_range = null,
+                        prerequisite_quantity_range = null,
+                        prerequisite_shipping_price_range = null,
+                        prerequisite_to_entitlement_quantity_ratio = null,
+                        prerequisite_to_entitlement_purchase = null,
+                        title = "10% Off Sale",
+                        admin_graphql_api_id = "gid://shopify/PriceRule/1234567890"
+                    )
+                )
+            )
+        )
     }
 
     override suspend fun exchangeRate(): ApiState<CurrencyResponse> {

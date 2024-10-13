@@ -35,7 +35,7 @@
             _draftOrderState.value = ApiState.Loading()
             val result = repo.getProductsIdForDraftFavorite(draftFavoriteId)
             _draftOrderState.value = result
-            when (result) {
+            /*when (result) {
                 is ApiState.Success -> {
                     Log.d("TAG", "get Draft Order data successfully")
                     Log.i("TAG", "Add Response: ${result.data?.draft_order}")
@@ -48,7 +48,7 @@
                 }
                 // Handle loading state if needed
                 is ApiState.Loading -> TODO()
-            }
+            }*/
 
         }
         fun addCouponToDraftOrder(draftOrderRequest: DraftOrderRequest, draftOrderId: Long)
@@ -100,20 +100,20 @@
             _draftOrderState.value = ApiState.Loading()
             val result = repo.getAllCoupons()
             _allCouponsResult.value = result
-            when (result) {
-                is ApiState.Success -> {
-                    Log.d("TAG", "Coupon Getted successfully")
-                    Log.i("TAG", "Add Response: ${result.data?.price_rules}")
-                }
-                is ApiState.Error -> {
-                    Log.e(
-                        "TAG",
-                        "Error getting Coupons: ${result.message}"
-                    )
-                }
-                // Handle loading state if needed
-                is ApiState.Loading -> TODO()
-            }
+//            when (result) {
+//                is ApiState.Success -> {
+//                    Log.d("TAG", "Coupon Getted successfully")
+//                    Log.i("TAG", "Add Response: ${result.data?.price_rules}")
+//                }
+//                is ApiState.Error -> {
+//                    Log.e(
+//                        "TAG",
+//                        "Error getting Coupons: ${result.message}"
+//                    )
+//                }
+//                // Handle loading state if needed
+//                is ApiState.Loading -> TODO()
+//            }
 
         }
 
