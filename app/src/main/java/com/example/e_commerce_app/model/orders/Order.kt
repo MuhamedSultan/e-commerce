@@ -17,8 +17,8 @@ data class Order(
     val confirmation_number: String? = null,
     val confirmed: Boolean? = null,
     val contact_email: String? = null,
-    val created_at: String, // Not nullable
-    val currency: String? = null, // Made nullable
+    val created_at: String,
+    val currency: String? = null,
     val current_subtotal_price: String? = null,
     val current_subtotal_price_set: CurrentSubtotalPriceSet? = null,
     val current_total_additional_fees_set: Any? = null,
@@ -43,13 +43,13 @@ data class Order(
     val landing_site: Any? = null,
     val landing_site_ref: Any? = null,
     val line_items: List<LineItem> = emptyList(),
-    val location_id: Long, // Not nullable
+    val location_id: Long,
     val merchant_of_record_app_id: Any? = null,
     val name: String? = null,
     val note: Any? = null,
     val note_attributes: List<Any>? = null,
     val number: Int? = null,
-    val order_number: Int, // Not nullable
+    val order_number: Int,
     val order_status_url: String? = null,
     val original_total_additional_fees_set: Any? = null,
     val original_total_duties_set: Any? = null,

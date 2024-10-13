@@ -1,5 +1,6 @@
 package com.example.e_commerce_app.orders.view
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
@@ -12,7 +13,7 @@ class OrdersAdapter(
     private val onOrderClick: (Order) -> Unit,
     private val currencyResponse: CurrencyResponse,
     private val selectedCurrency: String,
-    private var conversionRate:Double
+    private var conversionRate: Double
 ) :
     RecyclerView.Adapter<OrdersAdapter.OrdersViewHolder>() {
 
@@ -27,9 +28,11 @@ class OrdersAdapter(
 //            return
 //        }
         val order = ordersList[position]
-        holder.orderNumber.text = ("#${position + 1}").toString()
-        holder.createdAt.text = order.created_at
-        val defaultPrice = order.total_price.toDoubleOrNull()?:0.0
+        holder.orderNumber.text = order.order_number.toString()
+        holder.quantity.text = (order.line_items.size - 1).toString()
+        val createdAt = order.created_at
+        holder.createAt.text = createdAt.substring(0,10)
+        val defaultPrice = order.total_price.toDoubleOrNull() ?: 0.0
         val convertedPrice = defaultPrice * conversionRate
         holder.orderPrice.text = String.format("%.2f %s", convertedPrice, selectedCurrency)
         holder.orderItem.setOnClickListener {
@@ -39,16 +42,16 @@ class OrdersAdapter(
             "USD" -> currencyResponse.rates.USD
             "EUR" -> currencyResponse.rates.EUR
             "EGP" -> currencyResponse.rates.EGP
-            else ->0.0
+            else -> 0.0
         }
 
     }
 
     override fun getItemCount(): Int {
-   //     if (!isExpanded && ordersList.isNotEmpty()&&ordersList.size==2) {
+        //     if (!isExpanded && ordersList.isNotEmpty()&&ordersList.size==2) {
 //            return 2
 //        }
-            return ordersList.size
+        return ordersList.size
     }
 
 //    fun viewMore() {
@@ -62,6 +65,7 @@ class OrdersAdapter(
         val orderItem = binding.orderItem
         val orderNumber = binding.orderNumberTv
         val orderPrice = binding.OrderPriceTv
-        val createdAt = binding.createdAtTv
+        val quantity = binding.quantityTv
+        val createAt = binding.createAt
     }
 }
