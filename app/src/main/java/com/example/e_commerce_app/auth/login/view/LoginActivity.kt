@@ -28,7 +28,6 @@ class LoginActivity : AppCompatActivity() {
     private lateinit var tv_signUp: TextView
     private lateinit var sharedPreferences: SharedPreferences
     private lateinit var tv_guest: TextView
-
     private val remoteDataSource by lazy { RemoteDataSourceImpl() }
     private val shopifyRepo by lazy { ShopifyRepoImpl(remoteDataSource) }
 
@@ -44,13 +43,10 @@ class LoginActivity : AppCompatActivity() {
         sharedPreferences = getSharedPreferences("UserPrefs", Context.MODE_PRIVATE)
 
         checkUserLoggedIn()
-
-        // Handle Guest Login
         tv_guest = binding.tvGuest
         tv_guest.setOnClickListener {
             handleGuestLogin()
         }
-
 
         tv_signUp = binding.tvSignUp
         tv_signUp.setOnClickListener {
@@ -74,7 +70,6 @@ class LoginActivity : AppCompatActivity() {
     }
 
     private fun handleGuestLogin() {
-        // Set guest flag in SharedPreferences
         with(sharedPreferences.edit()) {
             putBoolean("isGuest", true)
             apply()
