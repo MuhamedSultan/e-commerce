@@ -29,6 +29,4 @@ abstract class ShopifyDB : RoomDatabase() {
 
         }
     }
-
-
 }

@@ -13,13 +13,8 @@ interface ShopifyDao {
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun addToFavorite(product: Product)
 
-
-//    @Query("SELECT * FROM fav_table")
-//    suspend fun getAllFavorites(): List<Product>
-
     @Delete
     suspend fun removeFavorite(product: Product)
-
 
     @Query("SELECT * FROM fav_table WHERE shopifyCustomerId = :shopifyCustomerId")
     suspend fun getAllFavorites(shopifyCustomerId: String): List<Product>

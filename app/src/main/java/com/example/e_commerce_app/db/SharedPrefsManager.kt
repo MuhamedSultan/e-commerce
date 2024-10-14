@@ -30,7 +30,7 @@ class SharedPrefsManager private constructor(context: Context) {
         return sharedPreferences.getString("shopifyCustomerId", null)
     }
 
-    fun setDraftedOrderId(draftedId : Long) {
+    fun setDraftedOrderId(draftedId: Long) {
         val editor = sharedPreferences.edit()
         editor.putLong("draftId", draftedId)
         editor.apply()
@@ -47,18 +47,18 @@ class SharedPrefsManager private constructor(context: Context) {
     fun getPaidStatus(): Boolean {
         return sharedPreferences.getBoolean("paid", false)
     }
-    fun setPaidStatus(paidStatus : Boolean) {
+
+    fun setPaidStatus(paidStatus: Boolean) {
         val editor = sharedPreferences.edit()
         editor.putBoolean("paid", paidStatus)
         editor.apply()
     }
 
-    ////////////////////// Currency Data //////////////////////////
-
     fun getCurrencyLastDate(): String? {
-        return sharedPreferences.getString("currency_date","")
+        return sharedPreferences.getString("currency_date", "")
     }
-    fun setCurrencyLastDate(currencyDate:String){
+
+    fun setCurrencyLastDate(currencyDate: String) {
         val editor = sharedPreferences.edit()
         editor.putString("currency_date", currencyDate)
         editor.apply()
@@ -69,8 +69,9 @@ class SharedPrefsManager private constructor(context: Context) {
         editor.putFloat("EGP", egp)
         editor.apply()
     }
+
     fun getCurrencyEGP(): Float {
-        return sharedPreferences.getFloat("EGP",1f)
+        return sharedPreferences.getFloat("EGP", 1f)
     }
 
     fun setCurrencyEUR(eur: Float) {
@@ -78,8 +79,9 @@ class SharedPrefsManager private constructor(context: Context) {
         editor.putFloat("EUR", eur)
         editor.apply()
     }
+
     fun getCurrencyEUR(): Float {
-        return sharedPreferences.getFloat("EUR",1f)
+        return sharedPreferences.getFloat("EUR", 1f)
     }
 
     fun setCurrencyUSD(usd: Float) {
@@ -87,10 +89,11 @@ class SharedPrefsManager private constructor(context: Context) {
         editor.putFloat("USD", usd)
         editor.apply()
     }
+
     fun getCurrencyUSD(): Float {
-        return sharedPreferences.getFloat("USD",1f)
+        return sharedPreferences.getFloat("USD", 1f)
     }
-    // get Selected currency
+
     fun getCurrency(): String {
         return shopifySharedPreferences.getString("currency", "EUR") ?: "EUR"
     }

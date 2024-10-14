@@ -11,7 +11,6 @@ class ProductTypeConverters {
 
     private val gson = Gson()
 
-    // For List<Image>
     @TypeConverter
     fun fromImageList(value: List<Image>?): String? {
         val type = object : TypeToken<List<Image>>() {}.type
@@ -24,7 +23,6 @@ class ProductTypeConverters {
         return gson.fromJson(value, type)
     }
 
-    // For Image
     @TypeConverter
     fun fromImage(image: Image?): String? {
         return gson.toJson(image)
@@ -35,7 +33,6 @@ class ProductTypeConverters {
         return gson.fromJson(imageString, Image::class.java)
     }
 
-    // For List<Option>
     @TypeConverter
     fun fromOptionList(value: List<Option>?): String? {
         val type = object : TypeToken<List<Option>>() {}.type
@@ -48,7 +45,6 @@ class ProductTypeConverters {
         return gson.fromJson(value, type)
     }
 
-    // For List<Variant>
     @TypeConverter
     fun fromVariantList(value: List<Variant>?): String? {
         val type = object : TypeToken<List<Variant>>() {}.type
@@ -62,7 +58,6 @@ class ProductTypeConverters {
     }
 
 
-    // Converter for template_suffix
     @TypeConverter
     fun fromTemplateSuffix(value: Any?): String? {
         return gson.toJson(value)
