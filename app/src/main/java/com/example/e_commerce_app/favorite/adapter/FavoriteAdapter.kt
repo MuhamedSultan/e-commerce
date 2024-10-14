@@ -1,6 +1,7 @@
 package com.example.e_commerce_app.favorite.adapter
 
 import android.app.AlertDialog
+import android.content.Context
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -10,9 +11,8 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.e_commerce_app.R
+import com.example.e_commerce_app.db.SharedPrefsManager
 import com.example.e_commerce_app.model.product.Product
-import android.content.Context
-
 
 class FavoriteAdapter(
     private val onDeleteClick: (Product) -> Unit,
@@ -55,8 +55,8 @@ class FavoriteAdapter(
         ) {
             productName.text = product.title
 
-            val price = product.variants.firstOrNull()?.price ?: "N/A"
-            productPrice.text = "$$price"
+            val price = product.variants.firstOrNull()?.price?.toDoubleOrNull() ?: 0.0
+            productPrice.text = getPriceAndCurrency(price)
 
             val imageUrl = product.image?.src
             if (!imageUrl.isNullOrEmpty()) {
@@ -83,6 +83,18 @@ class FavoriteAdapter(
                 onProductClick(product.id)
             }
 
+        }
+
+        private fun getPriceAndCurrency(price: Double): String {
+            val sharedPrefsManager = SharedPrefsManager.getInstance()
+            val currency = sharedPrefsManager.getCurrency()
+            var convertedPrice = price
+            when (currency) {
+                "EGP" -> convertedPrice *= sharedPrefsManager.getCurrencyEGP()
+                "USD" -> convertedPrice *= sharedPrefsManager.getCurrencyUSD()
+            }
+            val formattedPrice = String.format("%.2f", convertedPrice)
+            return "$formattedPrice $currency"
         }
 
         private fun showDeleteConfirmationDialog(
