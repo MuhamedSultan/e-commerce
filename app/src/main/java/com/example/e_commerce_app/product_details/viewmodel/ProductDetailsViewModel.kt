@@ -1,12 +1,10 @@
 package com.example.e_commerce_app.product_details.viewmodel
 
-import android.content.SharedPreferences
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.e_commerce_app.model.cart.DraftOrderRequest
 import com.example.e_commerce_app.model.cart.DraftOrderResponse
-import com.example.e_commerce_app.model.cart.UpdateCartItemRequest
 import com.example.e_commerce_app.model.currencyResponse.CurrencyResponse
 import com.example.e_commerce_app.model.product.Product
 import com.example.e_commerce_app.model.repo.ShopifyRepo
@@ -83,47 +81,12 @@ class ProductDetailsViewModel(
                         "Error creating draft order: ${result.message}"
                     )
                 }
-                // Handle loading state if needed
                 is ApiState.Loading -> TODO()
             }
         }
     }
 
 
-
-    // Function to fetch product IDs from the draft order (getting products in cart)
-    fun getProductsFromDraftOrder(draftFavoriteId: Long) {
-        viewModelScope.launch {
-            _draftOrderState.value = ApiState.Loading()
-            val result = repository.getProductsIdForDraftFavorite(draftFavoriteId)
-            _draftOrderState.value = result
-            when (result) {
-                is ApiState.Success -> {
-                    Log.d("TAG", "get Draft Order data successfully")
-                    Log.i("TAG", "Add Response: ${result.data?.draft_order}")
-                }
-                is ApiState.Error -> {
-                    Log.e(
-                        "TAG",
-                        "Error getting draft order Data: ${result.message}"
-                    )
-                }
-                // Handle loading state if needed
-                is ApiState.Loading -> TODO()
-            }
-        }
-    }
-
-
-
-    // Function to update (back up) the draft order
-    fun updateDraftOrder(draftOrderRequest: DraftOrderRequest, draftFavoriteId: Long) {
-        viewModelScope.launch {
-            _draftOrderState.value = ApiState.Loading()
-            val result = repository.backUpDraftFavorite(draftOrderRequest, draftFavoriteId)
-            _draftOrderState.value = result
-        }
-    }
 
     fun fetchCurrencyRates() {
         viewModelScope.launch(Dispatchers.IO) {

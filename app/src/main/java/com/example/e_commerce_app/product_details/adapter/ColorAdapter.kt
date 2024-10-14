@@ -36,7 +36,8 @@ class ColorAdapter(private val colors: List<String>) :
         }
 
         holder.colorImageView.setOnClickListener {
-            Toast.makeText(holder.itemView.context, "Clicked on color: $color", Toast.LENGTH_SHORT).show()
+            Toast.makeText(holder.itemView.context, "Clicked on color: $color", Toast.LENGTH_SHORT)
+                .show()
         }
     }
 
