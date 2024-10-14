@@ -20,8 +20,6 @@ class SignUpActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivitySignUpBinding
     private lateinit var tv_signIn: TextView
-
-    // Initialize the RemoteDataSource
     private val remoteDataSource = RemoteDataSourceImpl()
     private val shopifyRepo = ShopifyRepoImpl(remoteDataSource)
 
