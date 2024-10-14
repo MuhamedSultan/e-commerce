@@ -24,7 +24,7 @@
     <string name="click_here_to_logout">Click here to log out</string>
     <string name="checkout">CHECKOUT</string>
     <string name="total">Total :</string>
-    <string name="emptyCart">\"It seems like your shopping cart is empty. Browse our collection and add items to your cart to start shopping!\"</string>
+    <string name="emptyCart">It seems like your shopping cart is empty. Browse our collection and add items to your cart to start shopping!</string>
     <string name="addCreditCard">Add Credit Card</string>
     <string name="MyOrders">My Orders</string>
     <string name="seeYourOrders">See your orders</string>

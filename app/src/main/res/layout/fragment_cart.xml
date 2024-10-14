@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/light_gray"
+    android:background="@color/white"
     tools:context=".cart.view.CartFragment">
     <ProgressBar
         android:id="@+id/loadingIndicator"
@@ -23,10 +23,11 @@
         android:layout_height="match_parent"
         android:visibility="gone">
 
-        <ImageView
+        <com.airbnb.lottie.LottieAnimationView
+            android:layout_width="300dp"
+            android:layout_height="300dp"
+            app:lottie_rawRes="@raw/nodataloading"
             android:id="@+id/emptyCartImg"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
             android:layout_marginTop="128dp"
             android:src="@drawable/cart_shopping_svg"
             app:layout_constraintEnd_toEndOf="parent"
@@ -41,7 +42,6 @@
             android:gravity="center"
             android:text="@string/emptyCart"
             android:textSize="16dp"
-            android:textStyle="bold|italic"
             app:layout_constraintEnd_toEndOf="@+id/emptyCartImg"
             app:layout_constraintStart_toStartOf="@+id/emptyCartImg"
             app:layout_constraintTop_toBottomOf="@+id/emptyCartImg" />
