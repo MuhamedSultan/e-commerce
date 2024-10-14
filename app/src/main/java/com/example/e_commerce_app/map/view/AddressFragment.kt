@@ -190,9 +190,11 @@ class AddressFragment : Fragment() {
                         Log.i("TAG", "observeViewModel: billing:  ${state.data?.draft_order?.billing_address}\n" +
                                 "shopping : ${state.data?.draft_order?.shipping_address}")
                         Toast.makeText(requireContext(),"Address added to Order Sucessfully", Toast.LENGTH_SHORT).show()
-                        val action =
-                            AddressFragmentDirections.actionAddressFragmentToAddingCouponFragment()
-                        findNavController().navigate(action)
+                        if (findNavController().currentDestination?.id == R.id.addressFragment) {
+                            val action =
+                                AddressFragmentDirections.actionAddressFragmentToAddingCouponFragment()
+                            findNavController().navigate(action)
+                        }
                     }
 
                     is ApiState.Error -> {
