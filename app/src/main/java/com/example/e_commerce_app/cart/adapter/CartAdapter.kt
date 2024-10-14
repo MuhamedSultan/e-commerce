@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.e_commerce_app.R
 import com.example.e_commerce_app.model.cart.LineItem
 import com.bumptech.glide.Glide
+import com.example.e_commerce_app.db.SharedPrefsManager
 
 class CartAdapter(
     private var lineItems: List<LineItem>,  // Change from List<Cart> to List<LineItem>
@@ -29,7 +30,7 @@ class CartAdapter(
 
         fun bind(lineItem: LineItem) {
             productTitle.text = lineItem.title
-            productPrice.text = lineItem.price
+            productPrice.text = getPriceAndCurrency(lineItem.price.toDouble())
             amountTxt.text = lineItem.quantity.toString()
 
             // Load image using Glide
@@ -75,6 +76,18 @@ class CartAdapter(
     fun updateData(newLineItems: List<LineItem>) {
         lineItems = newLineItems
         notifyDataSetChanged() // Notify the adapter that data has changed
+    }
+    private fun getPriceAndCurrency(price: Double): String {
+        val sharedPrefsManager = SharedPrefsManager.getInstance()
+        val currency = sharedPrefsManager.getCurrency()
+        var convertedPrice = price
+        if(currency == "EGP"){
+            convertedPrice *= sharedPrefsManager.getCurrencyEGP()
+        }else if(currency == "USD"){
+            convertedPrice *= sharedPrefsManager.getCurrencyUSD()
+        }
+        val formattedPrice = String.format("%.2f", convertedPrice)
+        return "$formattedPrice $currency"
     }
 
 }

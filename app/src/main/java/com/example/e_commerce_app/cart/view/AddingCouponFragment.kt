@@ -140,9 +140,15 @@ class AddingCouponFragment : Fragment() {
                             binding.loadingIndicator.visibility = View.GONE
                             enableUi()
                             result.data?.let { draftOrderResponse ->
-                                binding.tvTax.text = draftOrderResponse.draft_order.total_tax
-                                binding.tvSubtotal.text = draftOrderResponse.draft_order.subtotal_price
-                                binding.tvTotal.text = draftOrderResponse.draft_order.total_price
+                                binding.tvTax.text = draftOrderResponse.draft_order.total_tax?.let {
+                                    getPriceAndCurrency(
+                                        it.toDouble())
+                                }
+                                binding.tvSubtotal.text = getPriceAndCurrency((draftOrderResponse.draft_order.subtotal_price?.toDouble() ?: 0.00) +(draftOrderResponse.draft_order.applied_discount?.amount?.toDouble() ?: 0.00))
+                                binding.tvTotal.text = draftOrderResponse.draft_order.total_price?.let {
+                                    getPriceAndCurrency(
+                                        it.toDouble())
+                                }
                                 totalPrice = draftOrderResponse.draft_order.total_price.toString()
                             }
                         }
@@ -193,6 +199,18 @@ class AddingCouponFragment : Fragment() {
         binding.btnSubmit.isEnabled = true
         binding.btnApply.setBackgroundTintList(ColorStateList.valueOf(ContextCompat.getColor(requireContext(), R.color.basic_color)))
         binding.btnSubmit.setBackgroundTintList(ColorStateList.valueOf(ContextCompat.getColor(requireContext(), R.color.basic_color)))
+    }
+    private fun getPriceAndCurrency(price: Double): String {
+        val sharedPrefsManager = SharedPrefsManager.getInstance()
+        val currency = sharedPrefsManager.getCurrency()
+        var convertedPrice = price
+        if(currency == "EGP"){
+            convertedPrice *= sharedPrefsManager.getCurrencyEGP()
+        }else if(currency == "USD"){
+            convertedPrice *= sharedPrefsManager.getCurrencyUSD()
+        }
+        val formattedPrice = String.format("%.2f", convertedPrice)
+        return "$formattedPrice $currency"
     }
 
 }

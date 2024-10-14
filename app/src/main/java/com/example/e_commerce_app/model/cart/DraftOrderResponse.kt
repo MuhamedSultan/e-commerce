@@ -9,7 +9,7 @@ data class DraftOrderResponse(
 
 data class DraftOrderDetailsResponse(
     val admin_graphql_api_id: String?,
-    val applied_discount: Any?,
+    val applied_discount: ResponseAppliedDiscount?,
     val billing_address: Any?,
     val completed_at: Any?,
     val created_at: String?,
@@ -66,4 +66,11 @@ data class TaxLineX(
     val price: String?,
     val rate: Double?,
     val title: String?
+)
+data class ResponseAppliedDiscount(
+    val description: String,
+    val value: String,
+    val title: String,
+    val amount: String,
+    val value_type: String
 )

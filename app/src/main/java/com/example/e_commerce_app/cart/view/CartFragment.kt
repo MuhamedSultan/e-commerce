@@ -139,7 +139,21 @@ class CartFragment : Fragment() {
             }
         }
         cartAdapter.updateData(lineItems.drop(1))
-        binding.totalPrice.text = draftOrderResponse.draft_order.subtotal_price
+        var totalPrice = (draftOrderResponse.draft_order.subtotal_price?.toDouble() ?: 0.00) + (draftOrderResponse.draft_order.applied_discount?.amount?.toDouble() ?: 0.00)
+        binding.totalPrice.text = getPriceAndCurrency(totalPrice)
+    }
+
+    private fun getPriceAndCurrency(price: Double): String {
+        val sharedPrefsManager = SharedPrefsManager.getInstance()
+        val currency = sharedPrefsManager.getCurrency()
+        var convertedPrice = price
+        if(currency == "EGP"){
+            convertedPrice *= sharedPrefsManager.getCurrencyEGP()
+        }else if(currency == "USD"){
+            convertedPrice *= sharedPrefsManager.getCurrencyUSD()
+        }
+        val formattedPrice = String.format("%.2f", convertedPrice)
+        return "$formattedPrice $currency"
     }
 
     private fun getDraftOrderIdForCustomer(customerId: String?): Long? {
