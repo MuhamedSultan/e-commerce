@@ -7,14 +7,9 @@ import com.example.e_commerce_app.model.product.Product
 
 class LocalDataSourceImpl(private val shopifyDao: ShopifyDao) : LocalDataSource {
 
-
     override suspend fun addToFavorite(product: Product) {
         shopifyDao.addToFavorite(product)
     }
-
-//    override suspend fun getAllFavorites(): List<Product> {
-//        return shopifyDao.getAllFavorites()
-//    }
 
     override suspend fun removeFavorite(product: Product) {
         return shopifyDao.removeFavorite(product)
@@ -51,6 +46,7 @@ class LocalDataSourceImpl(private val shopifyDao: ShopifyDao) : LocalDataSource 
             editor.putString("currency", currency)
             editor.apply()
         }
+
         fun getCurrencyText(context: Context): String {
             val prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
             return prefs.getString("currency", "EUR") ?: "EUR"
@@ -67,13 +63,14 @@ class LocalDataSourceImpl(private val shopifyDao: ShopifyDao) : LocalDataSource 
             val prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
             return prefs.getInt("selected_currency_color_position", 0)
         }
-         fun getPriceAndCurrency(price: Double): String {
+
+        fun getPriceAndCurrency(price: Double): String {
             val sharedPrefsManager = SharedPrefsManager.getInstance()
             val currency = sharedPrefsManager.getCurrency()
             var convertedPrice = price
-            if(currency == "EGP"){
+            if (currency == "EGP") {
                 convertedPrice *= sharedPrefsManager.getCurrencyEGP()
-            }else if(currency == "USD"){
+            } else if (currency == "USD") {
                 convertedPrice *= sharedPrefsManager.getCurrencyUSD()
             }
             val formattedPrice = String.format("%.2f", convertedPrice)
