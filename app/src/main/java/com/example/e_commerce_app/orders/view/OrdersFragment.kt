@@ -72,25 +72,10 @@ class OrdersFragment : Fragment() {
 
                         is ApiState.Success -> {
                             hideLoadingIndicator()
-                            ordersViewModel.currencyRates.collect {
-                                val currencyResponse = it.data ?: CurrencyResponse(
-                                    "",
-                                    "",
-                                    Rates(0.0, 0.0, 0.0),
-                                    true,
-                                    0
-                                )
-
-                                val conversionRate = when (selectedCurrency) {
-                                    "USD" -> currencyResponse.rates.USD
-                                    "EUR" -> currencyResponse.rates.EUR
-                                    "EGP" -> currencyResponse.rates.EGP
-                                    else -> 0.0
-                                }
 
 
-                                setupOrdersRecyclerview(result.data?.orders ?: emptyList(),currencyResponse,conversionRate)
-                            }
+                                setupOrdersRecyclerview(result.data?.orders ?: emptyList())
+
                         }
                         is ApiState.Error -> {
                             hideLoadingIndicator()
@@ -123,11 +108,11 @@ class OrdersFragment : Fragment() {
     }
 
 
-    private fun setupOrdersRecyclerview(orders: List<Order>,currencyResponse: CurrencyResponse,conversionRate:Double) {
+    private fun setupOrdersRecyclerview(orders: List<Order>) {
          ordersAdapter = OrdersAdapter(orders,{selectedOrder->
              val action=OrdersFragmentDirections.actionOrdersFragmentToOrderDetailsFragment(selectedOrder.id)
              findNavController().navigate(action)
-         },currencyResponse,selectedCurrency,conversionRate)
+         },)
         val manger = LinearLayoutManager(requireContext())
         binding.orderRv.apply {
             adapter = ordersAdapter

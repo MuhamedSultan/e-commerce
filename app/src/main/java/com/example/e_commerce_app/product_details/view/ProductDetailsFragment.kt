@@ -89,24 +89,6 @@ class ProductDetailsFragment : Fragment() {
         return binding.root
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        observeViewModel()
-        viewModel.fetchCurrencyRates()
-        lifecycleScope.launch {
-            viewLifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.currencyRates.collect {
-                    conversionRate = when (selectedCurrency) {
-                        "USD" -> it.data?.rates?.USD
-                        "EUR" -> it.data?.rates?.EUR
-                        "EGP" -> it.data?.rates?.EGP
-                        else -> null
-                    }
-                }
-            }
-        }
-    }
-
 
     private fun observeViewModel() {
         lifecycleScope.launch {
@@ -115,24 +97,9 @@ class ProductDetailsFragment : Fragment() {
                     is ApiState.Success -> {
                         progressBar.visibility = View.GONE
                         state.data?.let { product ->
-                            viewModel.currencyRates.collect { ratesState ->
-                                when (ratesState) {
-                                    is ApiState.Success -> {
-                                        conversionRate = when (selectedCurrency) {
-                                            "USD" -> ratesState.data?.rates?.USD
-                                            "EUR" -> ratesState.data?.rates?.EUR
-                                            "EGP" -> ratesState.data?.rates?.EGP
-                                            else -> 0.0
-                                        }
-                                        progressBar.visibility = View.GONE
-                                        updateUI(product)
-                                    }
-
-                                    is ApiState.Error -> {}
-                                    is ApiState.Loading -> {}
-                                }
-                            }
                             progressBar.visibility = View.GONE
+                            updateUI(product)
+
                         }
                     }
 
@@ -154,9 +121,8 @@ class ProductDetailsFragment : Fragment() {
         binding.productTitle.text = product.title
         binding.productDescription.text = product.body_html
         val price = product.variants.firstOrNull()?.price?.toDoubleOrNull() ?: 0.0
-        val convertedPrice = conversionRate?.let { price * it } ?: price
-        val formattedPrice = String.format("%.2f", convertedPrice)
-        binding.productPrice.text = "$formattedPrice $selectedCurrency"
+        val formattedPrice = LocalDataSourceImpl.getPriceAndCurrency(price)
+        binding.productPrice.text = formattedPrice
 
         binding.seeRating.setOnClickListener {
             val action =

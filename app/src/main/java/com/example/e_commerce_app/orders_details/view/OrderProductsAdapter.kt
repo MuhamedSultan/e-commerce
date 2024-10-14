@@ -7,6 +7,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.e_commerce_app.R
 import com.example.e_commerce_app.databinding.ItemOrderDetailsProductBinding
+import com.example.e_commerce_app.db.LocalDataSourceImpl
 import com.example.e_commerce_app.model.currencyResponse.CurrencyResponse
 import com.example.e_commerce_app.model.order_details.LineItem
 import com.example.e_commerce_app.model.order_details.Order
@@ -14,9 +15,6 @@ import com.example.e_commerce_app.model.order_details.Order
 class OrderProductsAdapter(
     private val itemsList: MutableList<LineItem>,
     private val onProductClick: (LineItem) -> Unit,
-    private val currencyResponse: CurrencyResponse,
-    private val selectedCurrency: String,
-    private var conversionRate: Double,
     private val context: Context,
     private val src: List<String>
 ) :
@@ -35,8 +33,7 @@ class OrderProductsAdapter(
             .into(holder.image)
         holder.productName.text = item.title
         val defaultPrice = item.price.toDoubleOrNull() ?: 0.0
-        val convertedPrice = defaultPrice * conversionRate
-        holder.productPrice.text = String.format("%.2f %s", convertedPrice, selectedCurrency)
+        holder.productPrice.text = LocalDataSourceImpl.getPriceAndCurrency(defaultPrice)
 
         holder.productItem.setOnClickListener {
             onProductClick(item)
@@ -53,13 +50,6 @@ class OrderProductsAdapter(
             itemsList.removeAt(0)
             notifyItemRemoved(0)
             notifyItemRangeChanged(0, itemsList.size)
-        }
-
-        conversionRate = when (selectedCurrency) {
-            "USD" -> currencyResponse.rates.USD
-            "EUR" -> currencyResponse.rates.EUR
-            "EGP" -> currencyResponse.rates.EGP
-            else -> 0.0
         }
     }
 

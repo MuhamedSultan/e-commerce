@@ -80,7 +80,6 @@ class HomeFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         SharedPrefsManager.init(requireContext())
-        ////////------> Currency Check Data
         val currentDate = LocalDate.now().toString()
         val currencyLastCheckDate = SharedPrefsManager.getInstance().getCurrencyLastDate()
         if(currentDate != currencyLastCheckDate){
@@ -190,26 +189,9 @@ class HomeFragment : Fragment() {
                             hideLoadingIndicator()
                             result.data?.let { product ->
                                 hideLoadingIndicator()
-                                homeViewModel.currencyRates.collect {
-                                    val currencyResponse = it.data ?:CurrencyResponse(
-                                        "",
-                                        "",
-                                        Rates(0.0, 0.0, 0.0),
-                                        true,
-                                        0
-                                    )
-
-                                    val conversionRate = when (selectedCurrency) {
-                                        "USD" -> currencyResponse.rates.USD
-                                        "EUR" -> currencyResponse.rates.EUR
-                                        "EGP" -> currencyResponse.rates.EGP
-                                        else -> 0.0
-                                    }
                                     val randomProducts = product.products.shuffled().take(15)
                                     setupRandomProductsRecyclerview(
-                                        randomProducts,
-                                        currencyResponse,
-                                        conversionRate
+                                        randomProducts
                                     )
 
 
@@ -217,12 +199,12 @@ class HomeFragment : Fragment() {
                                         setupSuggestionsRecyclerview(filteredList)
                                         setupRandomProductsRecyclerview(filteredList.ifEmpty {
                                             homeViewModel.originalProducts
-                                        }, currencyResponse, conversionRate)
+                                        })
                                         if (filteredList.isEmpty() && binding.edSearch.text.isNotEmpty()) {
                                             binding.suggestionsRv.visibility = View.GONE
                                         }
                                     }
-                                }
+
                             }
 
 
@@ -397,8 +379,6 @@ class HomeFragment : Fragment() {
 
     private fun setupRandomProductsRecyclerview(
         product: List<Product>,
-        currencyResponse: CurrencyResponse,
-        conversion: Double
     ) {
         val randomProductsAdapter = RandomProductsAdapter(
             product,
@@ -438,7 +418,7 @@ class HomeFragment : Fragment() {
                     }
 
                 }
-            }, sharedPreferences, currencyResponse, selectedCurrency, conversion
+            }, sharedPreferences
         )
         randomProductsAdapter.notifyDataSetChanged()
 

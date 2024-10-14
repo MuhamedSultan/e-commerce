@@ -5,15 +5,14 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.e_commerce_app.databinding.ItemOrdersBinding
+import com.example.e_commerce_app.db.LocalDataSourceImpl
+import com.example.e_commerce_app.db.SharedPrefsManager
 import com.example.e_commerce_app.model.currencyResponse.CurrencyResponse
 import com.example.e_commerce_app.model.orders.Order
 
 class OrdersAdapter(
     private val ordersList: List<Order>,
     private val onOrderClick: (Order) -> Unit,
-    private val currencyResponse: CurrencyResponse,
-    private val selectedCurrency: String,
-    private var conversionRate: Double
 ) :
     RecyclerView.Adapter<OrdersAdapter.OrdersViewHolder>() {
 
@@ -33,19 +32,14 @@ class OrdersAdapter(
         val createdAt = order.created_at
         holder.createAt.text = createdAt.substring(0,10)
         val defaultPrice = order.total_price.toDoubleOrNull() ?: 0.0
-        val convertedPrice = defaultPrice * conversionRate
-        holder.orderPrice.text = String.format("%.2f %s", convertedPrice, selectedCurrency)
+        val convertedPrice = LocalDataSourceImpl.getPriceAndCurrency(defaultPrice)
+        holder.orderPrice.text = convertedPrice
         holder.orderItem.setOnClickListener {
             onOrderClick(order)
         }
-        conversionRate = when (selectedCurrency) {
-            "USD" -> currencyResponse.rates.USD
-            "EUR" -> currencyResponse.rates.EUR
-            "EGP" -> currencyResponse.rates.EGP
-            else -> 0.0
-        }
 
     }
+
 
     override fun getItemCount(): Int {
         //     if (!isExpanded && ordersList.isNotEmpty()&&ordersList.size==2) {

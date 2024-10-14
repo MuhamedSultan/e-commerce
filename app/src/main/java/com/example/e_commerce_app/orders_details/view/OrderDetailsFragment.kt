@@ -64,21 +64,6 @@ class OrderDetailsFragment : Fragment() {
 
                         is ApiState.Success -> {
                             hideLoadingIndicator()
-                            orderDetailsViewModel.currencyRates.collect {
-                                val currencyResponse = it.data ?: CurrencyResponse(
-                                    "",
-                                    "",
-                                    Rates(0.0, 0.0, 0.0),
-                                    true,
-                                    0
-                                )
-
-                                val conversionRate = when (selectedCurrency) {
-                                    "USD" -> currencyResponse.rates.USD
-                                    "EUR" -> currencyResponse.rates.EUR
-                                    "EGP" -> currencyResponse.rates.EGP
-                                    else -> 0.0
-                                }
 
                                 val order = result.data?.orders?.get(0)
                                 val productImage = (order?.note ?: "").split("|##|").filter { it.isNotEmpty() }
@@ -92,31 +77,29 @@ class OrderDetailsFragment : Fragment() {
 
 
                                 val orderSubTotal =
-                                    order?.subtotal_price?.toDoubleOrNull()?.times(conversionRate)
-                                        ?: 0.0
+                                    order?.subtotal_price?.toDoubleOrNull()?:0.0
+
                                 binding.subTotal.text =
-                                    String.format("%.2f %s", orderSubTotal, selectedCurrency)
+                                   LocalDataSourceImpl.getPriceAndCurrency(orderSubTotal)
 
                                 val totalTax =
-                                    order?.total_tax?.toDoubleOrNull()?.times(conversionRate) ?: 0.0
+                                    order?.total_tax?.toDoubleOrNull()?:0.0
                                 binding.totalTax.text =
-                                    String.format("%.2f %s", totalTax, selectedCurrency)
+                                  LocalDataSourceImpl.getPriceAndCurrency(totalTax)
 
                                 val totalPrice =
-                                    order?.total_price?.toDoubleOrNull()?.times(conversionRate)
+                                    order?.total_price?.toDoubleOrNull()
                                         ?: 0.0
                                 binding.totalCost.text =
-                                    String.format("%.2f %s", totalPrice, selectedCurrency)
+                                  LocalDataSourceImpl.getPriceAndCurrency(totalPrice)
 
 
                                 setupProductRecyclerView(
                                     order?.line_items!!.toMutableList(),
-                                    currencyResponse,
-                                    conversionRate,
                                     productImage
                                 )
                             }
-                        }
+
 
                         is ApiState.Error -> {
                             hideLoadingIndicator()
@@ -146,8 +129,6 @@ class OrderDetailsFragment : Fragment() {
 
     private fun setupProductRecyclerView(
         item: MutableList<LineItem>,
-        currencyResponse: CurrencyResponse,
-        conversionRate: Double,
         productImage:List<String>
     ) {
         val orderProductsAdapter = OrderProductsAdapter(item, { onProductClick ->
@@ -156,7 +137,7 @@ class OrderDetailsFragment : Fragment() {
                     onProductClick.product_id
                 )
             findNavController().navigate(action)
-        }, currencyResponse, selectedCurrency, conversionRate,requireContext(), productImage)
+        },requireContext(), productImage)
         val manager = LinearLayoutManager(requireContext())
         manager.orientation = LinearLayoutManager.HORIZONTAL
 
