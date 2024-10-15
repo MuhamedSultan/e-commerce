@@ -66,12 +66,13 @@ class LocalDataSourceImpl(private val shopifyDao: ShopifyDao) : LocalDataSource 
 
         fun getPriceAndCurrency(price: Double): String {
             val sharedPrefsManager = SharedPrefsManager.getInstance()
-            val currency = sharedPrefsManager.getCurrency()
+            var currency = sharedPrefsManager.getCurrency()
             var convertedPrice = price
-            if (currency == "EGP") {
-                convertedPrice *= sharedPrefsManager.getCurrencyEGP()
-            } else if (currency == "USD") {
+            if (currency == "USD") {
+                convertedPrice /= sharedPrefsManager.getCurrencyEGP()
                 convertedPrice *= sharedPrefsManager.getCurrencyUSD()
+            }else if(currency == "EUR"){
+                convertedPrice /= sharedPrefsManager.getCurrencyEGP()
             }
             val formattedPrice = String.format("%.2f", convertedPrice)
             return "$formattedPrice $currency"

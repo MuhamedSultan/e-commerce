@@ -21,9 +21,6 @@ class BrandProductsAdapter(
     private val onProductClick: (Product) -> (Unit),
     private val onFavouriteClick: (Product, Boolean) -> Unit,
     private val sharedPrefs: SharedPreferences,
-    private val currencyResponse: CurrencyResponse,
-    private val selectedCurrency: String,
-    private var conversionRate:Double
 
 ) :
     Adapter<BrandProductsAdapter.BrandProductsViewHolder>() {
@@ -38,8 +35,7 @@ class BrandProductsAdapter(
         Glide.with(context).load(product.image.src).into(holder.productImage)
         holder.productName.text = product.title.split('|').getOrNull(1)?.trim() ?: ""
         val defaultPrice = product.variants[0].price.toDoubleOrNull() ?: 0.0
-        val convertedPrice = defaultPrice * conversionRate
-        holder.productPrice.text = String.format("%.2f %s", convertedPrice, selectedCurrency)
+        holder.productPrice.text =LocalDataSourceImpl.getPriceAndCurrency(defaultPrice)
 
         var isFavorite = LocalDataSourceImpl.isProductFavorite(context, product.id.toString())
         holder.favouriteIcon.setImageResource(
@@ -65,12 +61,6 @@ class BrandProductsAdapter(
                     Toast.LENGTH_SHORT
                 ).show()
             }
-        }
-        conversionRate = when (selectedCurrency) {
-            "USD" -> currencyResponse.rates.USD
-            "EUR" -> currencyResponse.rates.EUR
-            "EGP" -> currencyResponse.rates.EGP
-            else ->0.0
         }
     }
 
