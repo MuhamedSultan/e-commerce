@@ -32,10 +32,9 @@ import com.example.e_commerce_app.categories.viewmodel.CategoriesViewModel
 import com.example.e_commerce_app.categories.viewmodel.CategoriesViewModelFactory
 import com.example.e_commerce_app.databinding.FragmentCategoriesBinding
 import com.example.e_commerce_app.db.LocalDataSourceImpl
+import com.example.e_commerce_app.db.SharedPrefsManager
 import com.example.e_commerce_app.db.ShopifyDB
 import com.example.e_commerce_app.home.view.adapter.SuggestionsAdapter
-import com.example.e_commerce_app.model.currencyResponse.CurrencyResponse
-import com.example.e_commerce_app.model.currencyResponse.Rates
 import com.example.e_commerce_app.model.custom_collection.CustomCollection
 import com.example.e_commerce_app.model.product.Product
 import com.example.e_commerce_app.model.repo.ShopifyRepoImpl
@@ -43,7 +42,6 @@ import com.example.e_commerce_app.network.RemoteDataSourceImpl
 import com.example.e_commerce_app.util.ApiState
 import com.example.e_commerce_app.util.GuestUtil
 import com.google.android.material.snackbar.Snackbar
-import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
 
 
@@ -57,6 +55,7 @@ class CategoriesFragment : Fragment(), OnCategoryClick {
     private var isOpen = false
     private var selectedProductType: String? = null
     private lateinit var sharedPreferences: SharedPreferences
+    private lateinit var sharedPrefsManager: SharedPrefsManager
     private lateinit var suggestionsAdapter: SuggestionsAdapter
     private lateinit var selectedCurrency: String
 
@@ -73,6 +72,7 @@ class CategoriesFragment : Fragment(), OnCategoryClick {
         sharedPreferences = requireContext().getSharedPreferences("UserPrefs", 0)
         selectedCurrency = LocalDataSourceImpl.getCurrencyText(requireContext())
         LocalDataSourceImpl.saveCurrencyText(requireContext(), selectedCurrency)
+        sharedPrefsManager=SharedPrefsManager.getInstance()
     }
 
     override fun onCreateView(
@@ -87,7 +87,6 @@ class CategoriesFragment : Fragment(), OnCategoryClick {
         super.onViewCreated(view, savedInstanceState)
 
 
-        // Set icon colors programmatically
         val filteringOptionsFAB = binding.filteringOptions
         filteringOptionsFAB.setColorFilter(
             ContextCompat.getColor(
@@ -126,7 +125,6 @@ class CategoriesFragment : Fragment(), OnCategoryClick {
             ), PorterDuff.Mode.SRC_IN
         )
 
-        // Set background color programmatically
         val backgroundColor = ContextCompat.getColor(
             requireContext(),
             R.color.basic_color
@@ -171,7 +169,6 @@ class CategoriesFragment : Fragment(), OnCategoryClick {
             }
         })
 
-        // Observe the filtered products
         lifecycleScope.launch {
             viewLifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 categoriesViewModel.filteredProducts.collect { filteredProducts ->
@@ -207,7 +204,6 @@ class CategoriesFragment : Fragment(), OnCategoryClick {
                 categoriesViewModel.categoriesResult.collect { result ->
                     when (result) {
                         is ApiState.Loading -> {
-                            // Handle loading state
                         }
 
                         is ApiState.Success -> {
@@ -226,13 +222,7 @@ class CategoriesFragment : Fragment(), OnCategoryClick {
 
         lifecycleScope.launch {
             viewLifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                // Combine productsResult and currencyRates to avoid nested collections
-                combine(
-                    categoriesViewModel.productsResult,
-                    categoriesViewModel.currencyRates
-                ) { productsResult, currencyRates ->
-                    Pair(productsResult, currencyRates)
-                }.collect { (productsResult, currencyRates) ->
+                categoriesViewModel.productsResult.collect { productsResult ->
                     when (productsResult) {
                         is ApiState.Loading -> {
                             showLoadingIndicator()
@@ -240,19 +230,6 @@ class CategoriesFragment : Fragment(), OnCategoryClick {
 
                         is ApiState.Success -> {
                             hideLoadingIndicator()
-                            val currencyResponse = currencyRates.data ?: CurrencyResponse(
-                                "",
-                                "",
-                                Rates(0.0, 0.0, 0.0),
-                                true,
-                                0
-                            )
-                            val conversionRate = when (selectedCurrency) {
-                                "USD" -> currencyResponse.rates.USD
-                                "EUR" -> currencyResponse.rates.EUR
-                                "EGP" -> currencyResponse.rates.EGP
-                                else -> 0.0
-                            }
 
                             allProducts = productsResult.data?.products ?: emptyList()
                             categoriesViewModel.originalProducts = allProducts
@@ -261,11 +238,9 @@ class CategoriesFragment : Fragment(), OnCategoryClick {
 
                             setupCategoriesProductsRecyclerview(
                                 allProducts,
-                                currencyResponse,
-                                conversionRate
                             )
-                            productTypeFiltering(currencyResponse, conversionRate)
-                            priceFiltering(currencyResponse, conversionRate)
+                            productTypeFiltering()
+                            priceFiltering()
                         }
 
                         is ApiState.Error -> {
@@ -278,7 +253,7 @@ class CategoriesFragment : Fragment(), OnCategoryClick {
         }
     }
 
-    private fun productTypeFiltering(currencyResponse: CurrencyResponse, conversionRate: Double) {
+    private fun productTypeFiltering() {
         menuItems = arrayOf(
             binding.shirtsType,
             binding.shoesType,
@@ -295,29 +270,29 @@ class CategoriesFragment : Fragment(), OnCategoryClick {
         }
         binding.shirtsType.setOnClickListener {
             selectedProductType = "T-SHIRTS"
-            showProductsByType(currencyResponse, conversionRate)
+            showProductsByType()
         }
         binding.shoesType.setOnClickListener {
             selectedProductType = "SHOES"
-            showProductsByType(currencyResponse, conversionRate)
+            showProductsByType()
         }
         binding.accessoriesType.setOnClickListener {
             selectedProductType = "ACCESSORIES"
-            showProductsByType(currencyResponse, conversionRate)
+            showProductsByType()
         }
         binding.allProducts.setOnClickListener {
             selectedProductType = null
-            showAllProducts(currencyResponse, conversionRate)
+            showAllProducts()
         }
     }
 
-    private fun showAllProducts(currencyResponse: CurrencyResponse, conversionRate: Double) {
-        setupCategoriesProductsRecyclerview(allProducts, currencyResponse, conversionRate)
-        resetPriceFilter(currencyResponse, conversionRate)
+    private fun showAllProducts() {
+        setupCategoriesProductsRecyclerview(allProducts)
+        resetPriceFilter()
     }
 
 
-    private fun resetPriceFilter(currencyResponse: CurrencyResponse, conversionRate: Double) {
+    private fun resetPriceFilter() {
         binding.seekBar.progress = 0
         binding.priceTv.text = "0"
         val filteredProducts = if (selectedProductType != null) {
@@ -325,18 +300,18 @@ class CategoriesFragment : Fragment(), OnCategoryClick {
         } else {
             allProducts
         }
-        setupCategoriesProductsRecyclerview(filteredProducts, currencyResponse, conversionRate)
+        setupCategoriesProductsRecyclerview(filteredProducts)
     }
 
-    private fun showProductsByType(currencyResponse: CurrencyResponse, conversionRate: Double) {
+    private fun showProductsByType() {
         val filteredProducts = allProducts.filter { product ->
             product.product_type == selectedProductType
         }
-        setupCategoriesProductsRecyclerview(filteredProducts, currencyResponse, conversionRate)
-        resetPriceFilter(currencyResponse, conversionRate)
+        setupCategoriesProductsRecyclerview(filteredProducts)
+        resetPriceFilter()
     }
 
-    private fun priceFiltering(currencyResponse: CurrencyResponse, conversionRate: Double) {
+    private fun priceFiltering() {
         binding.filterPrice.setOnClickListener {
             binding.seekBar.visibility = View.VISIBLE
             binding.priceTv.visibility = View.VISIBLE
@@ -347,48 +322,40 @@ class CategoriesFragment : Fragment(), OnCategoryClick {
 
         binding.seekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
             override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
-                binding.priceTv.text ="${progress.toDouble()} $selectedCurrency"
-                filterProductsByTypeAndPrice(currencyResponse, conversionRate)
+                binding.priceTv.text = "${progress.toDouble()} $selectedCurrency"
+                filterProductsByTypeAndPrice()
                 currentSeekBarProgress = progress
             }
 
             override fun onStartTrackingTouch(seekBar: SeekBar?) {}
             override fun onStopTrackingTouch(seekBar: SeekBar?) {
-                if (seekBar?.progress==0){
-                    showAllProducts(currencyResponse,conversionRate)
+                if (seekBar?.progress == 0) {
+                    showAllProducts()
                 }
             }
         })
     }
 
     private fun filterProductsByTypeAndPrice(
-        currencyResponse: CurrencyResponse,
-        conversionRate: Double
     ) {
         val filteredProducts = allProducts.filter { product ->
             val matchesType = selectedProductType?.let { product.product_type == it } ?: true
 
-            // Convert the original price to the selected currency
-            val originalPrice = product.variants[0].price.toDouble()
-            val convertedPrice = originalPrice * conversionRate
+            val originalPrice = convertPriceToSelectedCurrency(product.variants[0].price.toDouble())
 
-            // Compare the converted price to the current seek bar progress
-            val matchesPrice = convertedPrice <= currentSeekBarProgress
-
-            // Return true only if both type and price match
+            val matchesPrice = originalPrice <= currentSeekBarProgress
             matchesType && matchesPrice
         }
-        setupCategoriesProductsRecyclerview(filteredProducts, currencyResponse, conversionRate)
+        setupCategoriesProductsRecyclerview(filteredProducts)
     }
-
-
-
-//    private fun filterProductsByPrice(maxPrice: Int) {
-//        val filteredProducts = allProducts.filter {
-//            it.variants[0].price.toDouble() <= maxPrice
-//        }
-//        setupCategoriesProductsRecyclerview(filteredProducts)
-//    }
+    private fun convertPriceToSelectedCurrency(price: Double): Double {
+        selectedCurrency = LocalDataSourceImpl.getCurrencyText(requireContext())
+        return when (selectedCurrency) {
+            "USD" -> {price / sharedPrefsManager.getCurrencyEGP() * sharedPrefsManager.getCurrencyUSD()}
+            "EUR" -> price / sharedPrefsManager.getCurrencyEGP()
+            else -> price
+        }
+    }
 
 
     private fun showLoadingIndicator() {
@@ -418,8 +385,6 @@ class CategoriesFragment : Fragment(), OnCategoryClick {
 
     private fun setupCategoriesProductsRecyclerview(
         product: List<Product>,
-        currencyResponse: CurrencyResponse,
-        conversionRate: Double
     ) {
         val categoriesProductsAdapter =
             CategoriesProductsAdapter(product, requireContext(), { selectedProduct ->
@@ -451,7 +416,7 @@ class CategoriesFragment : Fragment(), OnCategoryClick {
                         isFavorite
                     )
                 }
-            }, sharedPreferences, currencyResponse, selectedCurrency, conversionRate)
+            }, sharedPreferences)
         val manager = GridLayoutManager(requireContext(), 2)
 
         binding.productsRv.apply {

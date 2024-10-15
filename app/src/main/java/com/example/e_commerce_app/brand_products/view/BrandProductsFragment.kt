@@ -24,6 +24,7 @@ import com.example.e_commerce_app.brand_products.viewmodel.BrandProductViewModel
 import com.example.e_commerce_app.brand_products.viewmodel.BrandProductViewModelFactory
 import com.example.e_commerce_app.databinding.FragmentBrandProductsBinding
 import com.example.e_commerce_app.db.LocalDataSourceImpl
+import com.example.e_commerce_app.db.SharedPrefsManager
 import com.example.e_commerce_app.db.ShopifyDB
 import com.example.e_commerce_app.home.view.adapter.SuggestionsAdapter
 import com.example.e_commerce_app.model.currencyResponse.CurrencyResponse
@@ -44,11 +45,11 @@ class BrandProductsFragment : Fragment() {
     private var allProducts: List<Product> = emptyList()
     private var filteredProducts: List<Product> = emptyList()
     private lateinit var sharedPreferences: SharedPreferences
+    private lateinit var sharedPrefsManager: SharedPrefsManager
     private lateinit var suggestionsAdapter: SuggestionsAdapter
     private lateinit var selectedCurrency: String
 
 
-    //    private lateinit var gridLayoutManager: GridLayoutManager
     private lateinit var linearLayoutManager: LinearLayoutManager
 
 
@@ -62,6 +63,7 @@ class BrandProductsFragment : Fragment() {
         brandProductViewModel = ViewModelProvider(this, factory)[BrandProductViewModel::class.java]
         brandName = BrandProductsFragmentArgs.fromBundle(requireArguments()).brandName
         sharedPreferences = requireContext().getSharedPreferences("UserPrefs", 0)
+        sharedPrefsManager=SharedPrefsManager.getInstance()
 
     }
 
@@ -149,17 +151,24 @@ class BrandProductsFragment : Fragment() {
 
     }
 
-    private fun filterProductsByPrice(
-        maxPrice: Int
-    ) {
-
+    private fun filterProductsByPrice(maxPrice: Int) {
         filteredProducts = allProducts.filter {
             val price = it.variants[0].price.toDouble()
-            price <= maxPrice
+            val convertedPrice = convertPriceToSelectedCurrency(price)
+            convertedPrice <= maxPrice
         }
-
         setupBrandProductsRecyclerview(filteredProducts)
     }
+
+    private fun convertPriceToSelectedCurrency(price: Double): Double {
+        selectedCurrency = LocalDataSourceImpl.getCurrencyText(requireContext())
+        return when (selectedCurrency) {
+            "USD" -> price / sharedPrefsManager.getCurrencyEGP() * sharedPrefsManager.getCurrencyUSD()
+            "EUR" -> price / sharedPrefsManager.getCurrencyEGP()
+            else -> price
+        }
+    }
+
 
     private fun showLoadingIndicator() {
         binding.loadingIndicator.visibility = View.VISIBLE
