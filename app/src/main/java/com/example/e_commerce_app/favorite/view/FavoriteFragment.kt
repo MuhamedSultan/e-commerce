@@ -75,7 +75,10 @@ class FavoriteFragment : Fragment() {
             favoriteViewModel.favorites.collectLatest { favoriteProducts ->
 
                 favoriteAdapter.submitList(favoriteProducts)
-
+                if (shopifyCustomerId== null) {
+                    binding.textView.visibility = View.VISIBLE
+                    binding.textView.text = "You are a guest,Please log in to proceed!"
+                }
                 if (favoriteProducts.isEmpty()) {
                     binding.recyclerView.visibility =
                         View.GONE
