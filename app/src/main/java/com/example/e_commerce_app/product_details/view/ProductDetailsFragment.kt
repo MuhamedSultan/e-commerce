@@ -60,10 +60,21 @@ class ProductDetailsFragment : Fragment() {
         viewModel = ViewModelProvider(this, factory)[ProductDetailsViewModel::class.java]
     }
 
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        if (SharedPrefsManager.getInstance().getShopifyCustomerId() == null) {
+            binding.btnAddToCart.isEnabled = false
+        } else {
+            binding.btnAddToCart.isEnabled = true
+        }
+
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
+
         binding = FragmentProductDetailsBinding.inflate(inflater, container, false)
 
         (activity as MainActivity).findViewById<BottomNavigationView>(R.id.bottomNavigationView).visibility =
