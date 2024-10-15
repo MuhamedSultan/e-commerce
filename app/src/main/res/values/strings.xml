@@ -1,11 +1,11 @@
 <resources>
-    <string name="app_name">ST Store</string>
+    <string name="app_name">3M Store</string>
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="home">Home</string>
     <string name="categories">Categories</string>
     <string name="cart">Cart</string>
     <string name="profile">Profile</string>
-    <string name="welcom">Welcome to STStore !</string>
+    <string name="welcom">Welcome to 3M-Store !</string>
     <string name="welcom2">With extensive experience in the e-commerce industry, we deliver the highest quality products to meet all your needs.</string>
     <string name="getstart_btn">Get Started</string>
     <string name="login1">Let’s Sign You In</string>
@@ -46,7 +46,7 @@
     <string name="orders">#Orders</string>
     <string name="view_all">View all</string>
     <string name="orderId">order No.</string>
-    <string name="st_store">ST Store</string>
+    <string name="st_store">3M-Store</string>
     <string name="payment_status">payment Status :</string>
     <string name="connection_lost">Connection Lost, Please Check Your Internet.</string>
     <string name="order_products">Order Products</string>
