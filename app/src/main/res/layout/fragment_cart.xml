@@ -35,6 +35,8 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
+            android:textStyle="bold"
+            android:textColor="@color/yellow"
             android:id="@+id/emptyCartTxt"
             android:layout_width="270dp"
             android:layout_height="wrap_content"
