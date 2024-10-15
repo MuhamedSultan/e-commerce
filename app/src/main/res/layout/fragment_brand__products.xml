@@ -70,7 +70,7 @@
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
         android:layout_marginEnd="8dp"
-        android:max="60000"
+        android:max="500"
         android:thumbTint="@color/yellow"
         android:visibility="gone"
         app:layout_constraintEnd_toStartOf="@+id/priceTextTv"

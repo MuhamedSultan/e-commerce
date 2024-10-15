@@ -112,30 +112,13 @@ class BrandProductsFragment : Fragment() {
                             hideLoadingIndicator()
                             result.data?.let { product ->
                                val  productPrice=product.products[0].variants[0].price.toDouble()
-                                brandProductViewModel.currencyRates.collect {
-                                    val currencyResponse = it.data ?: CurrencyResponse(
-                                        "",
-                                        "",
-                                        Rates(productPrice, productPrice, productPrice),
-                                        true,
-                                        0
-                                    )
-
-                                    val conversionRate = when (selectedCurrency) {
-                                        "USD" -> currencyResponse.rates.USD
-                                        "EUR" -> currencyResponse.rates.EUR
-                                        "EGP" -> currencyResponse.rates.EGP
-                                        else -> 0.0
-                                    }
                                     allProducts = product.products
                                     brandProductViewModel.setAllProducts(allProducts)
                                     setupBrandProductsRecyclerview(
                                         allProducts,
-                                        currencyResponse,
-                                        conversionRate
                                     )
-                                    setupSeekBar(currencyResponse, conversionRate)
-                                }
+                                    setupSeekBar()
+
                             }
                         }
 
@@ -149,17 +132,17 @@ class BrandProductsFragment : Fragment() {
         }
     }
 
-    private fun setupSeekBar(currencyResponse: CurrencyResponse, conversionRate: Double) {
+    private fun setupSeekBar() {
         binding.seekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
             override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
-                filterProductsByPrice(progress, currencyResponse, conversionRate)
+                filterProductsByPrice(progress)
                 binding.priceTv.text = "${progress.toDouble()} $selectedCurrency"
             }
 
             override fun onStartTrackingTouch(seekBar: SeekBar?) {}
             override fun onStopTrackingTouch(seekBar: SeekBar?) {
                 if (seekBar?.progress==0){
-                    setupBrandProductsRecyclerview(allProducts,currencyResponse,conversionRate)
+                    setupBrandProductsRecyclerview(allProducts)
                 }
             }
         })
@@ -167,18 +150,15 @@ class BrandProductsFragment : Fragment() {
     }
 
     private fun filterProductsByPrice(
-        maxPrice: Int,
-        currencyResponse: CurrencyResponse,
-        conversionRate: Double
+        maxPrice: Int
     ) {
 
         filteredProducts = allProducts.filter {
             val price = it.variants[0].price.toDouble()
-            val convertedPrice = conversionRate * price
-            convertedPrice <= maxPrice
+            price <= maxPrice
         }
 
-        setupBrandProductsRecyclerview(filteredProducts, currencyResponse, conversionRate)
+        setupBrandProductsRecyclerview(filteredProducts)
     }
 
     private fun showLoadingIndicator() {
@@ -197,8 +177,6 @@ class BrandProductsFragment : Fragment() {
 
     private fun setupBrandProductsRecyclerview(
         product: List<Product>,
-        currencyResponse: CurrencyResponse,
-        conversionRate: Double
     ) {
         val brandProductsAdapter =
             BrandProductsAdapter(product, requireContext(), { selectedProduct ->
@@ -236,7 +214,7 @@ class BrandProductsFragment : Fragment() {
                         isFavorite
                     )
                 }
-            }, sharedPreferences, currencyResponse, selectedCurrency, conversionRate)
+            }, sharedPreferences)
 
         val manager = GridLayoutManager(requireContext(), 2)
 
@@ -274,8 +252,7 @@ class BrandProductsFragment : Fragment() {
             }
 
             suggestionsAdapter.updateProducts(filteredProducts)
-            val currencyResponse = CurrencyResponse("", "", Rates(0.0, 0.0, 0.0), true, 0)
-            setupBrandProductsRecyclerview(filteredProducts, currencyResponse, 0.0)
+            setupBrandProductsRecyclerview(filteredProducts)
             binding.suggestionsRv.visibility =
                 if (searchText.isNotEmpty() && filteredProducts.isNotEmpty()) View.VISIBLE else View.GONE
         }
