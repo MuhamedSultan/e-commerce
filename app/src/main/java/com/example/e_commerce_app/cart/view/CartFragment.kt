@@ -78,9 +78,17 @@ class CartFragment : Fragment() {
                 viewModel.draftOrderState.collect { result ->
                     when (result) {
                         is ApiState.Loading -> {
-                            binding.loadingIndicator.visibility = View.VISIBLE
-                            binding.cartLayout.visibility = View.GONE
-                            binding.emptyCart.visibility = View.GONE
+                            if (SharedPrefsManager.getInstance().getShopifyCustomerId()!=null){
+                                binding.loadingIndicator.visibility = View.VISIBLE
+                                binding.cartLayout.visibility = View.GONE
+                                binding.emptyCart.visibility = View.GONE
+                            }else {
+                                binding.loadingIndicator.visibility = View.GONE
+                                binding.cartLayout.visibility = View.GONE
+                                binding.emptyCart.visibility = View.VISIBLE
+                                binding.emptyCartTxt.text = "You are a guest,Please log in to proceed!"
+                            }
+
                         }
 
                         is ApiState.Success -> {
@@ -122,7 +130,7 @@ class CartFragment : Fragment() {
     }
 
     private fun showError(message: String?) {
-        Toast.makeText(requireContext(), "Error fetching products: ${message ?: "Unknown error occurred."}", Toast.LENGTH_LONG).show()
+//        Toast.makeText(requireContext(), "Error fetching products: ${message ?: "Unknown error occurred."}", Toast.LENGTH_LONG).show()
     }
 
     private fun showNoDraftOrderMessage() {
