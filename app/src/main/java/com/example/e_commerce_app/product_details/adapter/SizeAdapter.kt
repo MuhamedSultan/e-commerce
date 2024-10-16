@@ -11,6 +11,8 @@ import com.example.e_commerce_app.R
 
 class SizeAdapter(private val sizes: List<String>) :
     RecyclerView.Adapter<SizeAdapter.SizeViewHolder>() {
+    private var selectedPosition = -1
+    var previousSelectedPos =0
 
     class SizeViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val sizeTextView: TextView = itemView.findViewById(R.id.size_item)
@@ -24,9 +26,21 @@ class SizeAdapter(private val sizes: List<String>) :
     override fun onBindViewHolder(holder: SizeViewHolder, position: Int) {
         val size = sizes[position]
         holder.sizeTextView.text = size
+        if (selectedPosition == position) {
+            holder.sizeTextView.setBackgroundResource(R.color.gray_dark_color)
+        } else {
+           holder.sizeTextView.setBackgroundResource(R.color.light_gray)
+        }
 
         holder.sizeTextView.setOnClickListener {
-            Toast.makeText(holder.itemView.context, "Clicked on size: $size", Toast.LENGTH_SHORT)
+
+            val previousPosition = selectedPosition
+            selectedPosition = position
+            notifyItemChanged(previousPosition)
+            notifyItemChanged(position)
+
+
+            Toast.makeText(holder.itemView.context, "Selected: $size", Toast.LENGTH_SHORT)
                 .show()
         }
     }

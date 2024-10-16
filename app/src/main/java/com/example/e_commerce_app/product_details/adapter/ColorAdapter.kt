@@ -10,6 +10,7 @@ import com.example.e_commerce_app.R
 
 class ColorAdapter(private val colors: List<String>) :
     RecyclerView.Adapter<ColorAdapter.ColorViewHolder>() {
+    private var selectedPosition = -1
 
     class ColorViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val colorImageView: ImageView = itemView.findViewById(R.id.color_item_image)
@@ -34,9 +35,20 @@ class ColorAdapter(private val colors: List<String>) :
             "burgandy" -> holder.colorImageView.setImageResource(R.drawable.burgandy)
             else -> holder.colorImageView.setImageResource(R.drawable.light_brown)
         }
+        // Handle selection and deselection
+        if (selectedPosition == position) {
+            holder.colorImageView.setBackgroundResource(R.color.gray_dark_color)  // Highlight selected
+        } else {
+            holder.colorImageView.setBackgroundResource(R.color.light_gray)
+        }
 
         holder.colorImageView.setOnClickListener {
-            Toast.makeText(holder.itemView.context, "Clicked on color: $color", Toast.LENGTH_SHORT)
+            val previousPosition = selectedPosition
+            selectedPosition = position
+            notifyItemChanged(previousPosition)
+            notifyItemChanged(position)
+
+            Toast.makeText(holder.itemView.context, "Selected: $color", Toast.LENGTH_SHORT)
                 .show()
         }
     }
