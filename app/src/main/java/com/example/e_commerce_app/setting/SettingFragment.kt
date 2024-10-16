@@ -244,8 +244,10 @@ class SettingFragment : Fragment() {
         }
 
         val intent = Intent(requireActivity(), LoginActivity::class.java)
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
         startActivity(intent)
         requireActivity().finish()
+
     }
 
     private fun showLogoutConfirmationDialog() {

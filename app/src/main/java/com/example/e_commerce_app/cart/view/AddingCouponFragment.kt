@@ -23,6 +23,7 @@ import com.example.e_commerce_app.cart.DraftOrderManager
 import com.example.e_commerce_app.cart.viewmodel.CartViewModel
 import com.example.e_commerce_app.cart.viewmodel.CartViewModelFactory
 import com.example.e_commerce_app.databinding.FragmentAddingCouponBinding
+import com.example.e_commerce_app.db.LocalDataSourceImpl
 import com.example.e_commerce_app.db.SharedPrefsManager
 import com.example.e_commerce_app.model.cart.AppliedDiscount
 import com.example.e_commerce_app.model.cart.PriceRule
@@ -141,12 +142,12 @@ class AddingCouponFragment : Fragment() {
                             enableUi()
                             result.data?.let { draftOrderResponse ->
                                 binding.tvTax.text = draftOrderResponse.draft_order.total_tax?.let {
-                                    getPriceAndCurrency(
+                                    LocalDataSourceImpl.getPriceAndCurrency(
                                         it.toDouble())
                                 }
-                                binding.tvSubtotal.text = getPriceAndCurrency((draftOrderResponse.draft_order.subtotal_price?.toDouble() ?: 0.00) +(draftOrderResponse.draft_order.applied_discount?.amount?.toDouble() ?: 0.00))
+                                binding.tvSubtotal.text = LocalDataSourceImpl.getPriceAndCurrency((draftOrderResponse.draft_order.subtotal_price?.toDouble() ?: 0.00) +(draftOrderResponse.draft_order.applied_discount?.amount?.toDouble() ?: 0.00))
                                 binding.tvTotal.text = draftOrderResponse.draft_order.total_price?.let {
-                                    getPriceAndCurrency(
+                                    LocalDataSourceImpl.getPriceAndCurrency(
                                         it.toDouble())
                                 }
                                 totalPrice = draftOrderResponse.draft_order.total_price.toString()
@@ -200,17 +201,6 @@ class AddingCouponFragment : Fragment() {
         binding.btnApply.setBackgroundTintList(ColorStateList.valueOf(ContextCompat.getColor(requireContext(), R.color.basic_color)))
         binding.btnSubmit.setBackgroundTintList(ColorStateList.valueOf(ContextCompat.getColor(requireContext(), R.color.basic_color)))
     }
-    private fun getPriceAndCurrency(price: Double): String {
-        val sharedPrefsManager = SharedPrefsManager.getInstance()
-        val currency = sharedPrefsManager.getCurrency()
-        var convertedPrice = price
-        if(currency == "EGP"){
-            convertedPrice *= sharedPrefsManager.getCurrencyEGP()
-        }else if(currency == "USD"){
-            convertedPrice *= sharedPrefsManager.getCurrencyUSD()
-        }
-        val formattedPrice = String.format("%.2f", convertedPrice)
-        return "$formattedPrice $currency"
-    }
+
 
 }

@@ -19,6 +19,7 @@ import com.example.e_commerce_app.cart.adapter.CartAdapter
 import com.example.e_commerce_app.cart.viewmodel.CartViewModel
 import com.example.e_commerce_app.cart.viewmodel.CartViewModelFactory
 import com.example.e_commerce_app.databinding.FragmentCartBinding
+import com.example.e_commerce_app.db.LocalDataSourceImpl
 import com.example.e_commerce_app.db.SharedPrefsManager
 import com.example.e_commerce_app.db.ShopifyDB
 import com.example.e_commerce_app.model.cart.Cart
@@ -148,21 +149,9 @@ class CartFragment : Fragment() {
         }
         cartAdapter.updateData(lineItems.drop(1))
         var totalPrice = (draftOrderResponse.draft_order.subtotal_price?.toDouble() ?: 0.00) + (draftOrderResponse.draft_order.applied_discount?.amount?.toDouble() ?: 0.00)
-        binding.totalPrice.text = getPriceAndCurrency(totalPrice)
+        binding.totalPrice.text = LocalDataSourceImpl.getPriceAndCurrency(totalPrice)
     }
 
-    private fun getPriceAndCurrency(price: Double): String {
-        val sharedPrefsManager = SharedPrefsManager.getInstance()
-        val currency = sharedPrefsManager.getCurrency()
-        var convertedPrice = price
-        if(currency == "EGP"){
-            convertedPrice *= sharedPrefsManager.getCurrencyEGP()
-        }else if(currency == "USD"){
-            convertedPrice *= sharedPrefsManager.getCurrencyUSD()
-        }
-        val formattedPrice = String.format("%.2f", convertedPrice)
-        return "$formattedPrice $currency"
-    }
 
     private fun getDraftOrderIdForCustomer(customerId: String?): Long? {
         return customerId?.toLong()
