@@ -11,6 +11,7 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.e_commerce_app.R
+import com.example.e_commerce_app.db.LocalDataSourceImpl
 import com.example.e_commerce_app.db.SharedPrefsManager
 import com.example.e_commerce_app.model.product.Product
 
@@ -56,7 +57,7 @@ class FavoriteAdapter(
             productName.text = product.title
 
             val price = product.variants.firstOrNull()?.price?.toDoubleOrNull() ?: 0.0
-            productPrice.text = getPriceAndCurrency(price)
+            productPrice.text = LocalDataSourceImpl.getPriceAndCurrency(price)
 
             val imageUrl = product.image?.src
             if (!imageUrl.isNullOrEmpty()) {
@@ -83,18 +84,6 @@ class FavoriteAdapter(
                 onProductClick(product.id)
             }
 
-        }
-
-        private fun getPriceAndCurrency(price: Double): String {
-            val sharedPrefsManager = SharedPrefsManager.getInstance()
-            val currency = sharedPrefsManager.getCurrency()
-            var convertedPrice = price
-            when (currency) {
-                "EGP" -> convertedPrice *= sharedPrefsManager.getCurrencyEGP()
-                "USD" -> convertedPrice *= sharedPrefsManager.getCurrencyUSD()
-            }
-            val formattedPrice = String.format("%.2f", convertedPrice)
-            return "$formattedPrice $currency"
         }
 
         private fun showDeleteConfirmationDialog(
